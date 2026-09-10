@@ -1,0 +1,38 @@
+{
+  "name": "certly-app",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "appwrite:provision": "node --env-file=.env.local scripts/provision-appwrite.mjs",
+    "appwrite:create-admin": "node --env-file=.env.local scripts/create-admin.mjs"
+  },
+  "dependencies": {
+    "appwrite": "^27.0.0",
+    "clsx": "^2.1.1",
+    "lucide-react": "^1.44.0",
+    "next": "16.3.4",
+    "node-appwrite": "^29.0.0",
+    "papaparse": "^5.7.0",
+    "pdf-parse": "^2.4.5",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^24.13.4",
+    "@types/papaparse": "^5.5.2",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.3.4",
+    "tailwindcss": "^4",
+    "typescript": "^5",
+    "vitest": "^4.1.11"
+  }
+}
