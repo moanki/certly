@@ -3,12 +3,12 @@ import { Client, Databases, Storage } from "node-appwrite";
 const config = {
   endpoint: process.env.APPWRITE_ENDPOINT ?? "https://sgp.cloud.appwrite.io/v1",
   projectId: process.env.APPWRITE_PROJECT_ID ?? "6aa2933f0011fcc722a1",
-  apiKey: process.env.APPWRITE_API_KEY,
+  apiKey: process.env.APPWRITE_ADMIN_API_KEY ?? process.env.APPWRITE_API_KEY,
   databaseId: process.env.APPWRITE_DATABASE_ID ?? "certly",
   importsBucketId: process.env.APPWRITE_IMPORTS_BUCKET_ID ?? "imports",
 };
 
-if (!config.apiKey) throw new Error("APPWRITE_API_KEY is required.");
+if (!config.apiKey) throw new Error("APPWRITE_ADMIN_API_KEY is required.");
 
 const client = new Client().setEndpoint(config.endpoint).setProject(config.projectId).setKey(config.apiKey);
 const databases = new Databases(client);
@@ -93,8 +93,20 @@ async function ensureDatabase() {
 
 async function ensureCollection(collection) {
   try {
-    await databases.getCollection({ databaseId: config.databaseId, collectionId: collection.id });
-    console.log(`Collection exists: ${collection.id}`);
+    const existing = await databases.getCollection({ databaseId: config.databaseId, collectionId: collection.id });
+    if (existing.$permissions.length || existing.documentSecurity || !existing.enabled) {
+      await databases.updateCollection({
+        databaseId: config.databaseId,
+        collectionId: collection.id,
+        name: collection.name,
+        permissions: [],
+        documentSecurity: false,
+        enabled: true,
+      });
+      console.log(`Hardened collection access: ${collection.id}`);
+    } else {
+      console.log(`Collection is private: ${collection.id}`);
+    }
   } catch (error) {
     if (error?.code !== 404) throw error;
     await databases.createCollection({
@@ -113,8 +125,28 @@ async function ensureCollection(collection) {
 
 async function ensureBucket() {
   try {
-    await storage.getBucket({ bucketId: config.importsBucketId });
-    console.log(`Bucket exists: ${config.importsBucketId}`);
+    const bucket = await storage.getBucket({ bucketId: config.importsBucketId });
+    const extensionsAreSafe = bucket.allowedFileExtensions.length === 2
+      && bucket.allowedFileExtensions.includes("pdf")
+      && bucket.allowedFileExtensions.includes("csv");
+    if (bucket.$permissions.length || bucket.fileSecurity || !bucket.enabled || bucket.maximumFileSize !== 10 * 1024 * 1024 || !extensionsAreSafe || !bucket.encryption || !bucket.antivirus) {
+      await storage.updateBucket({
+        bucketId: config.importsBucketId,
+        name: "Question imports",
+        permissions: [],
+        fileSecurity: false,
+        enabled: true,
+        maximumFileSize: 10 * 1024 * 1024,
+        allowedFileExtensions: ["pdf", "csv"],
+        compression: "none",
+        encryption: true,
+        antivirus: true,
+        transformations: false,
+      });
+      console.log(`Hardened private bucket: ${config.importsBucketId}`);
+    } else {
+      console.log(`Bucket is private and hardened: ${config.importsBucketId}`);
+    }
   } catch (error) {
     if (error?.code !== 404) throw error;
     await storage.createBucket({

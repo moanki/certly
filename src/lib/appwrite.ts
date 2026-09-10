@@ -1,7 +1,7 @@
-import { Account, Client, Databases, Storage, Users } from "node-appwrite";
+import { Account, Client, Databases, Storage } from "node-appwrite";
 
 export const appwriteConfig = {
-  endpoint: process.env.APPWRITE_ENDPOINT ?? "https://cloud.appwrite.io/v1",
+  endpoint: process.env.APPWRITE_ENDPOINT ?? "https://sgp.cloud.appwrite.io/v1",
   projectId: process.env.APPWRITE_PROJECT_ID ?? "6aa2933f0011fcc722a1",
   databaseId: process.env.APPWRITE_DATABASE_ID ?? "certly",
   certificationsCollectionId: process.env.APPWRITE_CERTIFICATIONS_COLLECTION_ID ?? "certifications",
@@ -30,7 +30,6 @@ export function createAdminClient() {
     account: new Account(client),
     databases: new Databases(client),
     storage: new Storage(client),
-    users: new Users(client),
   };
 }
 

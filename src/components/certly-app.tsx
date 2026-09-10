@@ -5,8 +5,8 @@ import { ArrowRight, Award, BarChart3, BookOpenCheck, CheckCircle2, Clock3, File
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { clsx } from "clsx";
 import { getCorrectOptionIds, hcipHuaweiPreset, isAnswerCorrect, normalizeQuestionCount, scoreAttempt, shuffleWithSeed } from "@/lib/exam-engine";
-import { certifications, sampleQuestions, topics } from "@/lib/questions";
-import type { AttemptAnswer, Candidate, ExamQuestion, ImportPreviewQuestion } from "@/types/exam";
+import { certifications, topics } from "@/lib/exam-catalog";
+import type { AttemptAnswer, AttemptSummary, Candidate, ExamQuestion, ImportPreviewQuestion } from "@/types/exam";
 import { AdminLogin } from "@/components/admin-login";
 import { ThemeToggle } from "@/lib/theme";
 
@@ -39,15 +39,20 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
   const [practiceIndex, setPracticeIndex] = useState(0);
   const [practiceSelected, setPracticeSelected] = useState<string[]>([]);
   const [practiceRevealed, setPracticeRevealed] = useState(false);
+  const [practiceFeedback, setPracticeFeedback] = useState<ExamQuestion | null>(null);
+  const [practiceChecking, setPracticeChecking] = useState(false);
+  const [practiceStatus, setPracticeStatus] = useState("");
   const [answers, setAnswers] = useState<AttemptAnswer[]>([]);
   const [timed, setTimed] = useState(true);
   const [startedAt, setStartedAt] = useState<string | null>(null);
   const [marked, setMarked] = useState<Set<string>>(new Set());
   const [remainingSeconds, setRemainingSeconds] = useState(hcipHuaweiPreset.durationMinutes * 60);
   const [saveStatus, setSaveStatus] = useState("");
-  const [questionBank, setQuestionBank] = useState(sampleQuestions);
+  const [questionBank, setQuestionBank] = useState<ExamQuestion[]>([]);
   const [attemptHistory, setAttemptHistory] = useState<AttemptHistoryItem[]>([]);
+  const [resultSummary, setResultSummary] = useState<AttemptSummary | null>(null);
   const questionOpenedAt = useRef(0);
+  const submittingAttempt = useRef(false);
 
   const examQuestions = useMemo(() => {
     const count = normalizeQuestionCount(questionBank.length, hcipHuaweiPreset.questionCount);
@@ -62,7 +67,7 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
       }));
   }, [candidate.email, questionBank]);
   const practiceQuestions = useMemo(() => selectedTopic === "Mixed Mock" ? questionBank : questionBank.filter((question) => question.topic === selectedTopic), [questionBank, selectedTopic]);
-  const summary = useMemo(() => scoreAttempt(examQuestions, answers), [answers, examQuestions]);
+  const summary = useMemo(() => resultSummary ?? scoreAttempt(examQuestions, []), [examQuestions, resultSummary]);
   const activeQuestion = examQuestions[questionIndex];
   const practiceQuestion = practiceQuestions[practiceIndex] ?? questionBank[0];
 
@@ -76,23 +81,8 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
   }, []);
 
   useEffect(() => {
-    if (!candidate.email.trim()) return;
-    const controller = new AbortController();
-    const timeout = window.setTimeout(() => {
-      void fetch(`/api/attempts?email=${encodeURIComponent(candidate.email.trim())}`, { signal: controller.signal })
-        .then((response) => response.json())
-        .then((data: { attempts?: AttemptHistoryItem[] }) => setAttemptHistory(data.attempts ?? []))
-        .catch(() => undefined);
-    }, 350);
-    return () => {
-      controller.abort();
-      window.clearTimeout(timeout);
-    };
-  }, [candidate.email]);
-
-  useEffect(() => {
     if (!startedAt) return;
-    window.localStorage.setItem(storageKey, JSON.stringify({ candidate, answers, startedAt, marked: [...marked] }));
+    window.sessionStorage.setItem(storageKey, JSON.stringify({ candidate, answers, startedAt, marked: [...marked] }));
   }, [answers, candidate, marked, startedAt]);
 
   function updateAnswer(question: ExamQuestion, optionId: string) {
@@ -108,37 +98,38 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
   }
 
   function startExam() {
+    if (questionBank.length === 0) return;
     setAnswers([]);
     setMarked(new Set());
     setQuestionIndex(0);
     setStartedAt(new Date().toISOString());
     setRemainingSeconds(hcipHuaweiPreset.durationMinutes * 60);
     setSaveStatus("");
+    setResultSummary(null);
+    setPracticeFeedback(null);
     questionOpenedAt.current = Date.now();
     setView("exam");
   }
 
   function resetAttempt() {
-    window.localStorage.removeItem(storageKey);
+    window.sessionStorage.removeItem(storageKey);
     setAnswers([]);
     setMarked(new Set());
     setStartedAt(null);
+    setResultSummary(null);
     setQuestionIndex(0);
     setView("exam-setup");
   }
 
   const finishExam = useCallback(async () => {
-    if (!startedAt || !activeQuestion) return;
+    if (!startedAt || !activeQuestion || submittingAttempt.current) return;
+    submittingAttempt.current = true;
     const elapsed = Math.max(1, Math.round((Date.now() - questionOpenedAt.current) / 1000));
     const finalAnswers = addQuestionTime(answers, activeQuestion.id, elapsed, marked.has(activeQuestion.id));
-    const result = scoreAttempt(examQuestions, finalAnswers);
     const submittedAt = new Date().toISOString();
 
     setAnswers(finalAnswers);
-    setStartedAt(null);
-    window.localStorage.removeItem(storageKey);
-    setView("results");
-    setSaveStatus("Saving attempt...");
+    setSaveStatus("Scoring attempt...");
 
     try {
       const response = await fetch("/api/attempts", {
@@ -151,27 +142,54 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
           timed,
           startedAt,
           submittedAt,
-          score: result.score,
-          passed: result.passed,
-          correct: result.correct,
-          incorrect: result.incorrect,
-          unanswered: result.unanswered,
-          total: result.total,
-          durationSeconds: Math.max(0, Math.round((Date.now() - new Date(startedAt).getTime()) / 1000)),
-          answers: result.results.map((item) => ({
-            questionId: item.question.id,
-            selectedOptionIds: item.selectedOptionIds,
-            timeSpentSeconds: item.timeSpentSeconds,
-            markedForReview: marked.has(item.question.id),
-            isCorrect: item.isCorrect,
-          })),
+          questionIds: examQuestions.map((question) => question.id),
+          answers: finalAnswers,
         }),
       });
-      setSaveStatus(response.ok ? "Attempt saved." : "Result shown, but attempt history could not be saved.");
+      const data = (await response.json()) as { error?: string; saved?: boolean; attemptId?: string | null; summary?: AttemptSummary };
+      if (!response.ok || !data.summary) throw new Error(data.error ?? "The attempt could not be scored.");
+      setResultSummary(data.summary);
+      setStartedAt(null);
+      window.sessionStorage.removeItem(storageKey);
+      setView("results");
+      setSaveStatus(data.saved ? "Attempt saved." : "Result shown, but attempt history could not be saved.");
+      const historyItem: AttemptHistoryItem = {
+        id: data.attemptId ?? `local-${Date.now()}`,
+        submittedAt,
+        score: data.summary.score,
+        passed: data.summary.passed,
+        correct: data.summary.correct,
+        total: data.summary.total,
+        durationSeconds: Math.max(0, Math.round((Date.now() - new Date(startedAt).getTime()) / 1000)),
+      };
+      setAttemptHistory((current) => [historyItem, ...current].slice(0, 10));
     } catch {
-      setSaveStatus("Result shown, but attempt history could not be saved.");
+      setSaveStatus("The attempt could not be scored. Check your connection and submit again.");
+    } finally {
+      submittingAttempt.current = false;
     }
   }, [activeQuestion, answers, candidate, examQuestions, marked, startedAt, timed]);
+
+  async function checkPracticeAnswer() {
+    if (!practiceQuestion || practiceSelected.length === 0 || practiceChecking) return;
+    setPracticeChecking(true);
+    setPracticeStatus("");
+    try {
+      const response = await fetch("/api/practice/check", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ questionId: practiceQuestion.id, selectedOptionIds: practiceSelected }),
+      });
+      const data = (await response.json()) as { error?: string; question?: ExamQuestion };
+      if (!response.ok || !data.question) throw new Error(data.error ?? "Answer could not be checked.");
+      setPracticeFeedback(data.question);
+      setPracticeRevealed(true);
+    } catch {
+      setPracticeStatus("Answer could not be checked. Try again.");
+    } finally {
+      setPracticeChecking(false);
+    }
+  }
 
   useEffect(() => {
     if (view !== "exam" || !timed || !startedAt) return;
@@ -230,21 +248,25 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
       </header>
 
       {view === "dashboard" && <Landing candidate={candidate} setCandidate={setCandidate} summary={summary} attemptHistory={attemptHistory} questionBank={questionBank} goExam={() => setView("exam-setup")} goPractice={() => setView("practice")} />}
-      {view === "practice" && (
+      {view === "practice" && practiceQuestion && (
         <PracticeMode
           topic={selectedTopic}
-          setTopic={(topic) => { setSelectedTopic(topic); setPracticeIndex(0); setPracticeSelected([]); setPracticeRevealed(false); }}
+          setTopic={(topic) => { setSelectedTopic(topic); setPracticeIndex(0); setPracticeSelected([]); setPracticeRevealed(false); setPracticeFeedback(null); setPracticeStatus(""); }}
           question={practiceQuestion}
           index={practiceIndex}
           total={practiceQuestions.length}
           selected={practiceSelected}
           setSelected={setPracticeSelected}
           revealed={practiceRevealed}
-          setRevealed={setPracticeRevealed}
-          next={() => { setPracticeIndex((current) => (current + 1) % practiceQuestions.length); setPracticeSelected([]); setPracticeRevealed(false); }}
+          feedback={practiceFeedback}
+          checking={practiceChecking}
+          status={practiceStatus}
+          onCheck={() => void checkPracticeAnswer()}
+          next={() => { setPracticeIndex((current) => (current + 1) % practiceQuestions.length); setPracticeSelected([]); setPracticeRevealed(false); setPracticeFeedback(null); setPracticeStatus(""); }}
         />
       )}
-      {view === "exam-setup" && <ExamSetup candidate={candidate} setCandidate={setCandidate} timed={timed} setTimed={setTimed} onStart={startExam} hasDraft={Boolean(startedAt)} onReset={resetAttempt} />}
+      {view === "practice" && !practiceQuestion && <QuestionBankUnavailable />}
+      {view === "exam-setup" && <ExamSetup candidate={candidate} setCandidate={setCandidate} timed={timed} setTimed={setTimed} onStart={startExam} hasDraft={Boolean(startedAt)} onReset={resetAttempt} ready={questionBank.length > 0} />}
       {view === "exam" && activeQuestion && (
         <ExamMode
           question={activeQuestion}
@@ -260,10 +282,11 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
           onPrevious={() => moveToQuestion(Math.max(0, questionIndex - 1))}
           onNext={() => moveToQuestion(Math.min(examQuestions.length - 1, questionIndex + 1))}
           onFinish={() => void finishExam()}
+          status={saveStatus}
           onToggleMark={(questionId) => setMarked((current) => { const next = new Set(current); if (next.has(questionId)) next.delete(questionId); else next.add(questionId); return next; })}
         />
       )}
-      {view === "results" && <Results summary={summary} questions={examQuestions} answers={answers} saveStatus={saveStatus} onRetake={resetAttempt} />}
+      {view === "results" && resultSummary && <Results summary={resultSummary} saveStatus={saveStatus} onRetake={resetAttempt} />}
       {view === "admin" && <AdminImport />}
     </main>
   );
@@ -414,8 +437,9 @@ function GlassMetric({ icon, label, value }: { icon: React.ReactNode; label: str
 // (Pearson VUE style: neutral surfaces, structured cards, disciplined accent use)
 // ---------------------------------------------------------------------------
 
-function PracticeMode(props: { topic: string; setTopic: (topic: string) => void; question: ExamQuestion; index: number; total: number; selected: string[]; setSelected: (selected: string[]) => void; revealed: boolean; setRevealed: (revealed: boolean) => void; next: () => void }) {
-  const correct = props.revealed && isAnswerCorrect(props.question, props.selected);
+function PracticeMode(props: { topic: string; setTopic: (topic: string) => void; question: ExamQuestion; index: number; total: number; selected: string[]; setSelected: (selected: string[]) => void; revealed: boolean; feedback: ExamQuestion | null; checking: boolean; status: string; onCheck: () => void; next: () => void }) {
+  const feedbackQuestion = props.feedback ?? props.question;
+  const correct = props.revealed && Boolean(props.feedback) && isAnswerCorrect(feedbackQuestion, props.selected);
   return (
     <section className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
       <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
@@ -431,17 +455,18 @@ function PracticeMode(props: { topic: string; setTopic: (topic: string) => void;
           </select>
         </label>
       </div>
-      <QuestionPanel question={props.question} selected={props.selected} reveal={props.revealed} onSelect={(optionId) => props.setSelected(props.question.type === "multiple" ? toggleSelection(props.selected, optionId) : [optionId])} eyebrow={`Question ${props.index + 1} of ${props.total}`} />
+      <QuestionPanel question={feedbackQuestion} selected={props.selected} reveal={props.revealed} onSelect={(optionId) => props.setSelected(props.question.type === "multiple" ? toggleSelection(props.selected, optionId) : [optionId])} eyebrow={`Question ${props.index + 1} of ${props.total}`} />
       <div className="mt-5 flex flex-wrap gap-3">
-        <button className={platformPrimaryBtn} disabled={props.selected.length === 0} onClick={() => props.setRevealed(true)}>Check answer</button>
+        <button className={platformPrimaryBtn} disabled={props.selected.length === 0 || props.checking} onClick={props.onCheck}>{props.checking ? "Checking..." : "Check answer"}</button>
         <button className={platformSecondaryBtn} onClick={props.next}>Next question</button>
       </div>
-      {props.revealed && <Feedback question={props.question} correct={correct} />}
+      {props.status && <p aria-live="polite" className="mt-3 text-sm text-[var(--danger)]">{props.status}</p>}
+      {props.revealed && props.feedback && <Feedback question={props.feedback} correct={correct} />}
     </section>
   );
 }
 
-function ExamSetup({ candidate, setCandidate, timed, setTimed, onStart, hasDraft, onReset }: { candidate: Candidate; setCandidate: (candidate: Candidate) => void; timed: boolean; setTimed: (timed: boolean) => void; onStart: () => void; hasDraft: boolean; onReset: () => void }) {
+function ExamSetup({ candidate, setCandidate, timed, setTimed, onStart, hasDraft, onReset, ready }: { candidate: Candidate; setCandidate: (candidate: Candidate) => void; timed: boolean; setTimed: (timed: boolean) => void; onStart: () => void; hasDraft: boolean; onReset: () => void; ready: boolean }) {
   return (
     <section className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
       <div className={clsx(platformCard, "p-6 sm:p-8")}>
@@ -463,16 +488,16 @@ function ExamSetup({ candidate, setCandidate, timed, setTimed, onStart, hasDraft
           <input type="checkbox" checked={timed} onChange={(event) => setTimed(event.target.checked)} className="h-4 w-4 accent-[var(--accent)]" />
         </label>
         <div className="mt-6 flex flex-wrap gap-3">
-          <button className={platformPrimaryBtn} disabled={!candidate.name.trim()} onClick={onStart}>Start mock exam</button>
+          <button className={platformPrimaryBtn} disabled={!candidate.name.trim() || !ready} onClick={onStart}>Start mock exam</button>
           {hasDraft && <button className="inline-flex items-center gap-2 rounded-lg border px-4 py-2.5 text-sm font-semibold transition-colors" style={{ borderColor: "var(--danger)", background: "var(--danger-soft)", color: "var(--danger)" }} onClick={onReset}><RotateCcw className="h-4 w-4" />Start again</button>}
         </div>
-        {!candidate.name.trim() && <p className="mt-3 text-sm text-[var(--text-soft)]">Enter the candidate name to start.</p>}
+        {(!candidate.name.trim() || !ready) && <p className="mt-3 text-sm text-[var(--text-soft)]">{ready ? "Enter the candidate name to start." : "The question bank is loading. Try again in a moment."}</p>}
       </div>
     </section>
   );
 }
 
-function ExamMode(props: { question: ExamQuestion; questions: ExamQuestion[]; index: number; total: number; answers: AttemptAnswer[]; marked: Set<string>; timed: boolean; remainingSeconds: number; onSelect: (question: ExamQuestion, optionId: string) => void; onPrevious: () => void; onNext: () => void; onJump: (index: number) => void; onFinish: () => void; onToggleMark: (questionId: string) => void }) {
+function ExamMode(props: { question: ExamQuestion; questions: ExamQuestion[]; index: number; total: number; answers: AttemptAnswer[]; marked: Set<string>; timed: boolean; remainingSeconds: number; status: string; onSelect: (question: ExamQuestion, optionId: string) => void; onPrevious: () => void; onNext: () => void; onJump: (index: number) => void; onFinish: () => void; onToggleMark: (questionId: string) => void }) {
   const selected = props.answers.find((item) => item.questionId === props.question.id)?.selectedOptionIds ?? [];
   const lowTime = props.timed && props.remainingSeconds <= 300;
   return (
@@ -501,6 +526,7 @@ function ExamMode(props: { question: ExamQuestion; questions: ExamQuestion[]; in
           </div>
         </div>
         <QuestionPanel question={props.question} selected={selected} reveal={false} onSelect={(optionId) => props.onSelect(props.question, optionId)} eyebrow={props.question.type === "multiple" ? "Select all correct answers" : "Select one answer"} />
+        {props.status && <p aria-live="polite" className="mt-3 text-sm text-[var(--text-soft)]">{props.status}</p>}
         <div className="mt-5 flex justify-between gap-3">
           <button className={platformSecondaryBtn} onClick={props.onPrevious}>Previous</button>
           {props.index === props.total - 1
@@ -542,7 +568,7 @@ function ExamMode(props: { question: ExamQuestion; questions: ExamQuestion[]; in
   );
 }
 
-function Results({ summary, questions, answers, saveStatus, onRetake }: { summary: ReturnType<typeof scoreAttempt>; questions: ExamQuestion[]; answers: AttemptAnswer[]; saveStatus: string; onRetake: () => void }) {
+function Results({ summary, saveStatus, onRetake }: { summary: AttemptSummary; saveStatus: string; onRetake: () => void }) {
   return (
     <section className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
       <div className="grid gap-5 lg:grid-cols-[0.8fr_1.2fr]">
@@ -572,17 +598,15 @@ function Results({ summary, questions, answers, saveStatus, onRetake }: { summar
       <div className={clsx(platformCard, "mt-6 p-6")}>
         <h3 className="text-sm font-bold uppercase tracking-[0.1em] text-[var(--text-soft)]">Full review</h3>
         <div className="mt-4 grid gap-4">
-          {questions.map((question, index) => {
-            const answer = answers.find((item) => item.questionId === question.id);
-            const selected = answer?.selectedOptionIds ?? [];
-            const correct = isAnswerCorrect(question, selected);
+          {summary.results.map((result, index) => {
+            const question = result.question;
             return (
               <div key={question.id} className="rounded-xl border border-[var(--border)] bg-[var(--surface-2)] p-4">
                 <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
                   <p className="font-bold">Question {index + 1}</p>
                   <div className="flex items-center gap-2">
-                    <span className="text-xs text-[var(--text-soft)]">{answer?.timeSpentSeconds ?? 0}s</span>
-                    <span className="rounded-full px-3 py-1 text-xs font-bold" style={correct ? { background: "var(--success-soft)", color: "var(--success)" } : { background: "var(--danger-soft)", color: "var(--danger)" }}>{correct ? "Correct" : "Review"}</span>
+                    <span className="text-xs text-[var(--text-soft)]">{result.timeSpentSeconds}s</span>
+                    <span className="rounded-full px-3 py-1 text-xs font-bold" style={result.isCorrect ? { background: "var(--success-soft)", color: "var(--success)" } : { background: "var(--danger-soft)", color: "var(--danger)" }}>{result.isCorrect ? "Correct" : "Review"}</span>
                   </div>
                 </div>
                 <p className="text-sm leading-6">{question.text}</p>
@@ -592,6 +616,16 @@ function Results({ summary, questions, answers, saveStatus, onRetake }: { summar
             );
           })}
         </div>
+      </div>
+    </section>
+  );
+}
+
+function QuestionBankUnavailable() {
+  return (
+    <section className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
+      <div className={clsx(platformCard, "p-6 text-sm text-[var(--text-soft)]")}>
+        The question bank is loading. Try again in a moment.
       </div>
     </section>
   );

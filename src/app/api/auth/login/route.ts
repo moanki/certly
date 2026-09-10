@@ -1,14 +1,26 @@
 import { cookies } from "next/headers";
 import { adminSessionCookie } from "@/lib/admin-auth";
 import { createAdminClient, createSessionClient } from "@/lib/appwrite";
+import { enforceBodyLimit, enforceRateLimit, enforceSameOrigin, noStoreJson, securityLog } from "@/lib/security";
 
 export async function POST(request: Request) {
+  const originError = enforceSameOrigin(request);
+  if (originError) return originError;
+  const sizeError = enforceBodyLimit(request, 8 * 1024);
+  if (sizeError) return sizeError;
+
   try {
     const body = (await request.json()) as { email?: string; password?: string };
-    const email = body.email?.trim();
+    const email = body.email?.trim().toLowerCase();
     const password = body.password ?? "";
-    if (!email || password.length < 8) {
-      return Response.json({ error: "Enter a valid email and password." }, { status: 400 });
+    if (!email || email.length > 254 || password.length < 8 || password.length > 256) {
+      return noStoreJson({ error: "Enter a valid email and password." }, { status: 400 });
+    }
+
+    const rateLimitError = enforceRateLimit(request, "admin-login", 5, 15 * 60 * 1_000, email);
+    if (rateLimitError) {
+      securityLog("admin_login_rate_limited");
+      return rateLimitError;
     }
 
     const { account } = createAdminClient();
@@ -18,19 +30,24 @@ export async function POST(request: Request) {
 
     if (!user.labels.includes("admin")) {
       await sessionClient.account.deleteSession({ sessionId: "current" });
-      return Response.json({ error: "This account does not have admin access." }, { status: 403 });
+      securityLog("admin_login_rejected", { reason: "missing_role" });
+      return noStoreJson({ error: "Email or password is incorrect." }, { status: 401 });
     }
 
+    const appwriteExpiry = new Date(session.expire).getTime();
+    const expiry = new Date(Math.min(appwriteExpiry, Date.now() + 8 * 60 * 60 * 1_000));
     (await cookies()).set(adminSessionCookie, session.secret, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      sameSite: "strict",
       path: "/",
-      expires: new Date(session.expire),
+      expires: expiry,
     });
 
-    return Response.json({ user: { id: user.$id, name: user.name, email: user.email } });
+    securityLog("admin_login_succeeded", { userId: user.$id });
+    return noStoreJson({ user: { id: user.$id, name: user.name, email: user.email } });
   } catch {
-    return Response.json({ error: "Email or password is incorrect." }, { status: 401 });
+    securityLog("admin_login_failed");
+    return noStoreJson({ error: "Email or password is incorrect." }, { status: 401 });
   }
 }

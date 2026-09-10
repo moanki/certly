@@ -19,7 +19,7 @@ Certly is a professional certification mock-exam portal. The first preset target
 4. Create an Appwrite admin user in the Console and add the `admin` label, or set `CERTLY_ADMIN_EMAIL` and `CERTLY_ADMIN_PASSWORD` locally and run `npm run appwrite:create-admin`.
 5. Run `npm run dev` and open `http://localhost:3000`.
 
-The API key must never use a `NEXT_PUBLIC_` prefix or be committed. See [docs/architecture.md](docs/architecture.md) for environment and data boundaries.
+Remove the one-time `CERTLY_ADMIN_*` values after account creation. The API key must never use a `NEXT_PUBLIC_` prefix or be committed. Use a restricted runtime key in Vercel and a separate local provisioning key. See [docs/architecture.md](docs/architecture.md) for environment boundaries and [docs/security.md](docs/security.md) for the OWASP-aligned baseline.
 
 ## Verification
 

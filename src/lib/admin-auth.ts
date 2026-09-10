@@ -1,7 +1,9 @@
 import { cookies } from "next/headers";
 import { createSessionClient } from "@/lib/appwrite";
 
-export const adminSessionCookie = "certly_admin_session";
+export const adminSessionCookie = process.env.NODE_ENV === "production"
+  ? "__Host-certly_admin_session"
+  : "certly_admin_session";
 
 export async function getAdminUser() {
   const session = (await cookies()).get(adminSessionCookie)?.value;
