@@ -631,14 +631,15 @@ function QuestionBankUnavailable() {
 }
 
 function AdminImport() {
-  const [preview, setPreview] = useState<ImportPreviewQuestion[]>([]);
+  const [batches, setBatches] = useState<Array<{ importId: string; fileName: string; questions: ImportPreviewQuestion[] }>>([]);
   const [status, setStatus] = useState("Upload CSV or PDF to preview extracted questions before import.");
   const [auth, setAuth] = useState<"loading" | "guest" | "admin">("loading");
   const [adminName, setAdminName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [importId, setImportId] = useState("");
   const [busy, setBusy] = useState(false);
+  const [dragging, setDragging] = useState(false);
+  const preview = batches.flatMap((batch) => batch.questions.map((question) => ({ ...question, fileName: batch.fileName })));
 
   useEffect(() => {
     void fetch("/api/auth/session")
@@ -678,49 +679,77 @@ function AdminImport() {
     setBusy(true);
     await fetch("/api/auth/logout", { method: "DELETE" });
     setAuth("guest");
-    setPreview([]);
-    setImportId("");
+    setBatches([]);
     setStatus("Signed out.");
     setBusy(false);
   }
 
-  async function upload(file: File) {
-    const formData = new FormData();
-    formData.set("file", file);
+  async function uploadFiles(selectedFiles: File[]) {
+    const files = selectedFiles.slice(0, 10);
+    if (files.length === 0) return;
     setBusy(true);
-    setStatus("Parsing file...");
+    const added: Array<{ importId: string; fileName: string; questions: ImportPreviewQuestion[] }> = [];
+    const errors: string[] = [];
     try {
-      const response = await fetch("/api/import", { method: "POST", body: formData });
-      const data = (await response.json()) as { importId?: string; questions?: ImportPreviewQuestion[]; error?: string };
-      if (response.status === 401) setAuth("guest");
-      setImportId(data.importId ?? "");
-      setPreview(data.questions ?? []);
-      setStatus(data.error ?? `Detected ${data.questions?.length ?? 0} question blocks. Review before importing.`);
-    } catch {
-      setStatus("Upload failed. Check the connection and try again.");
+      for (const [index, file] of files.entries()) {
+        setStatus(`Parsing ${index + 1} of ${files.length}: ${file.name}`);
+        const formData = new FormData();
+        formData.set("file", file);
+        try {
+          const response = await fetch("/api/import", { method: "POST", body: formData });
+          const data = (await response.json()) as { importId?: string; questions?: ImportPreviewQuestion[]; error?: string };
+          if (response.status === 401) {
+            setAuth("guest");
+            errors.push(`${file.name}: admin sign-in is required.`);
+            break;
+          }
+          if (!response.ok || !data.importId || !data.questions?.length) {
+            errors.push(`${file.name}: ${data.error ?? "no valid questions found."}`);
+            continue;
+          }
+          added.push({ importId: data.importId, fileName: file.name, questions: data.questions });
+        } catch {
+          errors.push(`${file.name}: upload failed.`);
+        }
+      }
+      if (added.length) setBatches((current) => [...current, ...added]);
+      const detected = added.reduce((total, batch) => total + batch.questions.length, 0);
+      const summary = `Added ${added.length} file${added.length === 1 ? "" : "s"} with ${detected} question${detected === 1 ? "" : "s"}.`;
+      setStatus(errors.length ? `${summary} ${errors.join(" ")}` : `${summary} Review before importing.`);
     } finally {
       setBusy(false);
     }
   }
 
   async function commitImport() {
-    if (!importId) return;
+    if (batches.length === 0) return;
     setBusy(true);
     setStatus("Importing reviewed questions...");
+    const failed: typeof batches = [];
+    const errors: string[] = [];
+    let importedCount = 0;
     try {
-      const response = await fetch(`/api/import/${importId}/commit`, {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ questions: preview }),
-      });
-      const data = (await response.json()) as { importedCount?: number; error?: string };
-      if (!response.ok) {
-        setStatus(data.error ?? "Import failed.");
-        return;
+      for (const batch of batches) {
+        const response = await fetch(`/api/import/${batch.importId}/commit`, {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ questions: batch.questions }),
+        });
+        const data = (await response.json()) as { importedCount?: number; error?: string };
+        if (response.status === 401) setAuth("guest");
+        if (!response.ok) {
+          failed.push(batch);
+          errors.push(`${batch.fileName}: ${data.error ?? "import failed."}`);
+        } else {
+          importedCount += data.importedCount ?? 0;
+        }
       }
-      setStatus(`Imported ${data.importedCount ?? 0} questions into Appwrite.`);
-      setPreview([]);
-      setImportId("");
+      setBatches(failed);
+      setStatus(errors.length
+        ? `Imported ${importedCount} questions. ${errors.join(" ")}`
+        : `Imported ${importedCount} questions into Appwrite.`);
+    } catch {
+      setStatus("Import failed. Check the connection and try again.");
     } finally {
       setBusy(false);
     }
@@ -757,15 +786,34 @@ function AdminImport() {
           </div>
           <button className={clsx(platformSecondaryBtn, "py-2")} disabled={busy} onClick={() => void logout()}><LogOut className="h-4 w-4" />Sign out {adminName}</button>
         </div>
-        <p className="mt-3 max-w-3xl text-sm leading-6 text-[var(--text-soft)]">Upload a source file, inspect the detected questions, then import the reviewed set.</p>
+        <p className="mt-3 max-w-3xl text-sm leading-6 text-[var(--text-soft)]">Upload up to 10 source files, inspect the detected questions, then import the reviewed set.</p>
         <label
           className={clsx("mt-5 flex flex-col items-center justify-center rounded-2xl border border-dashed p-8 text-center transition-colors", busy ? "cursor-wait opacity-60" : "cursor-pointer")}
-          style={{ borderColor: "var(--accent)", background: "var(--surface-2)" }}
+          style={{ borderColor: "var(--accent)", background: dragging ? "var(--accent-soft)" : "var(--surface-2)" }}
+          onDragEnter={(event) => { event.preventDefault(); if (!busy) setDragging(true); }}
+          onDragOver={(event) => { event.preventDefault(); }}
+          onDragLeave={(event) => { if (!event.currentTarget.contains(event.relatedTarget as Node)) setDragging(false); }}
+          onDrop={(event) => {
+            event.preventDefault();
+            setDragging(false);
+            if (!busy) void uploadFiles(Array.from(event.dataTransfer.files));
+          }}
         >
           <FileUp className="h-8 w-8" style={{ color: "var(--accent)" }} />
-          <span className="mt-2 font-semibold text-[var(--text)]">Choose PDF or CSV</span>
-          <span className="mt-1 text-xs text-[var(--text-soft)]">Drag and drop or click to browse</span>
-          <input className="sr-only" disabled={busy} type="file" accept=".pdf,.csv,text/csv,application/pdf" onChange={(event) => { const file = event.target.files?.[0]; if (file) void upload(file); }} />
+          <span className="mt-2 font-semibold text-[var(--text)]">Choose PDF or CSV files</span>
+          <span className="mt-1 text-xs text-[var(--text-soft)]">Drag and drop or click to browse · maximum 10 files</span>
+          <input
+            className="sr-only"
+            disabled={busy}
+            type="file"
+            multiple
+            accept=".pdf,.csv,text/csv,application/pdf"
+            onChange={(event) => {
+              const files = Array.from(event.target.files ?? []);
+              event.target.value = "";
+              void uploadFiles(files);
+            }}
+          />
         </label>
         <p aria-live="polite" className="mt-3 text-sm text-[var(--text-soft)]">{status}</p>
       </div>
@@ -774,11 +822,12 @@ function AdminImport() {
           <div className="overflow-x-auto">
             <table className="w-full min-w-[720px] border-collapse text-left text-sm">
               <thead className="bg-[var(--surface-2)] text-[var(--text-soft)]">
-                <tr><th className="p-3 font-bold">Topic</th><th className="p-3 font-bold">Question</th><th className="p-3 font-bold">Options</th><th className="p-3 font-bold">Answer</th></tr>
+                <tr><th className="p-3 font-bold">File</th><th className="p-3 font-bold">Topic</th><th className="p-3 font-bold">Question</th><th className="p-3 font-bold">Options</th><th className="p-3 font-bold">Answer</th></tr>
               </thead>
               <tbody>
                 {preview.map((question, index) => (
                   <tr key={`${question.question}-${index}`} className="border-t border-[var(--border)]">
+                    <td className="p-3 align-top text-[var(--text-soft)]">{question.fileName}</td>
                     <td className="p-3 align-top">{question.topic}</td>
                     <td className="p-3 align-top">{question.question}</td>
                     <td className="p-3 align-top">{question.options.length}</td>
@@ -789,7 +838,7 @@ function AdminImport() {
             </table>
           </div>
           <div className="flex justify-end border-t border-[var(--border)] p-4">
-            <button className={platformPrimaryBtn} disabled={busy} onClick={() => void commitImport()}>{busy ? "Importing..." : `Import ${preview.length} reviewed questions`}</button>
+            <button className={platformPrimaryBtn} disabled={busy} onClick={() => void commitImport()}>{busy ? "Importing..." : `Import ${preview.length} reviewed questions from ${batches.length} file${batches.length === 1 ? "" : "s"}`}</button>
           </div>
         </div>
       )}

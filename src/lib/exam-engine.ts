@@ -129,10 +129,15 @@ export function parseQuestionType(raw: string): QuestionType {
 }
 
 export function parseDelimitedAnswers(raw: string) {
-  return raw
-    .split(/[;,|]/)
-    .map((part) => part.trim().toUpperCase())
-    .filter(Boolean);
+  const normalized = raw
+    .toUpperCase()
+    .replace(/\bOPTIONS?\b/g, "")
+    .replace(/\bAND\b/g, ",")
+    .replace(/[()[\]{}]/g, " ")
+    .trim();
+  const compact = normalized.replace(/[\s,;|/]+/g, "");
+  if (!/^[A-H]+$/.test(compact)) return [];
+  return [...new Set(compact)];
 }
 
 export function coerceImportRows(rows: Record<string, unknown>[]) {

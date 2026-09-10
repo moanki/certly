@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isAnswerCorrect, scoreAttempt } from "@/lib/exam-engine";
+import { isAnswerCorrect, parseDelimitedAnswers, scoreAttempt } from "@/lib/exam-engine";
 import { sampleQuestions } from "@/lib/questions";
 
 describe("exam scoring", () => {
@@ -23,5 +23,12 @@ describe("exam scoring", () => {
     expect(result.score).toBe(600);
     expect(result.passed).toBe(true);
     expect(result.unanswered).toBe(2);
+  });
+
+  it("normalizes common imported answer formats", () => {
+    expect(parseDelimitedAnswers("AC")).toEqual(["A", "C"]);
+    expect(parseDelimitedAnswers("A and C")).toEqual(["A", "C"]);
+    expect(parseDelimitedAnswers("(A, C)")).toEqual(["A", "C"]);
+    expect(parseDelimitedAnswers("not an answer")).toEqual([]);
   });
 });
