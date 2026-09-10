@@ -3,33 +3,25 @@ import "server-only";
 import { Query } from "node-appwrite";
 import { appwriteConfig, createAdminClient } from "@/lib/appwrite";
 import { sampleQuestions } from "@/lib/questions";
-import type { ExamQuestion, QuestionOption } from "@/types/exam";
+import type { ExamQuestion } from "@/types/exam";
 
 export async function loadActiveQuestions(): Promise<ExamQuestion[]> {
   try {
-    const { databases } = createAdminClient();
-    const result = await databases.listDocuments({
+    const { tables } = createAdminClient();
+    const result = await tables.listRows({
       databaseId: appwriteConfig.databaseId,
-      collectionId: appwriteConfig.questionsCollectionId,
+      tableId: appwriteConfig.questionsCollectionId,
       queries: [Query.equal("status", ["active"]), Query.limit(500)],
     });
-    const questions = result.documents.flatMap((document) => {
+    const questions = result.rows.flatMap((row) => {
       try {
-        const options = JSON.parse(String(document.optionsJson)) as QuestionOption[];
-        if (!Array.isArray(options) || options.length < 2 || options.length > 10) return [];
+        const payload = JSON.parse(String(row.payloadJson)) as Omit<ExamQuestion, "id" | "certificationId" | "topic">;
+        if (!Array.isArray(payload.options) || payload.options.length < 2 || payload.options.length > 10) return [];
         const question: ExamQuestion = {
-          id: document.$id,
-          certificationId: String(document.certificationId),
-          examVersion: String(document.examVersion),
-          topic: String(document.topic),
-          subtopic: String(document.subtopic),
-          difficulty: document.difficulty as ExamQuestion["difficulty"],
-          type: document.type as ExamQuestion["type"],
-          text: String(document.text),
-          options,
-          explanation: String(document.explanation ?? ""),
-          sourceType: document.sourceType as ExamQuestion["sourceType"],
-          sourceReference: String(document.sourceReference ?? ""),
+          ...payload,
+          id: row.$id,
+          certificationId: String(row.certificationId),
+          topic: String(row.topic),
         };
         return [question];
       } catch {

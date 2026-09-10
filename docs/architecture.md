@@ -20,6 +20,6 @@ Certly is a Next.js App Router application hosted on Vercel. Appwrite Cloud stor
 
 ## Initial Appwrite resources
 
-Database `certly` contains `certifications`, `exam_presets`, `questions`, `attempts`, `attempt_answers`, and `imports`. Bucket `imports` accepts private PDF and CSV files up to 10 MB.
+Database `certly` uses the free-tier-friendly `questions` and `records` tables. The `records` table stores attempts and import metadata, with attempt answers embedded as bounded JSON. Bucket `imports` accepts private PDF and CSV files up to 10 MB.
 
 See [security.md](security.md) for the OWASP-aligned control baseline and deployment requirements.

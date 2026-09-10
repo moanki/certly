@@ -23,26 +23,22 @@ export async function GET(request: Request) {
     const email = new URL(request.url).searchParams.get("email")?.trim().toLowerCase();
     if (email && email.length > 254) return noStoreJson({ error: "Invalid email filter." }, { status: 400 });
 
-    const { databases } = createAdminClient();
-    const queries = [Query.orderDesc("submittedAt"), Query.limit(50)];
-    if (email) queries.unshift(Query.equal("candidateEmail", [email]));
-    const result = await databases.listDocuments({
+    const { tables } = createAdminClient();
+    const queries = [Query.equal("kind", ["attempt"]), Query.orderDesc("occurredAt"), Query.limit(50)];
+    if (email) queries.splice(1, 0, Query.equal("lookup", [email]));
+    const result = await tables.listRows({
       databaseId: appwriteConfig.databaseId,
-      collectionId: appwriteConfig.attemptsCollectionId,
+      tableId: appwriteConfig.attemptsCollectionId,
       queries,
     });
     return noStoreJson({
-      attempts: result.documents.map((document) => ({
-        id: document.$id,
-        candidateName: document.candidateName,
-        candidateEmail: document.candidateEmail,
-        submittedAt: document.submittedAt,
-        score: document.score,
-        passed: document.passed,
-        correct: document.correct,
-        total: document.total,
-        durationSeconds: document.durationSeconds,
-      })),
+      attempts: result.rows.flatMap((row) => {
+        try {
+          return [{ ...JSON.parse(String(row.payloadJson)), id: row.$id }];
+        } catch {
+          return [];
+        }
+      }),
     });
   } catch {
     return noStoreJson({ error: "Admin sign-in is required." }, { status: 401 });
@@ -84,40 +80,42 @@ export async function POST(request: Request) {
     let attemptId: string | null = null;
     let saved = false;
     try {
-      const { databases } = createAdminClient();
+      const { tables } = createAdminClient();
       const candidate = payload.candidate as Candidate;
-      const attempt = await databases.createDocument({
+      const attemptPayload = JSON.stringify({
+        candidateName: candidate.name.trim(),
+        candidateEmail: candidate.email.trim().toLowerCase(),
+        certificationId: payload.certificationId,
+        mode: payload.mode,
+        timed: payload.timed,
+        startedAt: startedAt.toISOString(),
+        submittedAt: submittedAt.toISOString(),
+        score: summary.score,
+        passed: summary.passed,
+        correct: summary.correct,
+        incorrect: summary.incorrect,
+        unanswered: summary.unanswered,
+        total: summary.total,
+        durationSeconds,
+        answers: answers.map((answer) => ({
+          ...answer,
+          isCorrect: summary.results.find((result) => result.question.id === answer.questionId)?.isCorrect ?? false,
+        })),
+      });
+      if (attemptPayload.length > 15_000) throw new Error("Attempt payload exceeds storage limit.");
+      const attempt = await tables.createRow({
         databaseId: appwriteConfig.databaseId,
-        collectionId: appwriteConfig.attemptsCollectionId,
-        documentId: ID.unique(),
+        tableId: appwriteConfig.attemptsCollectionId,
+        rowId: ID.unique(),
         data: {
-          candidateName: candidate.name.trim(),
-          candidateEmail: candidate.email.trim().toLowerCase(),
-          certificationId: payload.certificationId,
-          mode: payload.mode,
-          timed: payload.timed,
-          startedAt: startedAt.toISOString(),
-          submittedAt: submittedAt.toISOString(),
-          score: summary.score,
-          passed: summary.passed,
-          correct: summary.correct,
-          incorrect: summary.incorrect,
-          unanswered: summary.unanswered,
-          total: summary.total,
-          durationSeconds,
+          kind: "attempt",
+          lookup: candidate.email.trim().toLowerCase() || "anonymous",
+          status: "complete",
+          occurredAt: submittedAt.toISOString(),
+          payloadJson: attemptPayload,
         },
       });
       attemptId = attempt.$id;
-      await Promise.all(answers.map((answer) => databases.createDocument({
-        databaseId: appwriteConfig.databaseId,
-        collectionId: appwriteConfig.answersCollectionId,
-        documentId: ID.unique(),
-        data: {
-          attemptId: attempt.$id,
-          ...answer,
-          isCorrect: summary.results.find((result) => result.question.id === answer.questionId)?.isCorrect ?? false,
-        },
-      })));
       saved = true;
     } catch {
       securityLog("attempt_persistence_failed");

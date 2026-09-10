@@ -1,4 +1,4 @@
-import { Client, Databases, Storage } from "node-appwrite";
+import { Client, Storage, TablesDB } from "node-appwrite";
 
 const config = {
   endpoint: process.env.APPWRITE_ENDPOINT ?? "https://sgp.cloud.appwrite.io/v1",
@@ -11,116 +11,143 @@ const config = {
 if (!config.apiKey) throw new Error("APPWRITE_ADMIN_API_KEY is required.");
 
 const client = new Client().setEndpoint(config.endpoint).setProject(config.projectId).setKey(config.apiKey);
-const databases = new Databases(client);
+const tables = new TablesDB(client);
 const storage = new Storage(client);
 
 const collections = [
   {
-    id: "certifications",
-    name: "Certifications",
-    attributes: [
-      string("name", 180, true), string("code", 40, true), string("vendor", 80, true), bool("active", true),
-    ],
-    indexes: [unique("code_unique", ["code"])],
-  },
-  {
-    id: "exam_presets",
-    name: "Exam presets",
-    attributes: [
-      string("certificationId", 36, true), string("title", 180, true), integer("questionCount", true),
-      integer("durationMinutes", true), integer("scoreScale", true), integer("passingScore", true),
-      bool("exactMultipleAnswerScoring", true), bool("negativeMarkingEnabled", true),
-    ],
-    indexes: [key("certification", ["certificationId"])],
-  },
-  {
     id: "questions",
     name: "Questions",
     attributes: [
-      string("certificationId", 36, true), string("examVersion", 80, true), string("topic", 120, true),
-      string("subtopic", 120, true), string("difficulty", 20, true), string("type", 20, true),
-      string("text", 10000, true), string("optionsJson", 30000, true), string("explanation", 10000, false),
-      string("sourceType", 40, true), string("sourceReference", 300, false), string("status", 20, true),
+      string("certificationId", 36, true),
+      string("topic", 120, true),
+      string("status", 20, true),
+      string("payloadJson", 15000, true),
     ],
     indexes: [key("certification_topic", ["certificationId", "topic"]), key("status", ["status"])],
   },
   {
-    id: "attempts",
-    name: "Attempts",
+    id: "records",
+    name: "Attempts and imports",
     attributes: [
-      string("candidateName", 128, true), string("candidateEmail", 254, false), string("certificationId", 36, true),
-      string("mode", 20, true), bool("timed", true), datetime("startedAt", true), datetime("submittedAt", true),
-      integer("score", true), bool("passed", true), integer("correct", true), integer("incorrect", true),
-      integer("unanswered", true), integer("total", true), integer("durationSeconds", true),
+      string("kind", 20, true),
+      string("lookup", 254, true),
+      string("status", 20, true),
+      datetime("occurredAt", true),
+      string("payloadJson", 15000, true),
     ],
-    indexes: [key("candidate_history", ["candidateEmail", "submittedAt"]), key("submitted_at", ["submittedAt"])],
-  },
-  {
-    id: "attempt_answers",
-    name: "Attempt answers",
-    attributes: [
-      string("attemptId", 36, true), string("questionId", 36, true), arrayString("selectedOptionIds", 36, true),
-      integer("timeSpentSeconds", true), bool("markedForReview", true), bool("isCorrect", true),
+    indexes: [
+      key("record_history", ["kind", "lookup", "occurredAt"]),
+      key("occurred_at", ["kind", "occurredAt"]),
+      key("import_status", ["kind", "status"]),
     ],
-    indexes: [key("attempt", ["attemptId"]), key("question", ["questionId"])],
-  },
-  {
-    id: "imports",
-    name: "Imports",
-    attributes: [
-      string("fileId", 36, true), string("fileName", 255, true), string("status", 20, true),
-      integer("detectedCount", true), string("uploadedBy", 254, true),
-    ],
-    indexes: [key("import_status", ["status"])],
   },
 ];
 
 await ensureDatabase();
-for (const collection of collections) await ensureCollection(collection);
+for (const collection of collections) await ensureTable(collection);
 await ensureBucket();
 console.log("Appwrite schema is ready.");
 
 async function ensureDatabase() {
   try {
-    await databases.get({ databaseId: config.databaseId });
+    await tables.get({ databaseId: config.databaseId });
     console.log(`Database exists: ${config.databaseId}`);
   } catch (error) {
     if (error?.code !== 404) throw error;
-    await databases.create({ databaseId: config.databaseId, name: "Certly" });
+    await tables.create({ databaseId: config.databaseId, name: "Certly" });
     console.log(`Created database: ${config.databaseId}`);
   }
 }
 
-async function ensureCollection(collection) {
+async function ensureTable(collection) {
+  let existing;
   try {
-    const existing = await databases.getCollection({ databaseId: config.databaseId, collectionId: collection.id });
-    if (existing.$permissions.length || existing.documentSecurity || !existing.enabled) {
-      await databases.updateCollection({
+    existing = await tables.getTable({ databaseId: config.databaseId, tableId: collection.id });
+    if (existing.$permissions.length || existing.rowSecurity || !existing.enabled) {
+      await tables.updateTable({
         databaseId: config.databaseId,
-        collectionId: collection.id,
+        tableId: collection.id,
         name: collection.name,
         permissions: [],
-        documentSecurity: false,
+        rowSecurity: false,
         enabled: true,
       });
-      console.log(`Hardened collection access: ${collection.id}`);
+      console.log(`Hardened table access: ${collection.id}`);
     } else {
-      console.log(`Collection is private: ${collection.id}`);
+      console.log(`Table is private: ${collection.id}`);
     }
   } catch (error) {
     if (error?.code !== 404) throw error;
-    await databases.createCollection({
+    existing = await tables.createTable({
       databaseId: config.databaseId,
-      collectionId: collection.id,
+      tableId: collection.id,
       name: collection.name,
       permissions: [],
-      documentSecurity: false,
+      rowSecurity: false,
       enabled: true,
-      attributes: collection.attributes,
-      indexes: collection.indexes,
     });
-    console.log(`Created collection: ${collection.id}`);
+    console.log(`Created private table: ${collection.id}`);
   }
+
+  await ensureColumns(collection, existing);
+  await ensureIndexes(collection);
+}
+
+async function ensureColumns(table, existing) {
+  const known = new Set((existing.columns ?? []).map((column) => column.key));
+  for (const column of table.attributes) {
+    if (known.has(column.key)) continue;
+    const base = {
+      databaseId: config.databaseId,
+      tableId: table.id,
+      key: column.key,
+      required: column.required,
+      array: column.array ?? false,
+    };
+    if (column.type === "string") {
+      await tables.createStringColumn({ ...base, size: column.size, encrypt: false });
+    } else if (column.type === "integer") {
+      await tables.createIntegerColumn(base);
+    } else if (column.type === "boolean") {
+      await tables.createBooleanColumn(base);
+    } else if (column.type === "datetime") {
+      await tables.createDatetimeColumn(base);
+    } else {
+      throw new Error(`Unsupported column type: ${column.type}`);
+    }
+    await waitForSchema(table.id, "columns", column.key);
+    console.log(`Created column: ${table.id}.${column.key}`);
+  }
+}
+
+async function ensureIndexes(table) {
+  let current = await tables.getTable({ databaseId: config.databaseId, tableId: table.id });
+  const known = new Set((current.indexes ?? []).map((index) => index.key));
+  for (const index of table.indexes) {
+    if (known.has(index.key)) continue;
+    await tables.createIndex({
+      databaseId: config.databaseId,
+      tableId: table.id,
+      key: index.key,
+      type: index.type,
+      columns: index.attributes,
+    });
+    await waitForSchema(table.id, "indexes", index.key);
+    console.log(`Created index: ${table.id}.${index.key}`);
+    current = await tables.getTable({ databaseId: config.databaseId, tableId: table.id });
+  }
+}
+
+async function waitForSchema(tableId, property, keyName) {
+  for (let attempt = 0; attempt < 60; attempt += 1) {
+    const table = await tables.getTable({ databaseId: config.databaseId, tableId });
+    const item = (table[property] ?? []).find((candidate) => candidate.key === keyName);
+    if (item?.status === "available") return;
+    if (item?.status === "failed") throw new Error(`Appwrite failed to create ${tableId}.${keyName}`);
+    await new Promise((resolve) => setTimeout(resolve, 500));
+  }
+  throw new Error(`Timed out creating ${tableId}.${keyName}`);
 }
 
 async function ensureBucket() {
@@ -166,9 +193,5 @@ async function ensureBucket() {
 }
 
 function string(keyName, size, required) { return { key: keyName, type: "string", size, required }; }
-function arrayString(keyName, size, required) { return { key: keyName, type: "string", size, required, array: true }; }
-function integer(keyName, required) { return { key: keyName, type: "integer", required }; }
-function bool(keyName, required) { return { key: keyName, type: "boolean", required }; }
 function datetime(keyName, required) { return { key: keyName, type: "datetime", required }; }
 function key(keyName, attributes) { return { key: keyName, type: "key", attributes }; }
-function unique(keyName, attributes) { return { key: keyName, type: "unique", attributes }; }

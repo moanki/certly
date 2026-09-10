@@ -25,13 +25,13 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
       return noStoreJson({ error: "There are no valid reviewed questions to import." }, { status: 400 });
     }
 
-    const { databases } = createAdminClient();
-    const importRecord = await databases.getDocument({
+    const { tables } = createAdminClient();
+    const importRecord = await tables.getRow({
       databaseId: appwriteConfig.databaseId,
-      collectionId: appwriteConfig.importsCollectionId,
-      documentId: id,
+      tableId: appwriteConfig.importsCollectionId,
+      rowId: id,
     });
-    if (importRecord.status !== "preview") {
+    if (importRecord.kind !== "import" || importRecord.status !== "preview") {
       return noStoreJson({ error: "This import has already been processed." }, { status: 409 });
     }
     await Promise.all(questions.map((question) => {
@@ -40,31 +40,35 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
         const label = String.fromCharCode(65 + index);
         return { id: label.toLowerCase(), label, text, isCorrect: correctLabels.has(label), rationale: "" };
       });
-      return databases.createDocument({
+      const payloadJson = JSON.stringify({
+        examVersion: "HCIP-DCF mock v1",
+        subtopic: question.subtopic || "General",
+        difficulty: "intermediate",
+        type: question.type,
+        text: question.question,
+        options,
+        explanation: question.explanation,
+        sourceType: "mock_exam",
+        sourceReference: question.sourceReference,
+      });
+      if (payloadJson.length > 15_000) throw new Error("Question payload exceeds storage limit.");
+      return tables.createRow({
         databaseId: appwriteConfig.databaseId,
-        collectionId: appwriteConfig.questionsCollectionId,
-        documentId: ID.unique(),
+        tableId: appwriteConfig.questionsCollectionId,
+        rowId: ID.unique(),
         data: {
           certificationId: "hcip-dcf",
-          examVersion: "HCIP-DCF mock v1",
           topic: question.topic || "Unassigned",
-          subtopic: question.subtopic || "General",
-          difficulty: "intermediate",
-          type: question.type,
-          text: question.question,
-          optionsJson: JSON.stringify(options),
-          explanation: question.explanation,
-          sourceType: "mock_exam",
-          sourceReference: question.sourceReference,
           status: "active",
+          payloadJson,
         },
       });
     }));
-    await databases.updateDocument({
+    await tables.updateRow({
       databaseId: appwriteConfig.databaseId,
-      collectionId: appwriteConfig.importsCollectionId,
-      documentId: id,
-      data: { status: "imported", detectedCount: questions.length },
+      tableId: appwriteConfig.importsCollectionId,
+      rowId: id,
+      data: { status: "imported" },
     });
 
     securityLog("question_import_committed", { count: questions.length });
@@ -83,14 +87,14 @@ function isValidQuestion(question: ImportPreviewQuestion) {
   const correctLabels = parseDelimitedAnswers(question.answer);
   const validLabels = new Set(question.options.map((_, index) => String.fromCharCode(65 + index)));
   return question.question.length >= 5
-    && question.question.length <= 10_000
+    && question.question.length <= 3_000
     && question.topic.length <= 120
     && question.subtopic.length <= 120
-    && question.explanation.length <= 10_000
+    && question.explanation.length <= 2_000
     && question.sourceReference.length <= 300
     && question.options.length >= 2
     && question.options.length <= 10
-    && question.options.every((option) => option.length >= 1 && option.length <= 2_000)
+    && question.options.every((option) => option.length >= 1 && option.length <= 600)
     && correctLabels.length >= 1
     && correctLabels.every((label) => validLabels.has(label));
 }

@@ -61,22 +61,27 @@ export async function POST(request: Request) {
       return noStoreJson({ error: "The file does not contain a valid, bounded question set." }, { status: 422 });
     }
 
-    const { databases, storage } = createAdminClient();
+    const { tables, storage } = createAdminClient();
     const storedFile = await storage.createFile({
       bucketId: appwriteConfig.importsBucketId,
       fileId: ID.unique(),
       file: InputFile.fromBuffer(bytes, safeFileName),
     });
-    const importRecord = await databases.createDocument({
+    const importRecord = await tables.createRow({
       databaseId: appwriteConfig.databaseId,
-      collectionId: appwriteConfig.importsCollectionId,
-      documentId: ID.unique(),
+      tableId: appwriteConfig.importsCollectionId,
+      rowId: ID.unique(),
       data: {
-        fileId: storedFile.$id,
-        fileName: safeFileName,
+        kind: "import",
+        lookup: admin.email,
         status: "preview",
-        detectedCount: questions.length,
-        uploadedBy: admin.email,
+        occurredAt: new Date().toISOString(),
+        payloadJson: JSON.stringify({
+          fileId: storedFile.$id,
+          fileName: safeFileName,
+          detectedCount: questions.length,
+          uploadedBy: admin.email,
+        }),
       },
     });
 
@@ -108,13 +113,13 @@ function sanitizeFileName(fileName: string) {
 
 function isValidQuestion(question: ImportPreviewQuestion) {
   return question.question.length >= 5
-    && question.question.length <= 10_000
+    && question.question.length <= 3_000
     && question.topic.length <= 120
     && question.subtopic.length <= 120
-    && question.explanation.length <= 10_000
+    && question.explanation.length <= 2_000
     && question.sourceReference.length <= 300
     && question.answer.length <= 80
     && question.options.length >= 2
     && question.options.length <= 10
-    && question.options.every((option) => option.length >= 1 && option.length <= 2_000);
+    && question.options.every((option) => option.length >= 1 && option.length <= 600);
 }

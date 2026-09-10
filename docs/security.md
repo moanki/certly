@@ -11,7 +11,7 @@ Certly targets OWASP ASVS 5.0 Level 1 for the public mock-exam portal, with addi
 - The public question feed excludes answer keys, rationales, explanations, and source references. Practice answers are returned only after an explicit check; exam scoring is performed by the server.
 - Public attempt-history lookup is disabled. Attempt records are available only to authenticated admins.
 - Uploaded files are private, size-limited, extension and content-type checked, signature-checked for PDF, bounded after parsing, encrypted, and antivirus-scanned by Appwrite.
-- Database collections and the import bucket have no public permissions. Access is through server routes only.
+- Database tables and the import bucket have no public permissions. Access is through server routes only.
 - Browser responses include CSP, clickjacking, MIME-sniffing, referrer, permissions, opener/resource isolation, and HSTS headers.
 - API error responses avoid stack traces and credential or role enumeration. Security-relevant server events are structured and exclude credentials.
 - Production dependencies are checked with `npm audit --omit=dev` in CI.
@@ -20,8 +20,8 @@ Certly targets OWASP ASVS 5.0 Level 1 for the public mock-exam portal, with addi
 
 Use two Appwrite keys:
 
-- `APPWRITE_API_KEY`: runtime only; grant the minimum document read/write, file read/write, and session write scopes needed by the route handlers.
-- `APPWRITE_ADMIN_API_KEY`: local provisioning only; grant database, collection, attribute, index, bucket, file, and user administration scopes. Never add this key or the bootstrap admin password to Vercel.
+- `APPWRITE_API_KEY`: runtime only; grant the minimum row read/write, file read/write, and session write scopes needed by the route handlers.
+- `APPWRITE_ADMIN_API_KEY`: local provisioning only; grant database, table, column, index, bucket, file, and user administration scopes. Never add this key or the bootstrap admin password to Vercel.
 
 Rotate the current combined key after creating a restricted runtime key. Configure Vercel Preview and Production separately.
 
