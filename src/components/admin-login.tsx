@@ -2,7 +2,7 @@
 
 import type React from "react";
 import { useState } from "react";
-import { Eye, EyeOff, Lock, Mail, ShieldCheck, Sparkles } from "lucide-react";
+import { Eye, EyeOff, Lock, Mail, Sparkles } from "lucide-react";
 import { ThemeToggle } from "@/lib/theme";
 
 export function AdminLogin({
@@ -52,15 +52,14 @@ export function AdminLogin({
           style={{ borderColor: "var(--card-border)", background: "var(--card-bg)", boxShadow: "var(--card-shadow)" }}
         >
           <div className="flex items-center gap-2">
-            <span className="float-icon flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-[#ff5fae] via-[#a06bff] to-[#33e8c9] shadow-lg shadow-[#a06bff]/30">
-              <ShieldCheck className="h-5 w-5 text-white" />
-            </span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/brand/certly-mark.png" alt="" className="float-icon h-11 w-11" width={44} height={44} />
             <span className="inline-flex items-center gap-1 rounded-full border border-[var(--card-border)] bg-[var(--input-bg)] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--text-faint)]">
-              <Sparkles className="h-3 w-3 text-[#ffd166]" /> Admin access
+              <Sparkles className="h-3 w-3 text-[var(--turquoise)]" /> Admin access
             </span>
           </div>
 
-          <h2 className="animate-gradient-text mt-6 bg-gradient-to-r from-[#ff5fae] via-[#a06bff] to-[#33e8c9] bg-clip-text text-3xl font-bold tracking-tight text-transparent">
+          <h2 className="animate-gradient-text mt-6 bg-clip-text text-3xl font-bold tracking-tight text-transparent" style={{ backgroundImage: "var(--gradient-hero)" }}>
             Welcome back
           </h2>
           <p className="mt-1 text-sm text-[var(--text-soft)]">Sign in to manage the Certly question bank.</p>
@@ -126,7 +125,7 @@ export function AdminLogin({
             </label>
 
             <button
-              className="group relative mt-2 flex items-center justify-center gap-2 overflow-hidden rounded-2xl bg-gradient-to-r from-[#ff5fae] via-[#a06bff] to-[#33e8c9] bg-[length:200%_100%] px-4 py-3.5 text-sm font-bold text-white transition-[background-position,transform] duration-500 hover:bg-right active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
+              className="group relative mt-2 flex items-center justify-center gap-2 overflow-hidden rounded-2xl bg-[image:var(--gradient-primary)] px-4 py-3.5 text-sm font-bold text-white transition-[background-image] duration-300 hover:bg-[image:var(--gradient-primary-hover)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
               disabled={busy}
               type="submit"
             >

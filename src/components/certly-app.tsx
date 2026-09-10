@@ -18,7 +18,7 @@ const storageKey = "certly-active-attempt";
 // whole app follows the light/dark theme toggle.
 const platformCard = "rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-[0_1px_2px_rgba(15,17,25,0.04)] transition-colors duration-300";
 const platformInput = "rounded-lg border border-[var(--border-strong)] bg-[var(--surface)] px-3.5 py-2.5 text-sm text-[var(--text)] outline-none transition-colors focus:border-[var(--accent)] focus:ring-4 focus:ring-[var(--accent-soft)]";
-const platformPrimaryBtn = "inline-flex items-center justify-center gap-2 rounded-lg bg-[var(--accent)] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-strong)] disabled:cursor-not-allowed disabled:opacity-50";
+const platformPrimaryBtn = "inline-flex items-center justify-center gap-2 rounded-lg bg-[image:var(--gradient-primary)] px-4 py-2.5 text-sm font-semibold text-white transition-[filter] hover:bg-[image:var(--gradient-primary-hover)] disabled:cursor-not-allowed disabled:opacity-50";
 const platformSecondaryBtn = "inline-flex items-center justify-center gap-2 rounded-lg border border-[var(--border-strong)] bg-[var(--surface)] px-4 py-2.5 text-sm font-semibold text-[var(--text)] transition-colors hover:bg-[var(--surface-2)]";
 
 type AttemptHistoryItem = {
@@ -225,9 +225,8 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
       >
         <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
           <div className="flex items-center gap-2.5">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#ff5fae] via-[#a06bff] to-[#33e8c9]">
-              <ShieldCheck className="h-4.5 w-4.5 text-white" />
-            </span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/brand/certly-mark.png" alt="" className="h-9 w-9" width={36} height={36} />
             <div>
               <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[var(--text-faint)]">Certification simulator</p>
               <h1 className="-mt-0.5 text-lg font-bold tracking-tight text-[var(--text)]">Certly</h1>
@@ -310,9 +309,9 @@ function Landing({ candidate, setCandidate, summary, attemptHistory, questionBan
         <div className="login-card-enter grid gap-12 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
           <div>
             <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--card-border)] bg-[var(--input-bg)] px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--text-faint)]">
-              <Sparkles className="float-icon h-3 w-3 text-[#ffd166]" /> {certifications[0].name}
+              <Sparkles className="float-icon h-3 w-3 text-[var(--turquoise)]" /> {certifications[0].name}
             </span>
-            <h2 className="animate-gradient-text mt-5 max-w-2xl bg-gradient-to-r from-[#ff5fae] via-[#a06bff] to-[#33e8c9] bg-clip-text text-4xl font-bold leading-[1.1] tracking-tight text-transparent sm:text-5xl">
+            <h2 className="animate-gradient-text mt-5 max-w-2xl bg-clip-text text-4xl font-bold leading-[1.1] tracking-tight text-transparent sm:text-5xl" style={{ backgroundImage: "var(--gradient-hero)" }}>
               Practice like a learner. Sit the mock like it&rsquo;s Pearson&nbsp;VUE day.
             </h2>
             <p className="mt-5 max-w-xl text-base leading-7 text-[var(--text-soft)]">
@@ -320,9 +319,9 @@ function Landing({ candidate, setCandidate, summary, attemptHistory, questionBan
             </p>
 
             <div className="mt-7 flex flex-wrap items-center gap-4 text-sm text-[var(--text-soft)]">
-              <span className="fade-up inline-flex items-center gap-1.5" style={{ animationDelay: "80ms" }}><CheckCircle2 className="h-4 w-4 text-[var(--success)]" /> Timed, proctor-style pacing</span>
-              <span className="fade-up inline-flex items-center gap-1.5" style={{ animationDelay: "160ms" }}><CheckCircle2 className="h-4 w-4 text-[var(--success)]" /> Instant 1000-point scoring</span>
-              <span className="fade-up inline-flex items-center gap-1.5" style={{ animationDelay: "240ms" }}><CheckCircle2 className="h-4 w-4 text-[var(--success)]" /> Full answer review</span>
+              <span className="fade-up inline-flex items-center gap-1.5" style={{ animationDelay: "80ms" }}><CheckCircle2 className="h-4 w-4 text-[var(--turquoise)]" /> Timed, proctor-style pacing</span>
+              <span className="fade-up inline-flex items-center gap-1.5" style={{ animationDelay: "160ms" }}><CheckCircle2 className="h-4 w-4 text-[var(--turquoise)]" /> Instant 1000-point scoring</span>
+              <span className="fade-up inline-flex items-center gap-1.5" style={{ animationDelay: "240ms" }}><CheckCircle2 className="h-4 w-4 text-[var(--turquoise)]" /> Full answer review</span>
             </div>
 
             {attemptHistory.length > 0 && (
@@ -358,7 +357,7 @@ function Landing({ candidate, setCandidate, summary, attemptHistory, questionBan
               </div>
               <div className="mt-6 grid gap-2.5">
                 <button
-                  className="group relative flex items-center justify-center gap-2 overflow-hidden rounded-xl bg-gradient-to-r from-[#ff5fae] via-[#a06bff] to-[#33e8c9] bg-[length:200%_100%] px-4 py-3 text-sm font-bold text-white transition-[background-position,transform] duration-500 hover:bg-right active:scale-[0.98]"
+                  className="group relative flex items-center justify-center gap-2 overflow-hidden rounded-xl bg-[image:var(--gradient-primary)] px-4 py-3 text-sm font-bold text-white transition-[background-image] duration-300 hover:bg-[image:var(--gradient-primary-hover)] active:scale-[0.98]"
                   onClick={goExam}
                 >
                   <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/35 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-hover:animate-[shine_1.1s_ease]" />
@@ -546,7 +545,7 @@ function ExamMode(props: { question: ExamQuestion; questions: ExamQuestion[]; in
                 key={question.id}
                 className="h-10 rounded-lg border text-sm font-bold transition-colors"
                 style={{
-                  borderColor: isCurrent ? "var(--accent)" : answered ? "var(--success)" : "var(--border)",
+                  borderColor: isCurrent ? "var(--accent)" : answered ? "var(--success-border)" : "var(--border)",
                   background: isCurrent ? "var(--accent-soft)" : answered ? "var(--success-soft)" : "var(--surface)",
                   color: isCurrent ? "var(--accent)" : answered ? "var(--success)" : "var(--text-soft)",
                   boxShadow: isMarked ? "0 0 0 2px var(--warning)" : "none",
@@ -575,8 +574,8 @@ function Results({ summary, saveStatus, onRetake }: { summary: AttemptSummary; s
         <div className={clsx(platformCard, "p-6 text-center sm:text-left")}>
           <p className="text-xs font-bold uppercase tracking-[0.14em] text-[var(--accent)]">Immediate result</p>
           <div
-            className="mt-4 inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-sm font-bold"
-            style={summary.passed ? { background: "var(--success-soft)", color: "var(--success)" } : { background: "var(--danger-soft)", color: "var(--danger)" }}
+            className="mt-4 inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-sm font-bold"
+            style={summary.passed ? { background: "var(--success-soft)", color: "var(--success)", borderColor: "var(--success-border)" } : { background: "var(--danger-soft)", color: "var(--danger)", borderColor: "var(--danger-border)" }}
           >
             {summary.passed ? <Award className="h-4 w-4" /> : <XCircle className="h-4 w-4" />}
             {summary.passed ? "Pass" : "Fail"}
@@ -606,7 +605,7 @@ function Results({ summary, saveStatus, onRetake }: { summary: AttemptSummary; s
                   <p className="font-bold">Question {index + 1}</p>
                   <div className="flex items-center gap-2">
                     <span className="text-xs text-[var(--text-soft)]">{result.timeSpentSeconds}s</span>
-                    <span className="rounded-full px-3 py-1 text-xs font-bold" style={result.isCorrect ? { background: "var(--success-soft)", color: "var(--success)" } : { background: "var(--danger-soft)", color: "var(--danger)" }}>{result.isCorrect ? "Correct" : "Review"}</span>
+                    <span className="rounded-full border px-3 py-1 text-xs font-bold" style={result.isCorrect ? { background: "var(--success-soft)", color: "var(--success)", borderColor: "var(--success-border)" } : { background: "var(--danger-soft)", color: "var(--danger)", borderColor: "var(--danger-border)" }}>{result.isCorrect ? "Correct" : "Review"}</span>
                   </div>
                 </div>
                 <p className="text-sm leading-6">{question.text}</p>
@@ -809,7 +808,7 @@ function QuestionPanel({ question, selected, reveal, onSelect, eyebrow }: { ques
             key={option.id}
             className="rounded-xl border bg-[var(--surface)] p-4 text-left transition-all"
             style={{
-              borderColor: reveal && option.isCorrect ? "var(--success)" : selected.includes(option.id) ? "var(--accent)" : "var(--border)",
+              borderColor: reveal && option.isCorrect ? "var(--success-border)" : selected.includes(option.id) ? "var(--accent)" : "var(--border)",
               background: reveal && option.isCorrect ? "var(--success-soft)" : "var(--surface)",
               boxShadow: !reveal && selected.includes(option.id) ? "0 0 0 3px var(--accent-soft)" : "none",
             }}
@@ -868,7 +867,7 @@ function Progress({ label, value }: { label: string; value: number }) {
   return (
     <div>
       <div className="mb-1.5 flex justify-between text-sm font-medium"><span>{label}</span><span className="text-[var(--text-soft)]">{value}%</span></div>
-      <div className="h-2 rounded-full bg-[var(--border)]"><div className="h-2 rounded-full bg-gradient-to-r from-[var(--accent)] to-[var(--success)] transition-[width] duration-500" style={{ width: `${value}%` }} /></div>
+      <div className="h-2 rounded-full bg-[var(--border)]"><div className="h-2 rounded-full transition-[width] duration-500" style={{ width: `${value}%`, backgroundImage: "var(--gradient-primary)" }} /></div>
     </div>
   );
 }
@@ -877,7 +876,7 @@ function Nav({ active, onClick, icon, children }: { active: boolean; onClick: ()
   return (
     <button
       className="flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-semibold transition-colors [&_svg]:h-4 [&_svg]:w-4"
-      style={active ? { borderColor: "var(--accent)", background: "var(--accent-soft)", color: "var(--accent)" } : { borderColor: "transparent", color: "var(--text-soft)" }}
+      style={active ? { borderColor: "var(--nav-active-border)", background: "var(--nav-active-bg)", color: "var(--nav-active-text)" } : { borderColor: "transparent", color: "var(--text-soft)" }}
       onClick={onClick}
     >
       {icon}{children}
