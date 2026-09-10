@@ -51,22 +51,19 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
   const [questionBank, setQuestionBank] = useState<ExamQuestion[]>([]);
   const [attemptHistory, setAttemptHistory] = useState<AttemptHistoryItem[]>([]);
   const [resultSummary, setResultSummary] = useState<AttemptSummary | null>(null);
+  const [examSeed, setExamSeed] = useState(() => createSessionSeed());
+  const [practiceSeed, setPracticeSeed] = useState(() => createSessionSeed());
   const questionOpenedAt = useRef(0);
   const submittingAttempt = useRef(false);
 
   const examQuestions = useMemo(() => {
     const count = normalizeQuestionCount(questionBank.length, hcipHuaweiPreset.questionCount);
-    return shuffleWithSeed(questionBank, `${candidate.email || "guest"}-mock`)
-      .slice(0, count)
-      .map((question) => ({
-        ...question,
-        options: shuffleWithSeed(question.options, `${candidate.email || "guest"}-${question.id}`).map((option, index) => ({
-          ...option,
-          label: String.fromCharCode(65 + index),
-        })),
-      }));
-  }, [candidate.email, questionBank]);
-  const practiceQuestions = useMemo(() => selectedTopic === "Mixed Mock" ? questionBank : questionBank.filter((question) => question.topic === selectedTopic), [questionBank, selectedTopic]);
+    return shuffleWithSeed(questionBank, examSeed).slice(0, count);
+  }, [examSeed, questionBank]);
+  const practiceQuestions = useMemo(() => {
+    const topicQuestions = selectedTopic === "Mixed Mock" ? questionBank : questionBank.filter((question) => question.topic === selectedTopic);
+    return shuffleWithSeed(topicQuestions, practiceSeed).slice(0, normalizeQuestionCount(topicQuestions.length));
+  }, [practiceSeed, questionBank, selectedTopic]);
   const summary = useMemo(() => resultSummary ?? scoreAttempt(examQuestions, []), [examQuestions, resultSummary]);
   const activeQuestion = examQuestions[questionIndex];
   const practiceQuestion = practiceQuestions[practiceIndex] ?? questionBank[0];
@@ -107,8 +104,19 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
     setSaveStatus("");
     setResultSummary(null);
     setPracticeFeedback(null);
+    setExamSeed(createSessionSeed());
     questionOpenedAt.current = Date.now();
     setView("exam");
+  }
+
+  function startPractice() {
+    setPracticeSeed(createSessionSeed());
+    setPracticeIndex(0);
+    setPracticeSelected([]);
+    setPracticeRevealed(false);
+    setPracticeFeedback(null);
+    setPracticeStatus("");
+    setView("practice");
   }
 
   function resetAttempt() {
@@ -236,7 +244,7 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
             <div className="flex items-center gap-2">
               <nav className="flex flex-wrap gap-1.5">
                 <Nav active={view === "dashboard"} icon={<LayoutDashboard />} onClick={() => setView("dashboard")}>Home</Nav>
-                <Nav active={view === "practice"} icon={<BookOpenCheck />} onClick={() => setView("practice")}>Practice</Nav>
+                <Nav active={view === "practice"} icon={<BookOpenCheck />} onClick={startPractice}>Practice</Nav>
                 <Nav active={view === "exam-setup"} icon={<ShieldCheck />} onClick={() => setView("exam-setup")}>Exam mode</Nav>
                 <Nav active={view === "admin"} icon={<LockKeyhole />} onClick={() => setView("admin")}>Admin</Nav>
               </nav>
@@ -246,7 +254,7 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
         </div>
       </header>
 
-      {view === "dashboard" && <Landing candidate={candidate} setCandidate={setCandidate} summary={summary} attemptHistory={attemptHistory} questionBank={questionBank} goExam={() => setView("exam-setup")} goPractice={() => setView("practice")} />}
+      {view === "dashboard" && <Landing candidate={candidate} setCandidate={setCandidate} summary={summary} attemptHistory={attemptHistory} questionBank={questionBank} goExam={() => setView("exam-setup")} goPractice={startPractice} />}
       {view === "practice" && practiceQuestion && (
         <PracticeMode
           topic={selectedTopic}
@@ -697,7 +705,14 @@ function AdminImport() {
         formData.set("file", file);
         try {
           const response = await fetch("/api/import", { method: "POST", body: formData });
-          const data = (await response.json()) as { importId?: string; questions?: ImportPreviewQuestion[]; error?: string };
+          let data: { importId?: string; questions?: ImportPreviewQuestion[]; error?: string } = {};
+          try {
+            data = (await response.json()) as typeof data;
+          } catch {
+            data.error = response.status === 413
+              ? "the server rejected the file size."
+              : `the import service returned HTTP ${response.status}.`;
+          }
           if (response.status === 401) {
             setAuth("guest");
             errors.push(`${file.name}: admin sign-in is required.`);
@@ -709,7 +724,7 @@ function AdminImport() {
           }
           added.push({ importId: data.importId, fileName: file.name, questions: data.questions });
         } catch {
-          errors.push(`${file.name}: upload failed.`);
+          errors.push(`${file.name}: the connection ended before the import service responded.`);
         }
       }
       if (added.length) setBatches((current) => [...current, ...added]);
@@ -901,6 +916,10 @@ function Metric({ icon, label, value }: { icon: React.ReactNode; label: string; 
       <p className="mt-1 text-xl font-bold">{value}</p>
     </div>
   );
+}
+
+function createSessionSeed() {
+  return globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random()}`;
 }
 
 function MiniStat({ label, value }: { label: string; value: number }) {

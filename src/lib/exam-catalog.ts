@@ -16,4 +16,5 @@ export const topics = [
   "FusionModule 2000",
   "FusionDC 1000",
   "ECC800 / NetEco",
+  "HCIP-DCF Comprehensive",
 ];

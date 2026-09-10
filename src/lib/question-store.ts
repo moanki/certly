@@ -8,12 +8,17 @@ import type { ExamQuestion } from "@/types/exam";
 export async function loadActiveQuestions(): Promise<ExamQuestion[]> {
   try {
     const { tables } = createAdminClient();
-    const result = await tables.listRows({
-      databaseId: appwriteConfig.databaseId,
-      tableId: appwriteConfig.questionsCollectionId,
-      queries: [Query.equal("status", ["active"]), Query.limit(500)],
-    });
-    const questions = result.rows.flatMap((row) => {
+    const rows = [];
+    for (let offset = 0; ; offset += 500) {
+      const page = await tables.listRows({
+        databaseId: appwriteConfig.databaseId,
+        tableId: appwriteConfig.questionsCollectionId,
+        queries: [Query.equal("status", ["active"]), Query.limit(500), Query.offset(offset)],
+      });
+      rows.push(...page.rows);
+      if (page.rows.length < 500) break;
+    }
+    const questions = rows.flatMap((row) => {
       try {
         const payload = JSON.parse(String(row.payloadJson)) as Omit<ExamQuestion, "id" | "certificationId" | "topic">;
         if (!Array.isArray(payload.options) || payload.options.length < 2 || payload.options.length > 10) return [];

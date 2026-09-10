@@ -140,6 +140,20 @@ export function parseDelimitedAnswers(raw: string) {
   return [...new Set(compact)];
 }
 
+export function dedupeImportQuestions(questions: ImportPreviewQuestion[], existingQuestionTexts: string[] = []) {
+  const seen = new Set(existingQuestionTexts.map(normalizeQuestionText));
+  return questions.filter((question) => {
+    const key = normalizeQuestionText(question.question);
+    if (!key || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+function normalizeQuestionText(value: string) {
+  return value.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+}
+
 export function coerceImportRows(rows: Record<string, unknown>[]) {
   return rows
     .map((row): ImportPreviewQuestion | null => {

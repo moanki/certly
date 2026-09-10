@@ -1,7 +1,7 @@
-import { ID } from "node-appwrite";
+import { ID, Query } from "node-appwrite";
 import { requireAdmin } from "@/lib/admin-auth";
 import { appwriteConfig, createAdminClient } from "@/lib/appwrite";
-import { parseDelimitedAnswers } from "@/lib/exam-engine";
+import { dedupeImportQuestions, parseDelimitedAnswers } from "@/lib/exam-engine";
 import { enforceBodyLimit, enforceRateLimit, enforceSameOrigin, noStoreJson, securityLog } from "@/lib/security";
 import type { ImportPreviewQuestion } from "@/types/exam";
 
@@ -34,36 +34,57 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     if (importRecord.kind !== "import" || importRecord.status !== "preview") {
       return noStoreJson({ error: "This import has already been processed." }, { status: 409 });
     }
-    await Promise.all(questions.map((question) => {
-      const correctLabels = new Set(parseDelimitedAnswers(question.answer));
-      const options = question.options.map((text, index) => {
-        const label = String.fromCharCode(65 + index);
-        return { id: label.toLowerCase(), label, text, isCorrect: correctLabels.has(label), rationale: "" };
-      });
-      const payloadJson = JSON.stringify({
-        examVersion: "HCIP-DCF mock v1",
-        subtopic: question.subtopic || "General",
-        difficulty: "intermediate",
-        type: question.type,
-        text: question.question,
-        options,
-        explanation: question.explanation,
-        sourceType: "mock_exam",
-        sourceReference: question.sourceReference,
-      });
-      if (payloadJson.length > 15_000) throw new Error("Question payload exceeds storage limit.");
-      return tables.createRow({
+    const existingRows = [];
+    for (let offset = 0; ; offset += 500) {
+      const page = await tables.listRows({
         databaseId: appwriteConfig.databaseId,
         tableId: appwriteConfig.questionsCollectionId,
-        rowId: ID.unique(),
-        data: {
-          certificationId: "hcip-dcf",
-          topic: question.topic || "Unassigned",
-          status: "active",
-          payloadJson,
-        },
+        queries: [Query.equal("status", ["active"]), Query.limit(500), Query.offset(offset)],
       });
-    }));
+      existingRows.push(...page.rows);
+      if (page.rows.length < 500) break;
+    }
+    const existingQuestionTexts = existingRows.flatMap((row) => {
+      try {
+        const payload = JSON.parse(String(row.payloadJson)) as { text?: string };
+        return payload.text ? [payload.text] : [];
+      } catch {
+        return [];
+      }
+    });
+    const uniqueQuestions = dedupeImportQuestions(questions, existingQuestionTexts);
+    for (let offset = 0; offset < uniqueQuestions.length; offset += 10) {
+      await Promise.all(uniqueQuestions.slice(offset, offset + 10).map((question) => {
+        const correctLabels = new Set(parseDelimitedAnswers(question.answer));
+        const options = question.options.map((text, index) => {
+          const label = String.fromCharCode(65 + index);
+          return { id: label.toLowerCase(), label, text, isCorrect: correctLabels.has(label), rationale: "" };
+        });
+        const payloadJson = JSON.stringify({
+          examVersion: "HCIP-DCF mock v1",
+          subtopic: question.subtopic || "General",
+          difficulty: "intermediate",
+          type: question.type,
+          text: question.question,
+          options,
+          explanation: question.explanation,
+          sourceType: "mock_exam",
+          sourceReference: question.sourceReference,
+        });
+        if (payloadJson.length > 15_000) throw new Error("Question payload exceeds storage limit.");
+        return tables.createRow({
+          databaseId: appwriteConfig.databaseId,
+          tableId: appwriteConfig.questionsCollectionId,
+          rowId: ID.unique(),
+          data: {
+            certificationId: "hcip-dcf",
+            topic: question.topic || "Unassigned",
+            status: "active",
+            payloadJson,
+          },
+        });
+      }));
+    }
     await tables.updateRow({
       databaseId: appwriteConfig.databaseId,
       tableId: appwriteConfig.importsCollectionId,
@@ -71,8 +92,9 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
       data: { status: "imported" },
     });
 
-    securityLog("question_import_committed", { count: questions.length });
-    return noStoreJson({ importedCount: questions.length });
+    const skippedDuplicates = questions.length - uniqueQuestions.length;
+    securityLog("question_import_committed", { count: uniqueQuestions.length, skippedDuplicates });
+    return noStoreJson({ importedCount: uniqueQuestions.length, skippedDuplicates });
   } catch (error) {
     if (error instanceof Error && error.message === "ADMIN_UNAUTHORIZED") {
       securityLog("question_import_commit_unauthorized");
@@ -96,5 +118,6 @@ function isValidQuestion(question: ImportPreviewQuestion) {
     && question.options.length <= 10
     && question.options.every((option) => option.length >= 1 && option.length <= 600)
     && correctLabels.length >= 1
+    && (question.type === "multiple" ? correctLabels.length >= 2 : correctLabels.length === 1)
     && correctLabels.every((label) => validLabels.has(label));
 }

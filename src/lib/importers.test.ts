@@ -102,4 +102,47 @@ describe("PDF question extraction", () => {
 
     expect(question.answer).toBe("B");
   });
+
+  it("removes generated page markers and recurring certification headers", () => {
+    const [question] = extractLooseQuestionsFromText(`
+      10. Which option is correct?
+      A. First
+      B. Second
+      -- 2 of 24 --
+      Huawei HCIP-DCF Sept 2019
+      2
+    `, [["B"]]);
+
+    expect(question.options).toEqual(["First", "Second"]);
+  });
+
+  it("does not treat the F in a T or F marker as an answer option", () => {
+    const [question] = extractLooseQuestionsFromText(`
+      14. (T or F) A stable load lets idle modules enter hibernation.
+      A. True
+      B. False
+    `, [["A"]]);
+
+    expect(question).toMatchObject({
+      question: "(T or F) A stable load lets idle modules enter hibernation.",
+      options: ["True", "False"],
+      answer: "A",
+      type: "true_false",
+    });
+  });
+
+  it("keeps multiline multiple-answer wording in the question", () => {
+    const [question] = extractLooseQuestionsFromText(`
+      Q5. What are the supported functions? (Multiple
+      answers)
+      A. First
+      B. Second
+      C. Third
+    `, [["A", "B", "C"]]);
+
+    expect(question).toMatchObject({
+      question: "What are the supported functions? (Multiple answers)",
+      answer: "A,B,C",
+    });
+  });
 });

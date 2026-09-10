@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isAnswerCorrect, parseDelimitedAnswers, scoreAttempt } from "@/lib/exam-engine";
+import { dedupeImportQuestions, isAnswerCorrect, parseDelimitedAnswers, scoreAttempt } from "@/lib/exam-engine";
 import { sampleQuestions } from "@/lib/questions";
 
 describe("exam scoring", () => {
@@ -30,5 +30,23 @@ describe("exam scoring", () => {
     expect(parseDelimitedAnswers("A and C")).toEqual(["A", "C"]);
     expect(parseDelimitedAnswers("(A, C)")).toEqual(["A", "C"]);
     expect(parseDelimitedAnswers("not an answer")).toEqual([]);
+  });
+
+  it("removes repeated imported questions and questions already in the bank", () => {
+    const question = {
+      topic: "Power",
+      subtopic: "UPS",
+      type: "single" as const,
+      question: "Which UPS mode is active?",
+      options: ["Normal", "Bypass"],
+      answer: "A",
+      explanation: "",
+      sourceReference: "fixture",
+    };
+    expect(dedupeImportQuestions([
+      question,
+      { ...question, question: "Which UPS mode is active!" },
+      { ...question, question: "Which cooling mode is active?" },
+    ], ["Which UPS mode is active?"])).toEqual([{ ...question, question: "Which cooling mode is active?" }]);
   });
 });

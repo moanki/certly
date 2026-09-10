@@ -2,8 +2,9 @@ import { ID } from "node-appwrite";
 import { InputFile } from "node-appwrite/file";
 import { requireAdmin } from "@/lib/admin-auth";
 import { appwriteConfig, createAdminClient } from "@/lib/appwrite";
+import { parseDelimitedAnswers } from "@/lib/exam-engine";
 import { extractLooseQuestionsFromText, parseCsvImport } from "@/lib/importers";
-import { extractColoredAnswerHints } from "@/lib/pdf-color-answers";
+import { extractColoredAnswerHintsByPage } from "@/lib/pdf-color-answers";
 import { enforceBodyLimit, enforceRateLimit, enforceSameOrigin, noStoreJson, securityLog } from "@/lib/security";
 import type { ImportPreviewQuestion } from "@/types/exam";
 
@@ -50,19 +51,24 @@ export async function POST(request: Request) {
         return noStoreJson({ error: "The PDF file type or content is invalid." }, { status: 415 });
       }
       const { PDFParse } = await import("pdf-parse");
-      const parser = new PDFParse({ data: bytes });
+      const parser = new PDFParse({ data: bytes.slice() });
       try {
         let parsedText = "";
+        let parsedPages: Array<{ text: string }> = [];
         try {
-          parsedText = (await parser.getText()).text;
+          const parsed = await parser.getText();
+          parsedText = parsed.text;
+          parsedPages = parsed.pages;
         } catch {
           return noStoreJson({ error: "PDF text could not be extracted. Use an unlocked, text-based PDF." }, { status: 422 });
         }
         if (parsedText.replace(/\s/g, "").length < 20) {
           return noStoreJson({ error: "No readable text was found. Scanned image-only PDFs need OCR before upload." }, { status: 422 });
         }
-        const colorAnswerHints = await extractColoredAnswerHints(bytes).catch(() => []);
-        questions = extractLooseQuestionsFromText(parsedText, colorAnswerHints);
+        const colorAnswerHintsByPage = await extractColoredAnswerHintsByPage(bytes).catch(() => []);
+        questions = applySourceMetadata(parsedPages.flatMap((page, pageIndex) =>
+          extractLooseQuestionsFromText(page.text, colorAnswerHintsByPage[pageIndex] ?? [])
+            .map((question) => ({ ...question, sourceReference: `PDF page ${pageIndex + 1}` }))), safeFileName);
       } finally {
         await parser.destroy();
       }
@@ -132,7 +138,28 @@ function sanitizeFileName(fileName: string) {
   return baseName.replace(/[^a-zA-Z0-9._-]/g, "_").slice(0, 120) || "import";
 }
 
+function applySourceMetadata(questions: ImportPreviewQuestion[], fileName: string) {
+  const normalized = fileName.toLowerCase();
+  const topic = normalized.includes("d8") ? "ECC800 / NetEco"
+    : normalized.includes("d7") ? "FusionDC 1000"
+      : normalized.includes("d6") ? "FusionModule 2000"
+        : normalized.includes("d5") ? "Cooling"
+          : normalized.includes("d4") ? "UPS5000"
+            : normalized.includes("d3") ? "UPS2000"
+              : normalized.includes("d2") ? "UPS Basic"
+                : normalized.includes("d1") ? "SmartLi"
+                  : "HCIP-DCF Comprehensive";
+  return questions.map((question) => ({
+    ...question,
+    topic,
+    subtopic: topic,
+    sourceReference: `${fileName} - ${question.sourceReference}`,
+  }));
+}
+
 function isValidQuestion(question: ImportPreviewQuestion) {
+  const answerLabels = parseDelimitedAnswers(question.answer);
+  const validLabels = new Set(question.options.map((_, index) => String.fromCharCode(65 + index)));
   return question.question.length >= 5
     && question.question.length <= 3_000
     && question.topic.length <= 120
@@ -142,5 +169,7 @@ function isValidQuestion(question: ImportPreviewQuestion) {
     && question.answer.length <= 80
     && question.options.length >= 2
     && question.options.length <= 10
+    && (question.type === "multiple" ? answerLabels.length >= 2 : answerLabels.length === 1)
+    && answerLabels.every((label) => validLabels.has(label))
     && question.options.every((option) => option.length >= 1 && option.length <= 600);
 }

@@ -16,7 +16,10 @@ export function extractLooseQuestionsFromText(text: string, colorAnswerHints: st
     .replaceAll("\u00a0", " ")
     .replace(/\r\n?/g, "\n")
     .replace(/([^\n])\s+((?:Q(?:uestion)?\.?\s*)?\d{1,4}\s*[\).:-]\s+)/gi, "$1\n$2")
-    .replace(/\s+([A-H])\s*[\).:-]\s+(?=\S)/g, "\n$1. ")
+    .replace(/\s+([A-H])\s*[\).:-]\s+(?=\S)/g, (match, label: string, offset: number, input: string) => {
+      const prefix = input.slice(Math.max(0, offset - 16), offset);
+      return /(?:\bT|\bTrue)\s+or$/i.test(prefix.trimEnd()) ? match : `\n${label}. `;
+    })
     .replace(/\s+((?:correct\s+)?answer\s*[:.-]\s*)/gi, "\n$1")
     .replace(/\s+(explanation\s*[:.-]\s*)/gi, "\n$1");
 
@@ -35,8 +38,9 @@ export function extractLooseQuestionsFromText(text: string, colorAnswerHints: st
     let section: "question" | "options" | "explanation" = "question";
 
     for (const line of lines) {
+      if (/^--\s*\d+\s+of\s+\d+\s*--$/i.test(line) || /^\d+$/.test(line) || /^Huawei\s+HCIP-DCF\b/i.test(line)) continue;
       const optionMatch = line.match(/^([A-H])\s*[\).:-]\s*(.+)/i);
-      const answerMatch = line.match(/^(?:answer|correct answer)\s*[:.-]?\s*(.+)/i);
+      const answerMatch = line.match(/^(?:answer|correct answer)(?:\s*[:.-]\s*|\s+)(.+)/i);
       const explanationMatch = line.match(/^explanation\s*[:.-]?\s*(.*)/i);
 
       if (answerMatch) {
