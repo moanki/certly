@@ -3,6 +3,76 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  /* Certly design tokens — light theme (default) */
+  --bg: #f5f6fa;
+  --surface: #ffffff;
+  --surface-2: #f9fafc;
+  --border: #e3e6ee;
+  --border-strong: #ccd2e0;
+  --text: #12131a;
+  --text-soft: #5b6478;
+  --text-faint: #8890a0;
+
+  --accent: #5b3df0;
+  --accent-strong: #4c30d9;
+  --accent-soft: #eee9ff;
+  --success: #0f9488;
+  --success-soft: #e3f7f3;
+  --danger: #d6336c;
+  --danger-soft: #fce9f0;
+  --warning: #b45309;
+  --warning-soft: #fdf1de;
+
+  --blob-1: #ff5fae;
+  --blob-2: #7c5cff;
+  --blob-3: #33e8c9;
+  --blob-opacity: 0.14;
+  --hero-grid: rgba(18, 19, 26, 0.05);
+
+  --card-bg: rgba(255, 255, 255, 0.72);
+  --card-border: rgba(18, 19, 26, 0.08);
+  --card-shadow: 0 20px 60px -24px rgba(91, 61, 240, 0.25);
+  --input-bg: rgba(18, 19, 26, 0.035);
+  --input-border: rgba(18, 19, 26, 0.14);
+  --header-bg: rgba(255, 255, 255, 0.85);
+}
+
+[data-theme="dark"] {
+  --background: #0b0716;
+  --foreground: #f8f7ff;
+
+  --bg: #0b0716;
+  --surface: #171025;
+  --surface-2: #1c1530;
+  --border: rgba(255, 255, 255, 0.1);
+  --border-strong: rgba(255, 255, 255, 0.18);
+  --text: #f8f7ff;
+  --text-soft: rgba(248, 247, 255, 0.6);
+  --text-faint: rgba(248, 247, 255, 0.38);
+
+  --accent: #a06bff;
+  --accent-strong: #b384ff;
+  --accent-soft: rgba(160, 107, 255, 0.16);
+  --success: #33e8c9;
+  --success-soft: rgba(51, 232, 201, 0.14);
+  --danger: #ff5fae;
+  --danger-soft: rgba(255, 95, 174, 0.14);
+  --warning: #ffd166;
+  --warning-soft: rgba(255, 209, 102, 0.16);
+
+  --blob-1: #ff5fae;
+  --blob-2: #7c5cff;
+  --blob-3: #33e8c9;
+  --blob-opacity: 0.32;
+  --hero-grid: rgba(255, 255, 255, 0.05);
+
+  --card-bg: rgba(255, 255, 255, 0.06);
+  --card-border: rgba(255, 255, 255, 0.1);
+  --card-shadow: 0 20px 80px -20px rgba(124, 92, 255, 0.45);
+  --input-bg: rgba(255, 255, 255, 0.04);
+  --input-border: rgba(255, 255, 255, 0.1);
+  --header-bg: rgba(11, 7, 22, 0.75);
 }
 
 @theme inline {
@@ -13,10 +83,11 @@
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--bg);
+  color: var(--text);
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
   letter-spacing: 0;
+  transition: background-color 0.4s ease, color 0.4s ease;
 }
 
 button,
@@ -28,9 +99,13 @@ select {
 button:focus-visible,
 input:focus-visible,
 select:focus-visible {
-  outline: 3px solid rgba(29, 111, 117, 0.25);
+  outline: 3px solid var(--accent-soft);
   outline-offset: 2px;
 }
+
+/* ---------------------------------------------------------------------- */
+/* Animations                                                              */
+/* ---------------------------------------------------------------------- */
 
 @keyframes blob-move {
   0%,
@@ -74,6 +149,21 @@ select:focus-visible {
   animation: card-enter 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-up {
+  animation: fade-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
 @keyframes shine {
   from {
     transform: translateX(-100%);
@@ -83,12 +173,56 @@ select:focus-visible {
   }
 }
 
+@keyframes gradient-pan {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-gradient-text {
+  background-size: 200% auto;
+  animation: gradient-pan 6s ease infinite;
+}
+
+@keyframes float-y {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.float-icon {
+  animation: float-y 4s ease-in-out infinite;
+}
+
+@keyframes spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spin-slow {
+  animation: spin-slow 16s linear infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .admin-login *,
-  .admin-login *::before,
-  .admin-login *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+  .blob-anim,
+  .blob-anim-delay,
+  .blob-anim-slow,
+  .login-card-enter,
+  .fade-up,
+  .animate-gradient-text,
+  .float-icon,
+  .spin-slow {
+    animation: none;
   }
 }
