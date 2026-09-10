@@ -31,3 +31,64 @@ select:focus-visible {
   outline: 3px solid rgba(29, 111, 117, 0.25);
   outline-offset: 2px;
 }
+
+@keyframes blob-move {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(30px, -40px) scale(1.12);
+  }
+  66% {
+    transform: translate(-24px, 24px) scale(0.94);
+  }
+}
+
+.blob-anim {
+  animation: blob-move 14s ease-in-out infinite;
+}
+
+.blob-anim-delay {
+  animation: blob-move 18s ease-in-out infinite;
+  animation-delay: -6s;
+}
+
+.blob-anim-slow {
+  animation: blob-move 22s ease-in-out infinite;
+  animation-delay: -11s;
+}
+
+@keyframes card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.login-card-enter {
+  animation: card-enter 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes shine {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(200%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-login *,
+  .admin-login *::before,
+  .admin-login *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

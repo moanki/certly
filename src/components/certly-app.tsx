@@ -7,6 +7,7 @@ import { clsx } from "clsx";
 import { getCorrectOptionIds, hcipHuaweiPreset, isAnswerCorrect, normalizeQuestionCount, scoreAttempt, shuffleWithSeed } from "@/lib/exam-engine";
 import { certifications, sampleQuestions, topics } from "@/lib/questions";
 import type { AttemptAnswer, Candidate, ExamQuestion, ImportPreviewQuestion } from "@/types/exam";
+import { AdminLogin } from "@/components/admin-login";
 
 export type View = "dashboard" | "practice" | "exam-setup" | "exam" | "results" | "admin";
 
@@ -38,6 +39,7 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
   const [saveStatus, setSaveStatus] = useState("");
   const [questionBank, setQuestionBank] = useState(sampleQuestions);
   const [attemptHistory, setAttemptHistory] = useState<AttemptHistoryItem[]>([]);
+  const [adminAuthenticated, setAdminAuthenticated] = useState(false);
   const questionOpenedAt = useRef(0);
 
   const examQuestions = useMemo(() => {
@@ -187,7 +189,7 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
 
   return (
     <main className="min-h-screen bg-[#f3f5f6] text-[#161616]">
-      <header className="border-b border-[#d7dde1] bg-[#ffffff]">
+      {(view !== "admin" || adminAuthenticated) && <header className="border-b border-[#d7dde1] bg-[#ffffff]">
         <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#b14f2a]">Huawei certification simulator</p>
@@ -200,7 +202,7 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
             <Nav active={view === "admin"} icon={<LockKeyhole />} onClick={() => setView("admin")}>Admin</Nav>
           </nav>}
         </div>
-      </header>
+      </header>}
 
       {view === "dashboard" && <Dashboard candidate={candidate} setCandidate={setCandidate} summary={summary} attemptHistory={attemptHistory} questionBank={questionBank} goExam={() => setView("exam-setup")} goPractice={() => setView("practice")} />}
       {view === "practice" && (
@@ -237,7 +239,7 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
         />
       )}
       {view === "results" && <Results summary={summary} questions={examQuestions} answers={answers} saveStatus={saveStatus} onRetake={resetAttempt} />}
-      {view === "admin" && <AdminImport />}
+      {view === "admin" && <AdminImport onAuthChange={setAdminAuthenticated} />}
     </main>
   );
 }
@@ -331,9 +333,9 @@ function Results({ summary, questions, answers, saveStatus, onRetake }: { summar
   );
 }
 
-function AdminImport() {
+function AdminImport({ onAuthChange }: { onAuthChange: (authenticated: boolean) => void }) {
   const [preview, setPreview] = useState<ImportPreviewQuestion[]>([]);
-  const [status, setStatus] = useState("Upload CSV or PDF to preview extracted questions before import.");
+  const [status, setStatus] = useState("");
   const [auth, setAuth] = useState<"loading" | "guest" | "admin">("loading");
   const [adminName, setAdminName] = useState("");
   const [email, setEmail] = useState("");
@@ -346,10 +348,14 @@ function AdminImport() {
       .then((response) => response.json())
       .then((data: { authenticated: boolean; user?: { name: string } }) => {
         setAuth(data.authenticated ? "admin" : "guest");
+        onAuthChange(data.authenticated);
         setAdminName(data.user?.name ?? "");
       })
-      .catch(() => setAuth("guest"));
-  }, []);
+      .catch(() => {
+        setAuth("guest");
+        onAuthChange(false);
+      });
+  }, [onAuthChange]);
 
   async function login(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -367,6 +373,7 @@ function AdminImport() {
         return;
       }
       setAuth("admin");
+      onAuthChange(true);
       setAdminName(data.user?.name ?? "Admin");
       setPassword("");
       setStatus("Signed in. Choose a file to begin.");
@@ -379,6 +386,7 @@ function AdminImport() {
     setBusy(true);
     await fetch("/api/auth/logout", { method: "DELETE" });
     setAuth("guest");
+    onAuthChange(false);
     setPreview([]);
     setImportId("");
     setStatus("Signed out.");
@@ -433,18 +441,15 @@ function AdminImport() {
 
   if (auth === "guest") {
     return (
-      <section className="mx-auto max-w-md px-4 py-12 sm:px-6">
-        <form className="rounded-lg border border-[#d7dde1] bg-[#ffffff] p-6" onSubmit={login}>
-          <LockKeyhole className="h-6 w-6 text-[#b14f2a]" />
-          <h2 className="mt-4 text-2xl font-semibold">Admin sign in</h2>
-          <div className="mt-6 grid gap-4">
-            <TextInput label="Email" value={email} onChange={setEmail} placeholder="admin@example.com" />
-            <label className="grid gap-2 text-sm font-medium">Password<input className="rounded-md border border-[#c4cdd3] bg-white px-3 py-2 outline-none focus:border-[#1d6f75]" type="password" value={password} onChange={(event) => setPassword(event.target.value)} /></label>
-          </div>
-          <button className="mt-6 w-full rounded-md bg-[#1d6f75] px-4 py-2 font-semibold text-white disabled:opacity-50" disabled={busy} type="submit">{busy ? "Signing in..." : "Sign in"}</button>
-          <p aria-live="polite" className="mt-3 text-sm text-[#59636e]">{status}</p>
-        </form>
-      </section>
+      <AdminLogin
+        email={email}
+        setEmail={setEmail}
+        password={password}
+        setPassword={setPassword}
+        busy={busy}
+        status={status}
+        onSubmit={login}
+      />
     );
   }
 
