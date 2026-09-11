@@ -58,8 +58,42 @@ export function describeAnswerResult(question: ExamQuestion, selectedOptionIds: 
   return reasons.join(" ");
 }
 
+export function explainCorrectAnswer(question: ExamQuestion) {
+  const authoredExplanation = question.explanation.trim();
+  if (authoredExplanation) return authoredExplanation;
+
+  const correctOptions = question.options.filter((option) => option.isCorrect);
+  const rationales = correctOptions
+    .map((option) => option.rationale?.trim())
+    .filter((rationale): rationale is string => Boolean(rationale));
+  if (rationales.length > 0) return rationales.join(" ");
+
+  const labels = formatOptionLabels(correctOptions);
+  const statements = correctOptions.map((option) => `${option.label} states that ${sentenceFragment(option.text)}`);
+  if (question.type === "multiple") {
+    return `${labels} form the complete correct set for this ${question.topic} question. ${formatList(statements)}; together, these points satisfy every part of the question.`;
+  }
+  if (question.type === "true_false") {
+    return `${labels} is correct because the statement is ${correctOptions[0]?.text.toLowerCase() === "true" ? "accurate" : "not accurate"} in the ${question.topic} context covered by this question.`;
+  }
+  return `${labels} is correct because ${sentenceFragment(correctOptions[0]?.text ?? "this option")} directly matches what the ${question.topic} question asks.`;
+}
+
 function formatOptionLabels(options: ExamQuestion["options"]) {
   return options.map((option) => option.label).join(", ");
+}
+
+function sentenceFragment(value: string) {
+  const normalized = value.trim().replace(/[.!?]+$/, "");
+  if (!normalized) return "the marked answer";
+  if (/^[A-Z]{2}/.test(normalized)) return normalized;
+  return normalized[0].toLowerCase() + normalized.slice(1);
+}
+
+function formatList(values: string[]) {
+  if (values.length < 2) return values[0] ?? "The marked options apply";
+  if (values.length === 2) return `${values[0]}, and ${values[1]}`;
+  return `${values.slice(0, -1).join(", ")}, and ${values.at(-1)}`;
 }
 
 export function scoreAttempt(

@@ -4,7 +4,7 @@ import type React from "react";
 import { ArrowRight, Award, BarChart3, BookOpenCheck, CheckCircle2, Clock3, FileUp, Flag, GraduationCap, LayoutDashboard, ListChecks, LockKeyhole, LogOut, RotateCcw, ShieldCheck, Sparkles, Trophy, XCircle } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { clsx } from "clsx";
-import { describeAnswerResult, getCorrectOptionIds, hcipHuaweiPreset, isAnswerCorrect, normalizeQuestionCount, scoreAttempt, shuffleWithSeed } from "@/lib/exam-engine";
+import { describeAnswerResult, explainCorrectAnswer, getCorrectOptionIds, hcipHuaweiPreset, isAnswerCorrect, normalizeQuestionCount, scoreAttempt, shuffleWithSeed } from "@/lib/exam-engine";
 import { certifications, topics } from "@/lib/exam-catalog";
 import type { AttemptAnswer, AttemptSummary, Candidate, ExamQuestion, ImportPreviewQuestion } from "@/types/exam";
 import { AdminLogin } from "@/components/admin-login";
@@ -925,7 +925,10 @@ function Feedback({ question, selected, correct }: { question: ExamQuestion; sel
           </div>
         ))}
       </div>
-      {question.explanation && <p className="mt-3 text-sm leading-6 text-[var(--text-soft)]">{question.explanation}</p>}
+      <div className="mt-4 border-t border-[var(--border)] pt-4">
+        <p className="text-xs font-bold uppercase tracking-[0.1em] text-[var(--text-soft)]">Why the correct answer is correct</p>
+        <p className="mt-2 text-sm leading-6 text-[var(--text-soft)]">{explainCorrectAnswer(question)}</p>
+      </div>
     </div>
   );
 }

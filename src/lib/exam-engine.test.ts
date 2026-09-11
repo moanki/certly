@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { dedupeImportQuestions, describeAnswerResult, hcipHuaweiPreset, isAnswerCorrect, parseDelimitedAnswers, scoreAttempt, shuffleWithSeed } from "@/lib/exam-engine";
+import { dedupeImportQuestions, describeAnswerResult, explainCorrectAnswer, hcipHuaweiPreset, isAnswerCorrect, parseDelimitedAnswers, scoreAttempt, shuffleWithSeed } from "@/lib/exam-engine";
 import { sampleQuestions } from "@/lib/questions";
 
 describe("exam scoring", () => {
@@ -29,6 +29,15 @@ describe("exam scoring", () => {
     expect(describeAnswerResult(question, ["b", "c"])).toBe(
       "You selected B, which is not part of the correct answer. You missed A, which is required.",
     );
+  });
+
+  it("uses authored reasoning and provides a fallback for imported questions", () => {
+    const authored = sampleQuestions[0];
+    expect(explainCorrectAnswer(authored)).toBe(authored.explanation);
+
+    const imported = { ...sampleQuestions[1], explanation: "", options: sampleQuestions[1].options.map((option) => ({ ...option, rationale: "" })) };
+    expect(explainCorrectAnswer(imported)).toContain("form the complete correct set");
+    expect(explainCorrectAnswer(imported)).toContain("A states that");
   });
 
   it("uses the 1000 point scale and 600 pass mark", () => {
