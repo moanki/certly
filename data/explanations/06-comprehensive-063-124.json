@@ -1,0 +1,498 @@
+[
+  {
+    "id": "6aa2e5850010fe89cce3",
+    "question": "When installing the power line on the UPS5000-E, if there are different sources on the main-lines and bypass, you need to remove the copper bars connected the bypass and main line first, and then connect the main circuit and bypass input respectively.",
+    "correctOptionLabels": ["A"],
+    "explanation": "True. When the mains input and bypass input come from different sources, the UPS cannot retain the factory common-input copper links. Those links electrically join the two input paths; leaving them installed would unintentionally connect independent supplies, creating backfeed, fault-current, and isolation hazards. Removing the links establishes the separate-input configuration, after which the mains conductors are landed on the rectifier input and the bypass conductors on the bypass input. Phase sequence, neutral arrangement, protective earthing, cable sizing, torque, and upstream protection must then be verified against the UPS installation manual. The work must be performed while all sources are isolated and proven de-energized. This configuration preserves the intended redundancy and allows each source and protective device to operate without being cross-connected through the UPS cabinet.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5850011034e762d",
+    "question": "The assembly unit that can realize RS485/CAN to FE interface conversion is ().",
+    "correctOptionLabels": ["D"],
+    "explanation": "D is correct: the ETH converter performs the required interface conversion. Field devices in a data-center facility commonly expose serial RS485 or CAN communications, while the controller-side network uses Fast Ethernet (FE). The converter bridges these physical and protocol domains so equipment data can travel over the Ethernet-based management bus. It is therefore the component selected when a serial or CAN device must be integrated through an FE connection. A sunroof actuator performs mechanical control, and a smart ETH socket is a connection or distribution accessory rather than the dedicated RS485/CAN conversion unit. A Wi-Fi converter would imply a wireless transport role, which is not what the question specifies. During deployment, technicians must still match the device protocol, addressing, polarity, and port configuration; physical conversion alone cannot correct incompatible communication settings.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e58500110385954c",
+    "question": "The reason for using the EPO status interface in the parallel step of the UPS5000-E is ().",
+    "correctOptionLabels": ["D"],
+    "explanation": "D is correct: the EPO status interface is used to keep UPS output cut off while the parallel parameters are being set. A parallel system must have compatible operating mode, output voltage, frequency, and other coordination settings before units are allowed to energize a common bus. Using the EPO state provides a controlled inhibit so an inverter cannot unexpectedly supply the output during this configuration stage. That protects the parallel bus from unsynchronized sources and prevents an unsafe or damaging connection. The immediate purpose in this commissioning step is not battery conservation or routine load protection; it is output inhibition while the parallel configuration is established. Because EPO wiring and logic may use normally open or normally closed contacts, technicians must follow the model-specific diagram, prevent accidental operation, and verify the EPO state before and after commissioning.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e58500110cb8306d",
+    "question": "The principle of () humidifier is that the high-intensity infrared lamp causes the water surface to release water vapor and diffuse into the air stream that needs to be humidified.",
+    "correctOptionLabels": ["D"],
+    "explanation": "D is correct: this describes an infrared humidifier. A high-intensity infrared source transfers radiant energy to water, accelerating evaporation at the water surface; the resulting vapor is then carried into the conditioned airflow. The mechanism is therefore identified by the heat source named in the question. An electrode humidifier instead passes electrical current through water and uses its conductivity to generate steam. A wet-film humidifier relies on air passing across a wetted medium, while high-pressure fogging atomizes water into fine droplets through pressurized nozzles. Recognizing the mechanism matters during maintenance because each type has different inspection points: an infrared unit depends on lamp condition, water level, cleanliness, and safe electrical isolation. Mineral buildup or an impaired water supply can reduce output even if the airflow system remains operational.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e58500110fd56ac2",
+    "question": "The function provided by Huawei’s monitoring system NetEco are: (multiple choice)",
+    "correctOptionLabels": ["A", "B", "C", "D"],
+    "explanation": "A, B, C, and D are correct. NetEco provides several complementary visualization and configuration functions.\n- A: 2D and 3D data-center views give operators spatial and status-oriented representations of infrastructure.\n- B: module-level and cabinet-level views let users move from an overall facility picture to the equipment granularity needed for operations.\n- C: a power-distribution view represents the electrical topology and helps relate monitored devices, branches, and alarms to the supply path.\n- D: the view-creation tool supports efficient construction and configuration of those operational views instead of requiring every display to be built externally.\nTogether these capabilities turn collected monitoring data into navigable facility context. Their value is not merely graphical: they help operators locate affected assets, understand dependencies, and configure a model that reflects the deployed data-center layout.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5850011178a1e14",
+    "question": "Unpredictable business, expansion and difficult investment is one of the challenges facing the development of traditional data center business.",
+    "correctOptionLabels": ["A"],
+    "explanation": "True. Traditional data-center construction often requires large, early capital commitments for space, power, cooling, and supporting infrastructure, even when future IT demand is uncertain. If business growth is lower than forecast, capacity remains underused and the investment is stranded; if growth is faster, adding capacity can be slow and disruptive because the original electrical and cooling systems may not scale in convenient increments. This mismatch makes expansion planning and investment timing difficult. Modular data-center approaches address the problem by allowing capacity to be deployed in smaller, repeatable units and expanded closer to actual demand. The statement does not mean forecasting is impossible, but it accurately identifies uncertainty, expansion complexity, and investment pressure as linked challenges. Good facility planning therefore considers phased capacity, reserved interfaces, lead times, and the cost of both overbuilding and late expansion.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e585001118cbabe7",
+    "question": "In the process of disconnecting the battery pack switch, if there are multiple sets of batteries, first disconnect the main switch between the battery pack and the UPS, and then disconnect the switch of each battery pack.",
+    "correctOptionLabels": ["A"],
+    "explanation": "True. With multiple battery strings, opening the common battery switch between the battery system and the UPS first isolates the UPS DC bus from the combined battery source. The individual string switches can then be opened without leaving the UPS connected through another parallel string. This sequence reduces the chance of circulating current, unintended energization, or an arc caused by interrupting a branch while the common load path remains active. It also creates a clear isolation boundary before technicians handle individual strings. The operation must follow the approved shutdown procedure, use correctly rated DC switching devices, and include voltage verification because batteries remain hazardous energy sources even after the UPS side is isolated. Personal protective equipment and polarity awareness remain essential. The sequence is about controlled electrical isolation; it does not make the battery terminals themselves safe to touch.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e585001119fd9cf9",
+    "question": "The cycle life of a battery is inversely related to depth of discharge under otherwise comparable conditions.",
+    "correctOptionLabels": ["A"],
+    "explanation": "True; A is correct. Under otherwise comparable conditions, battery cycle life is inversely related to depth of discharge (DOD). A deeper cycle removes a larger fraction of the battery's available capacity and causes greater electrochemical and mechanical stress in the active materials. The battery therefore reaches its end-of-life capacity criterion after fewer cycles. Shallower cycling normally produces less damage per cycle and permits a higher cycle count. This relationship is a design principle rather than one universal mathematical ratio: battery chemistry, temperature, discharge rate, charging method, time spent at low state of charge, and the manufacturer's end-of-life definition all influence the result. UPS battery sizing and maintenance decisions should therefore use the cycle-life curves supplied for the specific battery, while avoiding unnecessarily deep discharge when long service life is important.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e585001a29500e03",
+    "question": "The following () parts can control the room lightning and control the Pad charging.",
+    "correctOptionLabels": ["B"],
+    "explanation": "B is correct: the actuator is the component used to switch room lighting and control power for Pad charging. In an intelligent facility system, the controller issues commands, but an actuator provides the physical output that operates a relay or controlled circuit. This separates low-power monitoring logic from the electrical load being switched. An access-control actuator is specialized for doors and associated security hardware, while a cabinet collector primarily gathers sensor or device data. A smart ETH socket may provide a network connection, but it is not the general control component identified here. During installation, the actuator output rating and wiring method must suit the controlled circuit, and protective devices must remain appropriate for the lighting or charger load. Correct mapping in the ECC800 or management configuration is also required so a command affects the intended circuit rather than another room function.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e585001a3102f89b",
+    "question": "The power indicator of the gas fire extinguishing controller is on and the alarm indicator is off indicating that the gas fire extinguishing controller is working properly.",
+    "correctOptionLabels": ["A"],
+    "explanation": "True. A lit power indicator shows that the gas fire-extinguishing controller is energized, while an unlit alarm indicator shows that it is not currently reporting a fire, fault, or release alarm through that indicator. In the normal standby state, this combination is therefore the expected basic indication. It is only a first-level operational check, however. A complete inspection must also confirm that no fault, disable, supervisory, or isolation indicators are active; detection loops and release circuits are healthy; the extinguishing cylinder and pressure supervision are normal; and manual controls and warning devices are available. Fire-suppression systems are life-safety systems, so lamp status alone does not prove every field device is functional. Periodic testing and maintenance must follow the approved fire-system procedure and local regulations without causing an unintended agent discharge.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e585001a3474b75e",
+    "question": "To balance the capacity loss caused by the self-discharge of the battery during the use of the battery, it is necessary to charge the battery continuously and for a long time at constant voltage, which is called ().",
+    "correctOptionLabels": ["A"],
+    "explanation": "A is correct: float charging. Float charging applies a controlled constant voltage continuously to compensate for a standby battery's self-discharge and keep it near full charge without intentional cycling. The charger supplies the small maintenance current required as internal losses occur, so the battery remains ready to support the UPS when mains power fails. This is distinct from equalized or balanced charging, which temporarily uses a different charging condition to restore charge or address imbalance under defined circumstances; it is not the normal long-term maintenance state. Float voltage must follow the battery manufacturer's value and temperature-compensation requirements. Excessive voltage accelerates gassing, water loss, positive-grid corrosion, and heating, while insufficient voltage permits progressive undercharge and sulfation. Correct settings and periodic condition checks are therefore essential to preserve both standby readiness and service life.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e585001a4367d249",
+    "question": "The PDU8000 intelligent power meter parameter display is abnormal, which may be caused by (). (Multiple choice)",
+    "correctOptionLabels": ["A", "B", "C", "D"],
+    "explanation": "A, B, C, and D are correct because each can corrupt or prevent the meter’s displayed electrical values.\n- A: an incorrect current or voltage ratio scales otherwise valid measurements to the wrong displayed magnitude.\n- B: an open, loose, or miswired voltage-sampling line removes or distorts the voltage reference used by the meter.\n- C: a failed current transformer produces missing or implausible current data and therefore affects derived power values.\n- D: an internal intelligent-meter fault can impair acquisition, calculation, communication, or display even when external wiring is sound.\nTroubleshooting should proceed safely from configuration and visible wiring checks to comparison with an independent calibrated measurement, then inspection of CT circuits and meter health. CT secondary circuits require special care and must not be opened while energized because hazardous voltage can develop.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e585001a449188d2",
+    "question": "The video can be viewed on NetEco only after the video camera is configured on the IVS.",
+    "correctOptionLabels": ["A"],
+    "explanation": "True. NetEco presents video through the configured video-surveillance integration rather than discovering and decoding an arbitrary camera feed by itself. The camera must first be added and correctly configured in the IVS so the video platform knows its address, identity, stream parameters, and access credentials. NetEco can then reference that managed camera and provide live viewing within the facility-management interface. Without the upstream IVS configuration, there is no valid camera resource or stream for NetEco to request. In deployment, technicians should verify network reachability, time synchronization, camera coding or channel information, permissions, and stream availability in the IVS before diagnosing NetEco. This layered role is important: the IVS manages video devices and streams, while NetEco integrates the video view with data-center monitoring and alarms.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e585001a4841d52a",
+    "question": "The report of NetEco has variety of presentation forms, including visualization of bar charts, pie charts, graph, etc.",
+    "correctOptionLabels": ["A"],
+    "explanation": "True. NetEco reports are not limited to raw tables; they can present monitored and statistical data using visual forms such as bar charts, pie charts, and trend graphs. Each form supports a different operational question. Bar charts help compare categories or devices, pie charts show composition, and line or trend graphs reveal change over time. These visualizations make energy, capacity, alarm, and performance information easier to interpret than an undifferentiated list of values. The underlying data scope, time range, aggregation, and units must still be checked because an attractive chart can be misleading if its filters or measurement sources are wrong. For study purposes, the key point is that reporting and visualization are management functions of NetEco: the platform collects or receives facility data, organizes it, and exposes it in multiple report formats for analysis and operations.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e585001a57a97b9c",
+    "question": "When the air conditioning outdoor of Huawei air-cooled air conditioner is installed horizontally, it is required to be ≥() mm from the wall or obstacle.",
+    "correctOptionLabels": ["D"],
+    "explanation": "D is correct: the required clearance is at least 600 mm for the installation condition described. An air-cooled outdoor unit must draw in and discharge enough ambient air to reject the heat removed from the data room plus compressor losses. If a wall or obstacle is too close, airflow resistance and recirculation increase, raising condensing pressure and reducing cooling capacity and efficiency. Adequate space also provides access for inspection, coil cleaning, and service. The 600 mm value is a model- and orientation-specific installation requirement, so it should be applied with the Huawei layout drawing rather than generalized to every outdoor unit. Field conditions may require more space when several units interact, hot discharge air can recirculate, or local codes impose service clearances. The marked value is therefore both an airflow requirement and a maintainability requirement.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e585001a5868eb5e",
+    "question": "When connecting the refrigerant pipe, to prevent the pipe from being oxidized, it is necessary to introduce a small amount of nitrogen gas during welding.",
+    "correctOptionLabels": ["A"],
+    "explanation": "True. A small continuous flow of dry nitrogen through refrigerant tubing during brazing displaces oxygen from the inside of the pipe. Without this purge, the high brazing temperature creates copper oxide scale on the internal surface. That scale can later break loose, contaminate refrigerant oil, obstruct strainers or electronic expansion valves, and reduce system reliability. Nitrogen is used because it is dry and inert under the brazing conditions; it should be supplied through a regulator at a low purge flow, not at a pressure that interferes with the joint or creates a hazard. After brazing, the circuit still requires the specified pressure test, leak check, evacuation, and charging procedure. Oxygen must never be used for purging or pressure testing because contact with refrigerant oil under pressure can create a severe fire or explosion risk.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e585001a58e26762",
+    "question": "The height of the ECC800 collector is () U.",
+    "correctOptionLabels": ["A"],
+    "explanation": "A is correct: the ECC800 collector occupies 1U of rack height. One rack unit is the standard vertical increment used to plan equipment placement in a 19-inch cabinet. Knowing the collector’s 1U form factor lets the installer reserve the correct mounting position without wasting cabinet space or obstructing neighboring equipment. The physical height is only one part of deployment: the rack position should also provide suitable access for power, communications, sensor cabling, grounding, and maintenance. Cable bend radius and port clearance must be preserved, and the device should be mounted securely with the specified hardware. The 1U answer identifies the enclosure size, not the number of connected devices or communication channels. Those capacities depend on the ECC800 model, expansion modules, and configured bus topology rather than on rack height alone.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e585001a5f576f0f",
+    "question": "NetCol5000-C temperature and humidity sensor dial setting is incorrect ay result in ().",
+    "correctOptionLabels": ["D"],
+    "explanation": "D is correct: an incorrect sensor dial setting can prevent the temperature and humidity sensor from being detected. The dial switches normally establish an address or communication identity on the sensor bus. If the address is invalid, duplicated, or inconsistent with the controller configuration, the NetCol unit cannot distinguish or poll the sensor correctly, so temperature and humidity data appear unavailable. This is a communication and addressing problem, not a hydraulic fault; it does not directly cause leakage or reduced drainage capacity. Large fan or return-temperature fluctuations would require separate investigation of control logic, airflow, load, or sensor placement. Troubleshooting should compare the dial position with the wiring diagram and configured address, check bus polarity and termination, then power-cycle or rescan only as the manual directs. Each cascaded sensor must have a unique supported address.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e585002332e43851",
+    "question": "UPS5000 option temperature and humidity sensor does not support cascading.",
+    "correctOptionLabels": ["B"],
+    "explanation": "False. The optional UPS5000 temperature and humidity sensors support cascading, allowing multiple sensors to share a communication chain and provide environmental measurements from more than one location. Cascading is useful around a UPS or battery installation because a single point may not represent the thermal conditions across the equipment area. Each sensor must be wired in the supported topology and assigned a distinct address so the monitoring system can identify its readings. A duplicate dial setting, reversed bus connection, excessive unsupported chain length, or poor termination can make a sensor disappear or report communication alarms. The false statement confuses optional-sensor support with a single-device limitation. Cascading does not remove the need to follow the model-specific maximum quantity, cable type, and placement guidance; those details determine whether the chain remains electrically reliable and operationally meaningful.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e585002334d4b3dc",
+    "question": "What does NetCol5000-A maintain the electrode humidifier without removing the humidifier? (Multiple choice).",
+    "correctOptionLabels": ["A", "B", "C", "D"],
+    "explanation": "A, B, C, and D are correct as in-place checks for the electrode humidifier.\n- A: confirm the electrodes are fully seated in the cylinder so live or hot parts are not improperly exposed.\n- B: verify that the inlet solenoid valve opens and closes under control, because failed water admission prevents steam generation or causes uncontrolled filling.\n- C: inspect the water supply and drain paths; restricted flow, leaks, or abnormal drainage disrupt the fill-boil-drain cycle.\n- D: operate or check the manual drain function to confirm the cylinder can be emptied safely.\nThese checks cover electrical seating, controlled filling, water flow, and drainage without dismantling the humidifier. Power isolation, hot-water precautions, and the manufacturer’s maintenance mode are essential because the cylinder can contain energized electrodes, hot water, and steam.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e58500233f79360f",
+    "question": "After the UPS5000-E system is installed, which of the following items need to be checked? (Multiple choice).",
+    "correctOptionLabels": ["A", "B", "C", "D"],
+    "explanation": "A, B, C, and D are correct post-installation checks.\n- A: the UPS and battery assemblies must be mechanically firm and stable so vibration, cable forces, or seismic loads cannot shift them.\n- B: cable routing should preserve orderly separation, service access, bend radius, and usable pathways for foreseeable future wiring.\n- C: protective grounding must be reliable because cabinet anchoring is not a substitute for a verified PE connection.\n- D: battery polarity must be correct; reversing positive and negative conductors can cause destructive current, arcing, and equipment damage.\nThese inspections should be completed before energization, along with torque, phase sequence, insulation, switch position, foreign-object, and clearance checks required by the manual. The goal is to catch mechanical and electrical installation errors while the system remains safely isolated.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e585002340909744",
+    "question": "The refrigerant air cylinder of the Huawei air-cooled air conditioner does not need to be inverted on the electronic scale when charging the refrigerant.",
+    "correctOptionLabels": ["B"],
+    "explanation": "False. For the charging procedure referenced by this question, the refrigerant cylinder must be positioned as specified, including inversion on the electronic scale when liquid charging is required. Many blended refrigerants must be withdrawn as liquid to preserve their intended composition; drawing vapor can fractionate the blend and alter system performance. The scale measures the mass transferred so the commissioned charge matches the calculated or specified amount. Cylinder orientation must never be improvised: technicians should verify the cylinder design, valve arrangement, refrigerant type, and Huawei procedure before charging. Liquid must also be introduced in a controlled manner to avoid compressor damage, using the correct charging point and operating state. The statement is false because it dismisses an explicit handling step that supports accurate charge quantity and refrigerant composition, not because every refrigerant cylinder is universally inverted in all circumstances.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e58500234ad0dee3",
+    "question": "The ECC800 supports two AC inputs.",
+    "correctOptionLabels": ["A"],
+    "explanation": "True. The ECC800 controller supports two AC power inputs, providing redundant supply paths for the facility monitoring controller. With both inputs correctly connected, loss of one source need not remove monitoring and control availability, which is important because alarms, environmental data, access control, and equipment communications may depend on the controller. The two inputs are a resilience feature; they are not permission to parallel arbitrary supplies externally. Each feed must meet the specified voltage, protection, grounding, and source requirements, and the installation diagram determines how redundancy is implemented internally. During commissioning, technicians should verify both feeds independently by confirming normal operation and alarms when each source is isolated in a controlled test. Maintaining controller power does not guarantee that every downstream sensor or actuator is redundant, so their individual power paths must also be reviewed.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e58500234b845a54",
+    "question": "The UPS5000-E accepts an input voltage of () V range.",
+    "correctOptionLabels": ["D"],
+    "explanation": "D is correct: 138–485 V is the accepted line-voltage range identified for the UPS5000-E configuration in this question. A wide input window allows the rectifier to continue operating through substantial utility or generator variation instead of transferring immediately to battery, although available load or charging capability may be derated toward the edges of the range. The value must be interpreted as the applicable AC line voltage and checked against the exact model and manual revision; rated operating points remain much narrower than the absolute acceptance window. Before startup, technicians measure both voltage and frequency at the external input switch, verify phase sequence and neutral/PE connections, and confirm that upstream protection matches the design. Being within the voltage window alone does not prove that frequency, phase balance, short-circuit capacity, or cable installation is acceptable.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e58500234ddbf3b8",
+    "question": "When the Huawei air-cooled air-conditioning compressor is turned on for the first time, the crankcase heating belt needs to be warmed up for more than () hours.",
+    "correctOptionLabels": ["C"],
+    "explanation": "C is correct: the crankcase heater must be energized for more than 12 hours before the compressor’s first startup. While a system is idle, refrigerant can migrate into the cold compressor crankcase and dissolve in the oil. Preheating raises the oil temperature, drives refrigerant out of the lubricant, and reduces the risk of foaming, poor lubrication, liquid slugging, and bearing damage at startup. This is especially important after installation or a long power-off period. The heater should be confirmed operational while the compressor remains disabled, and the specified warm-up interval should not be shortened merely because ambient conditions seem mild. The requirement is tied to the Huawei air-cooled unit in the question; other models may specify different times. Refrigerant valves, oil level, power phase, and control alarms should also be checked before enabling the compressor.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e585002350374523",
+    "question": "Two different versions of the software UPS2000-G can be implemented in parallel.",
+    "correctOptionLabels": ["B"],
+    "explanation": "False. UPS units intended to operate in parallel must use compatible software versions and configuration because their control loops exchange synchronization, load-sharing, status, and protection information. Different versions may implement parameters, communication behavior, or fault handling differently, creating unequal load sharing, nuisance transfers, circulating current, or loss of redundancy. Parallel operation is therefore commissioned only after model, power rating, firmware or software compatibility, output settings, and parallel cables have been verified against Huawei guidance. A unit should not be upgraded or added to a live parallel group merely because its electrical ratings match. The safe approach is to align supported versions using the approved upgrade procedure, confirm identical key settings, and perform the prescribed commissioning tests. The statement is false because parallel compatibility is a coordinated system requirement, not an independent capability of each UPS.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5850023515ea6ba",
+    "question": "In the stable operation of NetCol5000-A35kW air conditioner compressor, the oil level observed by the oil sight is regarded as qualified at the () position.",
+    "correctOptionLabels": ["C"],
+    "explanation": "C is correct: during stable compressor operation, an oil level between one-third and the full sight-glass reference is considered qualified for the condition stated. The sight glass provides a direct indication that enough lubricant is returning to the compressor while the refrigerant circuit is operating steadily. A level below the acceptable region may indicate oil loss, poor return, incorrect piping, or refrigerant-flow problems; an abnormal overfilled appearance can also require investigation. The reading should not be judged immediately at startup, during rapid load changes, or while refrigerant is foaming, because transient conditions can distort the apparent level. Technicians should observe the unit after stabilization and compare the result with operating pressures, superheat, alarms, and piping condition. Oil must not be added solely from a momentary sight-glass observation without diagnosing the circuit and following the model-specific service procedure.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e585002351d11ba3",
+    "question": "When a fire occurs in the cabinet and the fire extinguishing device releases the extinguishing agent into the protection zone, what will display the words “Don’t let in”?",
+    "correctOptionLabels": ["C"],
+    "explanation": "C is correct: the venting indicator displays the warning that people must not enter when extinguishing agent is being released into the protected zone. The indicator is part of the discharge-warning arrangement and communicates a specific hazard state at the enclosure boundary. A fire alarm bell or sound-and-light alarm attracts attention and signals an alarm condition, but it does not provide the dedicated textual release warning identified in the question. Emergency lighting supports evacuation during loss of normal lighting. Preventing entry matters because a gaseous extinguishing agent can create an unsafe atmosphere and the protected space may still contain fire, heat, or electrical hazards. The release sequence should also coordinate pre-discharge alarms, shutdowns, and access controls as designed. Personnel must follow the site emergency procedure and may re-enter only after authorized confirmation that the area is safe.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e585002cd7ec0bff",
+    "question": "NetCol5000-C nitrogen filling pressure value is (); holding time is ().",
+    "correctOptionLabels": ["C"],
+    "explanation": "C is correct: the specified nitrogen pressure is 0.8 MPa and the holding time is 24 hours. This standing-pressure test checks the assembled refrigerant circuit for leakage before evacuation and refrigerant charging. Dry nitrogen is used because it does not add moisture and is nonflammable under normal test conditions. The regulator must control cylinder pressure, and the test pressure must not exceed the equipment’s prescribed value. After stabilization, pressure is monitored for the required period; ambient-temperature change should be considered because it can alter pressure even without a leak. Joints are inspected using an approved leak-detection method. The system should then be depressurized safely and evacuated to remove nitrogen, air, and moisture. The exact 0.8 MPa and 24-hour values apply to the NetCol5000-C procedure in this question and should not be transferred to unrelated refrigeration equipment.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e585002cdff5f4b1",
+    "question": "UPS2000-G-(6-20kVA) battery is not connected and does not affect the normal power supply of the system, but the UPS loses the backup power capability.",
+    "correctOptionLabels": ["A"],
+    "explanation": "True. When acceptable mains power is present, the UPS2000-G can rectify the AC input and supply regulated output through its normal conversion path even if no battery is connected. The immediate load supply can therefore remain normal. What is lost is stored-energy support: if mains input fails or moves outside the supported range, there is no battery source to maintain the DC bus, so the UPS cannot provide its intended backup runtime. Battery-related alarms or status indications should also be expected. This operating distinction is useful during diagnosis, but it does not mean a batteryless installation is equivalent to a complete UPS system. Before relying on the load, technicians must confirm the permitted operating mode, bypass arrangement, alarm handling, and restart behavior. Battery cables must remain safely isolated and protected because later connection introduces high available DC fault current.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e585002ce669af1d",
+    "question": "When the NetCol5000-A is under nitrogen pressure, the required nitrogen bottle must be equipped with a pressure reduction valve.",
+    "correctOptionLabels": ["A"],
+    "explanation": "True. A nitrogen cylinder stores gas at a pressure far above the refrigerant circuit’s test pressure, so a pressure-reduction valve or regulator is essential. It lowers and controls the delivered pressure, allowing the technician to raise circuit pressure gradually to the specified test value. Connecting a cylinder without regulation can overpressurize tubing, valves, heat exchangers, or service hoses and create a serious rupture hazard. The regulator must be rated for nitrogen and the cylinder pressure, and a suitable gauge should show the controlled outlet pressure. Dry nitrogen, not oxygen or compressed air, is used for refrigeration pressure testing and brazing purge. The cylinder should be secured upright, valves opened slowly, and pressure released through an approved path after testing. The regulator is therefore both a process-control device and a critical safety barrier.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e585002ce6f419c7",
+    "question": "NetCol can assign operational rights to user groups, or assign operational rights directly to users.",
+    "correctOptionLabels": ["A"],
+    "explanation": "True. The management system supports authorization through user groups as well as direct assignment to individual users. Group-based rights are efficient when several operators share a role, because permissions can be maintained once and applied consistently to all members. Direct user rights handle exceptional responsibilities that do not justify a separate group. Both mechanisms implement role-based operational control: users should receive only the viewing, configuration, alarm, or control privileges needed for their duties. Administrators must consider how direct and inherited rights combine, periodically review dormant accounts, and avoid broad permissions that allow accidental changes to cooling or facility controls. Authentication identifies the operator, while authorization determines what that operator may do. Proper rights assignment therefore supports both operational efficiency and accountability through logs that can associate actions with a named user.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e585002cecea5c84",
+    "question": "The NetCol5000-A air conditioning humidification function may be invalid because of (). (multiple choice)",
+    "correctOptionLabels": ["B", "C", "D"],
+    "explanation": "B, C, and D are correct causes of an unavailable NetCol5000-A humidification function.\n\n- B: a damaged humidifier barrel can leak, fail to contain water safely, or prevent the electrodes from producing steam correctly.\n- C: an open humidifier circuit breaker removes electrical power from the humidifier, so no heating current can flow through the water.\n- D: an abnormal humidifier water supply prevents the barrel from filling to the level required for steam generation.\nTroubleshooting should start with controller alarms and the humidification demand, then verify the breaker state, barrel condition, inlet pressure, water valve, fill piping, level control, and drainage. Work must follow the approved isolation procedure because the assembly combines mains electricity, hot water, and steam. Low room temperature alone is not the keyed equipment fault; control limits may inhibit operation, but the listed B, C, and D conditions directly interrupt the humidification process.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e585002cf075c53f",
+    "question": "Check that the load switch is in the “OFF” position before powering up the UPS5000.",
+    "correctOptionLabels": ["A"],
+    "explanation": "True. Before first energization, the downstream load switch should be confirmed OFF so the UPS can start and complete its internal checks without immediately applying power to connected equipment. This limits the consequences of wiring errors, unexpected output voltage, incorrect phase sequence, or an unresolved fault. It also separates commissioning of the UPS from controlled energization of the load. The check belongs with verification of input, bypass, output, and battery switch positions; cable torque and polarity; grounding; absence of short circuits; and removal of tools or foreign objects. After the UPS reaches the expected stable state and measurements are normal, loads can be introduced according to the commissioning sequence. An OFF load switch is not a substitute for upstream isolation during installation work; all energy sources, including batteries and bypass, must be controlled under the applicable safety procedure.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e585002cf0d39b6d",
+    "question": "The gas fire extinguishing device is a fire extinguishing device composed of (). (Multiple choice)",
+    "correctOptionLabels": ["A", "B", "D"],
+    "explanation": "A, B, and D are correct components of the gas extinguishing device.\n- A: the fire cylinder stores the extinguishing agent under the required conditions until release.\n- B: the pressure switch provides feedback that discharge pressure has occurred, allowing the control system to confirm or signal release.\n- D: the solenoid valve is the electrically actuated release element that opens the agent path when the approved discharge command is issued.\nThe sound-and-light alarm is important to the overall fire-protection system, but it is a warning appliance rather than part of the agent-storage and release device identified here. In operation, detection and control logic energize the release mechanism, agent leaves the cylinder, and pressure feedback confirms the event. Inspection must verify cylinder condition, pressure, actuator security, wiring, and interlocks without unintentionally discharging the system.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e585002cf5410ef2",
+    "question": "The following air conditioning systems need to be equipped with a cooling tower or dry cooler ().",
+    "correctOptionLabels": ["D"],
+    "explanation": "D is correct: a DX water-cooled system requires an external heat-rejection device such as a cooling tower or dry cooler. The direct-expansion refrigeration circuit absorbs room heat at the evaporator, but its condenser rejects that heat into a water or glycol loop rather than directly to outdoor air. The loop must then discharge the heat outdoors, which is the role of the cooling tower or dry cooler. A DX air-cooled system uses an outdoor air-cooled condenser instead. Direct ventilation rejects heat by exchanging air, and a chilled-water arrangement has a different plant topology even though its central chiller may also use heat-rejection equipment. Correct selection depends on climate, water availability, freeze protection, water treatment, redundancy, and maintenance. The key mechanism is the water-cooled condenser loop: without external heat rejection, condensing temperature rises and the refrigeration cycle cannot operate reliably.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e585002cff0756de",
+    "question": "When the maintenance engineer arrives at the customer site, the working environment around the site should be recorded. The main collection items are (). (Multiple choice)",
+    "correctOptionLabels": ["A", "B", "C", "D"],
+    "explanation": "A, B, C, and D are correct site-condition records.\n- A: ventilation affects heat removal, air quality, and whether equipment exhaust can recirculate.\n- B: ambient temperature helps determine whether observed operation is within the equipment’s environmental envelope.\n- C: installation distances show whether airflow, service access, and safety clearances are adequate.\n- D: dust, moisture, corrosive contamination, or other adverse surroundings can explain failures and accelerate degradation.\nRecording these conditions before maintenance creates evidence of the operating context rather than treating the device in isolation. Notes should be objective and may include measurements and photographs where permitted. The engineer should also identify immediate hazards before opening equipment. Environmental findings guide diagnosis: a recurring overtemperature alarm, for example, may result from blocked ventilation or inadequate clearance rather than a failed cooling component.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e585002d049ef752",
+    "question": "() can realize the signal processing and centralized control of UPS5000-E.",
+    "correctOptionLabels": ["A"],
+    "explanation": "A is correct: the Energy Control Module (ECM) performs signal processing and centralized control in the UPS5000-E. The ECM coordinates operating states, protection decisions, synchronization, and communication needed by the power system. In supported configurations, redundant ECMs can work in active/standby mode so control availability is maintained if one module is unavailable. Power modules perform the actual power conversion, while the bypass module provides an alternate supply path under defined conditions. The maintenance bypass is a service isolation path and does not act as the central controller. Understanding these roles helps troubleshooting: a conversion fault points toward a power stage, a bypass problem toward the bypass path, and system-level coordination or control alarms toward the ECM and related signals. Replacement or switching of control modules must follow Huawei procedures because control continuity and configuration consistency are essential.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5850036827da83a",
+    "question": "The dry contact signal of the UPS5000-E does not support the remote emergency stop function.",
+    "correctOptionLabels": ["B"],
+    "explanation": "False. The UPS5000-E dry-contact interface supports a remote emergency power-off function. The EPO input can be wired using the supported normally open or normally closed logic so operation of the remote switch triggers an emergency shutdown response. This allows an accessible emergency control to inhibit UPS output when the site safety design requires it. EPO wiring is safety-critical: the switch should be protected against accidental operation, use the specified cable arrangement, and be dedicated as required rather than sharing contacts casually with other equipment. The configured contact logic must match the physical wiring, or a broken wire could be misinterpreted or the function may fail. Commissioning includes a controlled functional test under an approved plan. Remote EPO removes supplied output according to system design, but it does not make internal capacitors, batteries, or upstream conductors immediately safe for maintenance.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e58500368a94332a",
+    "question": "The rated voltage of the cell in the VRLA battery is ().",
+    "correctOptionLabels": ["C"],
+    "explanation": "C is correct: a lead-acid cell has a nominal rated voltage of 2 V. A 12 V VRLA battery block is constructed from six such cells connected in series, and a 6 V block contains three. The actual terminal voltage varies with state of charge, charging mode, temperature, load, and rest condition, so 2 V is a nominal cell designation rather than a constant measured value. UPS battery strings connect many cells or blocks in series to reach the required DC bus voltage, which makes polarity and cell count critical commissioning parameters. Incorrect battery quantity or voltage settings can impair charging and protection or damage the battery. When testing, technicians compare individual block or cell readings under consistent conditions to identify imbalance; they should not interpret a small deviation from exactly 2.000 V as a fault without considering operating state and manufacturer limits.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e58500368c8733b6",
+    "question": "The function of Counter irrigation protection card is when energy reversal occurs in the main load or bypass. The counter irrigation protection card sends a drive alarm signal, and the drive trip switch (customer self-configure) is disconnected, which acts as counter irrigation protection.",
+    "correctOptionLabels": ["A"],
+    "explanation": "True. The statement describes the UPS backfeed-protection function, translated here as a counter-irrigation protection card. If reverse energy or hazardous voltage is detected toward the mains or bypass input, the card issues an alarm or trip-driving signal to a customer-provided upstream circuit breaker. Opening that breaker isolates the affected input and prevents voltage from being fed back onto conductors that personnel may expect to be de-energized. The protection therefore depends on both the UPS detection interface and a correctly selected, wired, and configured external trip device. It is not merely a software alarm. Commissioning should verify the contact logic, breaker trip supply, labeling, and test method specified for the installation. Even with backfeed protection installed, technicians must isolate and prove all sources dead before work because stored energy and multiple UPS input paths can remain hazardous.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e585003699bfc4d7",
+    "question": "The NetCol5000-A35kW uses an electronic expansion valve.",
+    "correctOptionLabels": ["A"],
+    "explanation": "True. The NetCol5000-A 35 kW unit uses an electronic expansion valve to meter refrigerant into the evaporator. The controller adjusts valve opening in response to operating data, allowing closer regulation of refrigerant flow and superheat across changing IT loads than a fixed restriction can provide. Correct superheat control helps use the evaporator effectively while limiting the risk of liquid refrigerant returning to the compressor. The valve is part of a closed control loop that also depends on accurate temperature and pressure sensing, sound refrigerant charge, and correct controller configuration. If cooling is unstable, technicians should not assume the valve alone is faulty; sensor errors, wiring, blockage, charge condition, and airflow can produce similar symptoms. Service work requires safe refrigerant handling and the model-specific diagnostic procedure because commanding or replacing the valve without confirming the root cause can worsen operation.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e58500369b1e324d",
+    "question": "The NetCol5000C device is powered on and the reason why the fan does not turn may be ().",
+    "correctOptionLabels": ["B"],
+    "explanation": "B is correct: a faulty or abnormal power module can leave the NetCol5000-C energized at the controller while preventing the fan motor from receiving usable drive power. “Powered on” therefore does not prove that every internal power stage is healthy. A dirty filter raises airflow resistance but normally does not by itself stop a commanded fan. Drainage faults relate to condensate removal and may generate alarms or shutdowns under some conditions, but they are not the keyed direct cause here. Diagnosis should check active alarms, fan command, module indicators, supply voltage, connectors, and motor or drive feedback while observing electrical safety procedures. The fan must not be handled until rotating parts and all energy sources are isolated. Replacing the power module is justified only after confirming that control interlocks and fan wiring are not responsible for the no-run condition.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e58500369c484d35",
+    "question": "The following () characteristics are standard features of the NetCol 8000-C air conditioner.",
+    "correctOptionLabels": ["C"],
+    "explanation": "C is correct: the G4-grade filter is the standard feature identified for the NetCol 8000-C configuration in this question. The filter removes coarse airborne dust before it reaches the heat exchanger and fan section, helping preserve airflow and coil cleanliness in the data-center environment. Dual power supply, water-immersion sensing, and humidification may be optional, external, or configuration-dependent rather than standard on every unit. That distinction matters in design and acceptance testing: a feature shown in a solution architecture should not be assumed to ship in the base air conditioner. The bill of materials and exact model configuration must be checked for optional functions. The G4 filter also requires inspection and replacement based on pressure drop, contamination, and maintenance guidance; calling it standard does not mean it is maintenance-free or adequate for unusually dusty construction conditions.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5850036a4323cc2",
+    "question": "To use the NetCol APP on PAD to query the PUE information of the current computer room, you need to click on () menu.",
+    "correctOptionLabels": ["B"],
+    "explanation": "B is correct: PUE information is accessed from the Energy consumption menu. Power Usage Effectiveness compares total facility energy with IT-equipment energy, so it belongs with energy statistics rather than the alarm or general monitoring views. The menu groups the measurements and calculations used to assess how much overhead power is consumed by cooling, power conversion, lighting, and other supporting systems. Operators should still confirm the time period, meter scope, and data completeness before interpreting the displayed PUE. Missing branch meters or mismatched aggregation intervals can produce a plausible but incorrect value. The Alarm menu focuses on abnormal events, Monitoring shows current equipment state, and More contains ancillary functions. The navigation choice reflects the information’s purpose: PUE is an energy-efficiency metric derived from metered consumption, not an instantaneous equipment alarm.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5850036acc67505",
+    "question": "Huawei NetCol5000-A row-level precision air conditioner eliminates local hot spots by means of near-end cooling.",
+    "correctOptionLabels": ["A"],
+    "explanation": "True. A row-level precision air conditioner is placed close to the IT cabinets, shortening the airflow path between cooling equipment and the heat source. This near-end cooling delivers conditioned air where the server intake demand occurs and captures hot return air before it mixes extensively with room air. The result is better targeting of high-density loads and fewer local hot spots than a poorly organized room-level system. The benefit depends on correct placement, airflow direction, aisle containment, blanking panels, and fan control; proximity alone cannot overcome blocked cabinet airflow or recirculation. Capacity must also match the actual sensible heat load and redundancy plan. The statement describes the operating principle of the NetCol5000-A row-level design: reduce transport distance and mixing so cooling capacity is used more effectively at the racks that generate the heat.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5850036b5270d87",
+    "question": "NetEco can’t centrally and uniformly manage data center infrastructure across multiple geographies.",
+    "correctOptionLabels": ["B"],
+    "explanation": "False. Centralized, unified management across geographically separated data-center sites is a core use case for NetEco. Site controllers and managed devices provide alarms, status, energy, capacity, and environmental data to a common management platform, allowing operators to apply consistent views and operational processes across locations. The architecture reduces the need to treat every site as an isolated monitoring island. Successful multi-site management still depends on network connectivity, compatible interfaces, time synchronization, security controls, and a design that tolerates link outages. Local control and protection must continue safely when the central platform is unreachable; NetEco supervision is not a replacement for equipment-level autonomy. The statement is false because geographic separation changes communications and resilience planning, but it does not prevent centralized management. Permissions and site scopes should be configured so users see and control only the facilities assigned to them.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5850036c0024343",
+    "question": "In the battery model 6-GFM-150, 150 indicates the battery ().",
+    "correctOptionLabels": ["B"],
+    "explanation": "B is correct: 150 denotes the battery’s rated capacity, conventionally expressed in ampere-hours for this model designation. Rated capacity is measured under defined manufacturer conditions such as discharge duration, final voltage, and temperature; it is not the amount that will always be delivered in service. Actual available capacity changes with discharge rate, age, temperature, state of charge, and battery condition. The “6” in a lead-acid model designation commonly relates to the number of 2 V cells in series, yielding a nominal 12 V block, while GFM identifies the battery family or construction. Designers use rated capacity as a baseline for string sizing, then apply the required runtime calculation and correction factors. Calling 150 maximum, minimum, or actual capacity would ignore the standardized test conditions attached to the nameplate rating.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5860000ec8a41a3",
+    "question": "The NetCol5000-A35kW air conditioner has a light load dehumidification function.",
+    "correctOptionLabels": ["B"],
+    "explanation": "False. The NetCol5000-A 35 kW unit in this question does not provide a light-load dehumidification function. Dehumidification normally requires the evaporator to operate below the air dew point so moisture condenses, often followed by control measures that avoid overcooling. At very low sensible load, that sequence may conflict with precise room-temperature control unless the unit has a specifically designed light-load mode or reheating strategy. The absence of this named function means it should not be promised or commissioned as a standard capability simply because the unit can remove some moisture during normal cooling. Designers must assess the room’s latent load and select the correct configured options or separate humidity-control strategy. Operators should distinguish incidental dehumidification during compressor operation from a supported control mode that intentionally maintains humidity under light thermal load.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5860000f6881fbc",
+    "question": "The data center energy efficiency PUE is as small as possible, and minimum can be closed to zero.",
+    "correctOptionLabels": ["B"],
+    "explanation": "False. Lower PUE generally indicates less facility overhead, but PUE cannot approach zero under its standard definition: total data-center facility energy divided by IT-equipment energy. Total facility energy includes the IT energy in the numerator, so for a functioning data center the ratio cannot be below 1.0. An idealized PUE of 1.0 would mean every unit of facility energy reaches IT equipment with no cooling, power-distribution, lighting, or other overhead loss. Real sites are above 1.0. A value below 1 or near zero signals incorrect meter boundaries, missing data, inconsistent time intervals, or a calculation error rather than extraordinary efficiency. PUE should also be interpreted over a defined period and alongside climate, redundancy, and workload conditions. It is useful for tracking infrastructure efficiency, not for measuring server computational efficiency or overall business output.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5860000f784469b",
+    "question": "The following statement about the integration UPS5000-E120k-HASBS, which is wrong?",
+    "correctOptionLabels": ["C"],
+    "explanation": "C is correct because it is the wrong statement: the ATS does support manual switching. Manual operation provides a controlled way to transfer sources during commissioning, maintenance, or an automatic-control problem, subject to the ATS interlocks and operating procedure. The other statements describe supported integrated-system functions in the keyed configuration: smart battery management with adjustable battery-section settings, support for the incoming-line arrangement, and energy statistics that can display consumption for output branches. These capabilities combine power conversion, source transfer, battery supervision, distribution, and metering in the integrated UPS solution. Manual switching must not be confused with bypassing electrical or mechanical interlocks; operators must confirm source availability and follow the approved sequence. Because model suffixes encode configuration details, the exact bill of materials and manual should be checked before assuming that every UPS5000-E variant has identical ATS and branch-metering functions.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5860000fb27d5e3",
+    "question": "When the internal short circuit of the battery occurs, the faulty battery charging voltage (), the open circuit voltage is low (generally less than 1V/cell)",
+    "correctOptionLabels": ["C"],
+    "explanation": "C is correct: the faulty battery’s charging voltage is low. An internal short circuit creates a low-resistance path within the cell, bypassing part of the electrochemical voltage and consuming charge internally. As a result, both the observed charging voltage and the open-circuit voltage can remain abnormally low; the question notes a typical open-circuit symptom below 1 V per cell. The condition may also cause heating, imbalance, excessive charger demand, or depressed string voltage. It should not be corrected by simply raising the charger setting, because that can overcharge healthy cells in the same string. Diagnosis compares cell or block voltages, temperature, current, and physical condition under a safe battery procedure. A confirmed internally shorted battery is isolated and replaced according to manufacturer guidance, with attention to the stored energy and fault current available from parallel strings.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e58600010b7a218f",
+    "question": "ECC800 does not support alarm SMS notification, and remote maintenance cannot be implemented.",
+    "correctOptionLabels": ["B"],
+    "explanation": "False. ECC800 supports remote alarm notification and remote maintenance capabilities when the required communications hardware, network services, and configuration are present. For SMS notification, supported deployments use a cellular communications module and SIM service so selected alarms can be sent to configured recipients. Remote access and maintenance rely on appropriate network connectivity and permissions. These features allow operators to learn about facility events without being physically present and to inspect status or perform authorized actions remotely. They must be deployed securely: recipient lists, alarm severity filters, time settings, accounts, and network access should be tested and controlled. Loss of the WAN or mobile network must not disable local alarms or equipment protection. The statement is false because it treats optional connectivity prerequisites as an absence of product capability; configuration and communications availability determine whether the functions work at a particular site.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e58600010ca58808",
+    "question": "Data center siting needs to evaluate the following () factors. (Multiple choice)",
+    "correctOptionLabels": ["A", "B", "C", "D"],
+    "explanation": "A, B, C, and D are all correct siting factors.\n- A: physical and geographical conditions cover flood, seismic, climate, access, pollution, and other location hazards.\n- B: supporting facilities include utility power, communications, water where needed, transport, emergency services, and maintainability resources.\n- C: cost factors include land, construction, energy, staffing, taxes, connectivity, and lifecycle operation rather than purchase price alone.\n- D: building structure determines floor loading, clear height, equipment routes, fire compartments, expansion potential, and resistance to local hazards.\nThese categories interact. A low-cost building may be unsuitable if it cannot carry UPS batteries or lacks resilient utility feeds; an excellent utility location may still face unacceptable flood risk. A disciplined site study evaluates safety, availability, scalability, compliance, and total lifecycle cost before detailed facility design begins.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e58600010e586d25",
+    "question": "In NetEco “Video” function, you can enter () and other operations (Multiple choice).",
+    "correctOptionLabels": ["A", "B", "C", "D"],
+    "explanation": "A, B, C, and D are correct NetEco Video operations.\n- A: creating a camera registers a new video resource and its connection information.\n- B: deleting a camera removes a resource that is no longer managed.\n- C: modifying a camera updates addressing, identity, stream, or other configuration when the deployment changes.\n- D: live video browsing lets an authorized operator view the current camera stream.\nTogether these functions cover the camera lifecycle and its primary operational use. Configuration depends on valid camera or IVS details, network reachability, supported coding, and user permissions. Deleting or modifying a camera should be controlled because alarms, views, or site procedures may reference it. Video access also requires least-privilege accounts and appropriate retention and privacy controls. NetEco integrates surveillance into facility operations; it does not eliminate the need to configure and maintain the underlying video system.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e586000114f4330b",
+    "question": "() air supply method must have a reasonable raised floor height.",
+    "correctOptionLabels": ["B"],
+    "explanation": "B is correct: under-floor air supply requires a suitably designed raised-floor plenum. The floor void is the air-distribution path, so its clear height and obstruction level determine pressure loss and how evenly conditioned air reaches perforated tiles or grilles. A plenum that is too shallow or crowded with cables and pipes can create high resistance, uneven pressure, and starved cold aisles, leading to recirculation and hot spots even when cooling capacity is sufficient. The required height is an engineering result, not a universal number; it depends on airflow volume, room dimensions, leakage, obstructions, and tile layout. Upper-hood and upper-duct systems use overhead paths, while row-level horizontal supply delivers air near the racks. Good under-floor design also controls sealing, cleanliness, fire barriers, and access so the plenum remains both effective and maintainable.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e586000116a6a189",
+    "question": "The default password for the UPS2000-G-(6-20kVA) operator panel is ().",
+    "correctOptionLabels": ["C"],
+    "explanation": "C is correct: the documented default operator-panel password for this UPS2000-G range is 000001. The credential provides initial access to the operator interface; it is not intended to remain a permanent site password. During commissioning, authorized personnel should change default credentials according to the applicable manual and site security policy, record access securely, and assign only the privileges required for operations. Leaving a well-known default allows unauthorized users to acknowledge alarms or alter settings within the operator role’s permissions. The exact credential is model- and software-version-specific, so technicians should use the documentation supplied with the installed unit rather than trying defaults from other Huawei products. Password recovery or reset must follow the approved support procedure to avoid disrupting configuration. The other listed strings are not the keyed factory credential for this operator panel.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e58600011dfd1bd4",
+    "question": "DOD (depth of discharge) indicates the percentage of battery discharge and battery rated capacity.",
+    "correctOptionLabels": ["A"],
+    "explanation": "True. Depth of discharge is the discharged capacity expressed as a percentage of the battery’s rated or reference capacity. If a fully charged battery delivers 40% of that capacity before discharge stops, its DOD is 40%, while roughly 60% state of charge remains. DOD and state of charge are therefore complementary under the same capacity basis. The metric helps specify UPS runtime tests, battery cycling duty, and life expectations because deeper discharges generally impose more cycling stress. It must be interpreted carefully: usable capacity changes with temperature, discharge rate, aging, and cutoff voltage, so calculated DOD based on nameplate capacity may differ from the battery’s true present condition. Battery-management and test systems should use consistent capacity assumptions and approved discharge endpoints to avoid overdischarge, cell reversal, or misleading health conclusions.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e586000a3464f484",
+    "question": "The NetCol 8000-A100kW is dual-system and comes standard with a single indoor unit connected to an outdoor unit.",
+    "correctOptionLabels": ["B"],
+    "explanation": "False. A dual-system NetCol 8000-A 100 kW configuration is not accurately described as a standard single indoor-unit-to-single outdoor-unit arrangement. “Dual-system” means the refrigeration capacity is divided into two independent or coordinated refrigerant circuits, so the outdoor-unit topology must support both circuits as specified for the model. Reducing that architecture to one ordinary indoor/outdoor pair ignores the circuit count and the redundancy or staged-capacity behavior it provides. During design, each circuit’s piping, power, communication, isolation valves, and outdoor heat-rejection equipment must be matched to the manufacturer’s layout. Commissioning also checks each system independently before combined operation. The statement is false because it combines a correct dual-system attribute with an incompatible claim about the standard connection arrangement. Exact quantities and pairings should always be taken from the selected model’s engineering data and bill of materials.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e586000a3e635796",
+    "question": "The UPS5000 seismic components are suitable for use in earthquake-prone areas and can effectively support cabinets in the event of an earthquake of 9 intensities and below to prevent the cabinet from tipping over.",
+    "correctOptionLabels": ["A"],
+    "explanation": "True. The UPS5000 seismic components are intended to brace and support the cabinet in earthquake-prone installations, reducing the risk of overturning for the stated seismic intensity of 9 or below when installed as specified. Their effectiveness comes from transferring cabinet forces into the floor or supporting structure through engineered restraints rather than relying only on the cabinet’s weight. The rating applies to the complete approved installation: correct component selection, anchor type, floor strength, fastener torque, cabinet arrangement, and cable flexibility all matter. Seismic accessories do not make an unsuitable slab or raised floor adequate, and they do not replace a site-specific structural assessment or local code compliance. Heavy batteries and power modules create significant inertia, so preventing cabinet movement protects personnel, connected conductors, and adjacent equipment as well as the UPS itself.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e586000a4015222e",
+    "question": "When you create a camera in NetEco, you need to get () in addition to the IP address of the camera.",
+    "correctOptionLabels": ["B"],
+    "explanation": "B is correct: in addition to the camera IP address, the camera coding information is needed. The IP address identifies the network endpoint, but NetEco or the integrated video platform also needs the encoding or channel identity required to request and decode the correct video stream. Resolution, installation location, and brightness are useful design or display attributes, but they do not substitute for the stream’s coding configuration. During camera creation, technicians should also verify network reachability, credentials, time settings, supported protocol, and any IVS registration required by the deployment. A reachable ping alone does not prove that live video will work; mismatched encoding, channel, or access permissions can still prevent browsing. Correct camera coding ensures the management system requests a stream format and source that it can interpret and present to authorized operators.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e586000a445db9d4",
+    "question": "Closed hot and cold aisle systems increase cooling efficiency and reduce energy consumption.",
+    "correctOptionLabels": ["A"],
+    "explanation": "True. Hot- or cold-aisle containment separates server exhaust air from conditioned supply air, reducing recirculation and unwanted mixing. With a more predictable return temperature and airflow path, cooling units can deliver the required rack inlet conditions using less excess fan flow and with better heat-exchanger effectiveness. This can raise cooling efficiency and reduce energy consumption compared with an uncontained room that repeatedly mixes hot and cold air. The benefit is not automatic: blanking panels, sealed cable openings, balanced airflow, proper controls, and pressure management are needed. Fire detection and suppression, lighting, doors, and emergency egress must also be integrated into the enclosure design. Containment improves airflow organization; it does not reduce the IT heat load itself. Operators should verify rack inlet temperatures and tune fan or cooling setpoints rather than assuming enclosure installation alone produces savings.",
+    "needsReview": false,
+    "reviewNote": ""
+  }
+]

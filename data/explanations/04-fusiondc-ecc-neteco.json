@@ -1,0 +1,410 @@
+[
+  {
+    "id": "6aa2e57c0025b7dabd13",
+    "question": "In the FusionDC 1000, all the fire-fighting cables of the open line are worn with metal hoses, and the pipe ends are protected by a wire sleeve to prevent damage to the fire-fighting cables when a fire occurs.",
+    "correctOptionLabels": ["A"],
+    "explanation": "Correct answer: A (True). Exposed fire-protection wiring in a prefabricated data-center module needs mechanical protection because it remains part of a life-safety system during abnormal conditions. A metal hose shields the cable from impact, abrasion, heat exposure, and deformation along an open route. The protective sleeve or bushing at each pipe end is equally important: an unfinished metal edge can cut insulation while the cable is pulled, vibrates in service, or expands under heat. Damaged insulation could create a short circuit or open circuit just when smoke detection, alarm, or fire-suppression control is required. This installation detail therefore supports both electrical integrity and fire-system availability; simply routing the cable through metal without protecting the termination edge would leave a credible failure point.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57c00259d2b8aaa",
+    "question": "FusionDC1000 is an indoor intelligent micro-module data center solution.",
+    "correctOptionLabels": ["B"],
+    "explanation": "Correct answer: B (False). FusionDC 1000 is a prefabricated modular data-center solution intended to provide a deployable facility when a conventional data-center building is unavailable or undesirable. Its enclosure integrates the physical infrastructure needed for outdoor or building-independent deployment, rather than being merely an indoor intelligent micro-module installed inside an existing equipment room. An indoor micro-module product typically relies on the host building for its weather envelope and much of the surrounding facility context. FusionDC instead brings the enclosure together with power, cooling, racks, fire protection, and management as an engineered module. Confusing these categories leads to the wrong site assumptions: weather protection, transport, foundations, lifting, outdoor interfaces, and module joining are central to prefabricated FusionDC deployment but are not defining features of an indoor micro-module.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57c0025a6e1fa2e",
+    "question": "The insulation layer thickness of standard FusionDC1000A is 100mm.",
+    "correctOptionLabels": ["A"],
+    "explanation": "Correct answer: A (True). The standard FusionDC1000A enclosure uses a 100 mm insulation layer as part of its prefabricated building envelope. That layer is not decorative: it limits heat transfer between the outdoor environment and the controlled data-hall space, reduces cooling load, and helps the cooling system maintain stable inlet conditions for IT equipment. A continuous insulated envelope also reduces condensation risk by moderating interior surface temperatures, provided joints and penetrations are properly sealed. During installation, technicians must preserve the designed thickness and continuity around doors, cable entries, pipes, and module interfaces; crushed insulation or unsealed gaps create thermal bridges and air leakage. The stated 100 mm value is therefore a product configuration detail tied directly to energy efficiency, environmental control, and reliable operation of the integrated equipment.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57c0025ab8b2b45",
+    "question": "FusionDC1000A uses ( ) enclosure .",
+    "correctOptionLabels": ["A"],
+    "explanation": "Correct answer: A, a 40 ft enclosure. FusionDC1000A is packaged around a standard 40-foot prefabricated module format, which provides enough length for the integrated rack row and supporting power, cooling, fire-protection, and monitoring equipment while remaining compatible with established transport and lifting practices. The enclosure dimension is part of the product architecture, not a field-selected approximation. It affects the foundation footprint, delivery route, crane plan, clearances, cable and pipe entry locations, and the standard internal cabinet count. Selecting 45 ft, 50 ft, or 55 ft would change those interfaces and would no longer describe the standard FusionDC1000A configuration in the question. During deployment, drawings and civil works must therefore be checked against the specified 40 ft module before delivery, because dimensional mismatch can prevent placement or alignment of external services.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57c0025a5cde92b",
+    "question": "The FusionDC1000A series solution can meet the Tier4 power supply requirements when using the 2N power supply and distribution system.",
+    "correctOptionLabels": ["B"],
+    "explanation": "Correct answer: B (False). A 2N power architecture provides two independently sized power paths, but that topology alone does not establish Tier IV compliance. Tier IV is a facility-level outcome requiring fault tolerance and concurrent maintainability across the complete critical distribution path and supporting infrastructure. The assessment includes switching arrangements, common-mode failures, controls, maintenance isolation, cooling dependencies, and the behavior of the system during a single failure. A prefabricated solution may use 2N distribution as an important design element, yet still have components or operating arrangements that prevent the entire facility from satisfying every Tier IV requirement. Therefore the statement is too broad: specifying 2N does not automatically certify the FusionDC1000A series as meeting Tier IV power-supply requirements. The actual project design must be evaluated as a complete system against the applicable tier criteria.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57c0025a2f49648",
+    "question": "Which systems is prefabricated and integrated in the FusionDC1000A?",
+    "correctOptionLabels": ["A", "B", "C", "D", "E"],
+    "explanation": "Correct answers: A, B, C, D, and E. A, Rack, provides the standardized mounting and physical organization for IT equipment. B, Cooling, removes the IT heat load and maintains the controlled operating environment inside the enclosure. C, Fire Protection, supplies detection, alarm, and coordinated safety functions appropriate to an enclosed technical space. D, Power, distributes conditioned electrical energy to the IT racks and supporting infrastructure. E, Management, supervises equipment status, environment, energy, and alarms so operators can commission and maintain the module as one system. Their factory integration is the central value of FusionDC1000A: interfaces can be engineered and tested before shipment, reducing site construction and integration effort. Site work still must provide foundations, utility connections, grounding, external networking, and final commissioning, but these five subsystems arrive as coordinated parts of the prefabricated solution.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57c0025bcbfb1cd",
+    "question": "Q7 . The device accesses the ECC800 monitoring system through a smart ETH socket, using the () interface of the intelligent ETH socket.",
+    "correctOptionLabels": ["A"],
+    "explanation": "Correct answer: A, PoE. On the smart ETH socket, the downstream monitored device uses a PoE interface so communication and suitable DC power can be delivered through the same structured connection. The smart ETH assembly extends the ECC800 monitoring network and provides convenient device connection points around the module. FE identifies the Ethernet cascade or uplink side of the smart ETH infrastructure rather than the specified device-access interface. RS485 is a serial field bus used by supported controllers and sensors, while AI/DI accepts analog or dry-contact input signals; neither describes this Ethernet device connection. Using the designated PoE port simplifies cabling and helps preserve the intended monitoring topology, but installers must still follow the product wiring diagram and connect only compatible devices, because an RJ45-shaped connector does not by itself guarantee the same electrical function.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57c0025cff5e87c",
+    "question": "If heat detector or smoke detector in the FusionDC1000 triggers an alarm, the ( ) will generate continue alarm.",
+    "correctOptionLabels": ["C"],
+    "explanation": "Correct answer: C, the buzzer. A smoke or heat detector is an initiating device: it senses a fire-related condition and sends an alarm signal to the control system. The buzzer is the audible notification device that then produces the continuing local warning so personnel nearby recognize the hazardous condition and respond. An emergency light provides illumination for safe movement but is not the component described as generating the continuous audible alarm. The smoke detector and heat detector also do not serve as the alarm sounder merely because either can initiate the event. This distinction matters during commissioning: technicians should test the detector input, control logic, and buzzer output as a complete chain. A detector indication at the controller is insufficient if the audible notification path is disconnected, muted, or incorrectly wired.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57c0025bc9190e5",
+    "question": "FusionDC 1000C fanwall chilled water supply and return temperatures.",
+    "correctOptionLabels": ["C"],
+    "explanation": "Correct answer: C, 20 degrees C supply and 28 degrees C return. This pair represents the specified warm-water operating condition for the FusionDC 1000C fan-wall chilled-water system. The 8-degree temperature rise reflects heat absorbed from the data-hall air as water passes through the cooling coils. Warmer supply water can improve plant efficiency and expand opportunities for efficient heat rejection compared with traditional low-temperature chilled-water regimes, while the fan wall delivers the airflow needed across the coil and IT space. The 7/12 degrees C and 15/22 degrees C pairs describe different chilled-water design regimes and are not the marked standard here. In project work, these temperatures are design setpoints rather than universal values: water flow, coil selection, load, humidity control, and outdoor design conditions must all match the approved FusionDC engineering documentation.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57c0025b378699d",
+    "question": "Smart ETH sockets support up to () cascading.",
+    "correctOptionLabels": ["C"],
+    "explanation": "Correct answer: C, up to 32 smart ETH sockets can be cascaded. Cascading extends monitoring power and Ethernet connectivity along the prefabricated module without requiring every socket to run separately to the ECC800. The maximum is an engineering boundary for the supported topology: each added unit contributes cable length, connector loss, power demand, and another communications hop, so the chain cannot be expanded indefinitely. A design with 8 or 16 units would remain below the stated capacity but would not answer the maximum asked here, while 64 exceeds it. Installers should count every socket in the cascade, observe the specified input/output direction, and verify power and communications after termination. Staying within 32 is necessary, but correct cable type, total route length, power budget, and device compatibility remain essential for reliable operation.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57c002f08894da9",
+    "question": "Data center power supply levels can be classified into four levels: TierI, TierII, TierIII and Tier IV.",
+    "correctOptionLabels": ["A"],
+    "explanation": "Correct answer: A (True). The familiar tier framework defines four ascending facility availability levels: Tier I, Tier II, Tier III, and Tier IV. Broadly, the progression moves from a basic single-path infrastructure, through added redundant capacity, to concurrent maintainability, and finally to fault-tolerant operation. The tiers evaluate the behavior and topology of the supporting facility, not simply the nameplate reliability of an individual UPS or generator. They also should not be treated as a direct calculation of annual downtime or as a substitute for detailed project requirements. For FusionDC planning, the intended tier influences power paths, redundancy, isolation, maintenance arrangements, controls, and supporting cooling design. A project must demonstrate the complete facility-level criteria; installing a component marketed for high availability does not by itself establish a particular tier.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57c002ee9834aea",
+    "question": "FusionDC 1000C supports for 50 years service life in Class C3 environments with custom painting.",
+    "correctOptionLabels": ["A"],
+    "explanation": "Correct answer: A (True). For a FusionDC 1000C enclosure deployed in a Class C3 corrosive environment, the specified custom coating system supports the stated 50-year structural service-life objective. C3 describes a meaningful atmospheric corrosion exposure, so ordinary finish selection cannot simply be assumed adequate for decades outdoors. The custom painting system provides a protective barrier that slows moisture and contaminant attack on the underlying steel. Achieving the design life still depends on correct surface preparation, coating thickness and continuity, protected cut edges and fasteners, proper drainage, and repair of transport or installation damage. It also presumes inspection and maintenance throughout service. The statement therefore describes a configured corrosion-protection capability, not a guarantee that every component operates maintenance-free for 50 years or that standard painting is suitable in every site environment.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57c002ef651e97b",
+    "question": "The standard FusionDC 1000B product uses a ()-height module.",
+    "correctOptionLabels": ["C"],
+    "explanation": "Correct answer: C, a 3.6 m-high module. FusionDC 1000B uses this taller standard module to provide the internal clearances and service zones required by a larger prefabricated data-center arrangement. Height affects more than external appearance: it governs equipment clearance, overhead cable or pipe routing, airflow organization, lighting and fire-system placement, lifting geometry, transport planning, and the structural interface with stacked or adjacent modules. The other listed heights do not match the standard product configuration identified in the question. Before civil work or delivery, the 3.6 m dimension must be reflected in foundation drawings, crane and rigging studies, route surveys, and local planning checks. Project teams should also distinguish module height from final installed elevation, because foundations, roof fittings, external services, and transport frames may add separate clearance requirements.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57c002f0857d398",
+    "question": "The integrated UPSs in the FusionDC1000A need to be connected in parallel.",
+    "correctOptionLabels": ["B"],
+    "explanation": "Correct answer: B (False). The integrated UPS units in the standard FusionDC1000A arrangement do not inherently require output paralleling merely because more than one UPS is present. Multiple UPSs may belong to separate power paths or support the designed distribution architecture independently. Paralleling is a specific engineered operating mode that requires compatible equipment, synchronization, control wiring, protection coordination, and a configuration explicitly designed for shared load and redundancy. An unnecessary field parallel connection could defeat path separation, create circulating-current or protection problems, and depart from the factory-tested topology. Installers should therefore follow the project single-line diagram and Huawei commissioning procedure rather than assuming that all integrated UPS outputs must be tied together. Where a project actually specifies a parallel UPS system, that requirement will be explicit and must be commissioned as such.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57c002ef82ccdd1",
+    "question": "Next-generation data center will have the feature of Simple, Green, Smart and Reliable.",
+    "correctOptionLabels": ["A"],
+    "explanation": "Correct answer: A (True). The four terms summarize the design direction of next-generation data centers. Simple means standardized, modular construction and easier deployment rather than extensive one-off site integration. Green means reducing energy and resource consumption through efficient power conversion, cooling, and capacity use. Smart means using connected sensors, centralized monitoring, analytics, alarms, and assisted operations to make facility state visible and actionable. Reliable means maintaining safe, resilient service through sound architecture, quality equipment, protection, redundancy where required, and disciplined operations. These goals reinforce one another in a prefabricated solution: factory integration can shorten deployment, coordinated controls can improve efficiency, and continuous monitoring can reveal developing faults. They are still engineering objectives, not automatic outcomes; site design, commissioning, maintenance, and operating practices determine whether the installed data center actually delivers them.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57c002ed2194f82",
+    "question": "The large-scale FusionDC supports a maximum stacking of five layers.",
+    "correctOptionLabels": ["A"],
+    "explanation": "Correct answer: A (True). The large-scale FusionDC structural concept supports stacking to a maximum of five layers in the applicable engineered configuration. Stacking allows a prefabricated data-center campus to increase capacity while using land efficiently, but the five-layer figure is a product-system limit, not permission to stack modules without project engineering. Vertical loads, wind and seismic actions, foundations, inter-module connections, fire strategy, personnel access, equipment replacement routes, drainage, and external pipe and cable risers all become more demanding as layers are added. The final arrangement must use the approved structural design and comply with local codes and site conditions. Exceeding the stated maximum would move outside the validated product architecture. Even below five layers, the allowable layout can be constrained by module type, loading, geography, and authority approval.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57c002ef207f0ca",
+    "question": "A data center with 6 IT racks is needed in the airport urgently, but there is no building available. Which solution should be recommended?",
+    "correctOptionLabels": ["B"],
+    "explanation": "Correct answer: B, FusionDC 1000A. The requirement combines a small six-rack load, urgent delivery, and no available building. FusionDC 1000A fits because it is a compact prefabricated data-center facility with its own enclosure and integrated rack, power, cooling, fire-protection, and management systems. Much of the assembly and integration can be completed before delivery, reducing the amount of building construction and on-site coordination needed at the airport. Indoor FusionModule solutions are intended to be installed within a suitable host room and therefore do not directly solve the missing-building constraint. FusionDC 1000B addresses larger deployments and would be disproportionate to the stated six-rack requirement. The final airport design must still account for foundations, secure placement, utility availability, grounding, delivery access, noise, fire approval, and aviation-site restrictions.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57c002ef95c083a",
+    "question": "A railway company wants to build a main data center with more than 20 IT racks. What solution can be recommended (Multiple answer).",
+    "correctOptionLabels": ["A", "D"],
+    "explanation": "Correct answers: A and D. A, FusionModule 2000, is suitable when the railway company has an appropriate data-hall building and wants a modular indoor deployment for more than 20 racks. It integrates aisle, power, cooling, monitoring, and related infrastructure at micro-module scale while using the building envelope. D, FusionDC 1000B, is the prefabricated alternative for a larger main data center, especially where constructing or adapting a building is undesirable; modules can be expanded to meet the required rack count. The deciding factor is therefore not rack count alone but the site and construction strategy. FusionModule 800 and FusionModule 500 are aimed at smaller edge or equipment-room scenarios and are not the recommended large main-data-center choices here. Capacity, redundancy, growth, transport, utilities, and local codes must still be engineered for the selected solution.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57c002f0f34fcab",
+    "question": "Which description in the below is wrong?",
+    "correctOptionLabels": ["D"],
+    "explanation": "Correct answer: D is the wrong description. A traditional data center can be used to host cloud infrastructure; cloud computing depends on pooled compute, storage, networking, automation, and service operations, not on the building being prefabricated. Traditional construction may be slower, difficult to expand exactly on demand, and operationally inefficient when systems are fragmented, which explains the concerns represented by the other statements. Those disadvantages motivate modular and prefabricated approaches, but they do not make a conventional facility technically incapable of supporting a cloud data center. Many large cloud environments operate in traditionally constructed buildings that were purpose-designed for their load and availability needs. The sound comparison is therefore about schedule, capital phasing, efficiency, manageability, and risk, not an absolute prohibition on cloud use.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57c002eeedc12b2",
+    "question": "If one company wants to build a new DC with more than 20 racks, but they don’t have right buildings to use, so what solution can be recommended firstly?",
+    "correctOptionLabels": ["B"],
+    "explanation": "Correct answer: B, FusionDC 1000B. The project needs more than 20 racks and lacks a suitable building, so the first recommendation should be a larger prefabricated data-center solution with its own engineered enclosure. FusionDC 1000B can combine data-hall modules with integrated supporting infrastructure and can scale beyond the small all-in-one deployment range. Factory prefabrication shortens site work and reduces dependence on constructing a conventional data-hall shell before equipment installation. FusionModule 2000 is a strong indoor modular option, but it assumes an appropriate host building. FusionModule 800 and FusionModule 500 address smaller deployments and do not match the stated main capacity. Selection still requires a site-specific design covering foundations, delivery and lifting, utility power, cooling heat rejection, fire approval, network entry, redundancy, and planned expansion.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57c00389757626a",
+    "question": "How many IT cabinets are configured in the standard FusionDC1000A 40ft pre-fabricated module?",
+    "correctOptionLabels": ["C"],
+    "explanation": "Correct answer: C, eight IT cabinets. The standard 40-foot FusionDC1000A layout allocates space not only to IT racks but also to the integrated power, cooling, fire-protection, monitoring, access, and service-clearance requirements. Eight is therefore the defined standard cabinet count after those supporting functions and maintainable access zones are accommodated inside the enclosure. The external 40-foot length cannot be divided by nominal rack width to infer a larger number, because wall construction, doors, aisles, equipment compartments, and installation tolerances consume usable space. Likewise, a project-specific customized layout should not be confused with the standard configuration asked here. During planning, the eight cabinets establish the baseline for rack elevation, load allocation, cooling distribution, power outlets, network cabling, floor loading, and future capacity decisions.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57c003888bfcb4d",
+    "question": "What is the total IT load power of the FusionDC1000A 40ft standard configuration solution?",
+    "correctOptionLabels": ["A"],
+    "explanation": "Correct answer: A, 54 kW. This is the rated total IT load for the standard 40-foot FusionDC1000A configuration, distinct from the module’s total facility input. IT load refers to the power available to servers, storage, and network equipment in the IT cabinets; cooling, UPS losses, lighting, monitoring, and other support loads add to the upstream electrical demand. Designers must therefore use 54 kW for the standard IT capacity while separately sizing the utility connection, protection, and backup source for the complete module load and required redundancy. The value also anchors cooling and rack power planning: unevenly concentrated rack loads can exceed local distribution or airflow capability even when the aggregate remains below 54 kW. Any customized configuration must be checked against its own approved design rather than assuming the same standard rating.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57e003a797d94c1",
+    "question": "The access control devices in Huawei FusionModule2000 are classified into (). (Multiple answer)",
+    "correctOptionLabels": ["A", "B", "C", "D"],
+    "explanation": "Correct answers: A, B, C, and D. A combines fingerprint, card, and keypad authentication, allowing multiple credential factors in one terminal. B provides fingerprint and card authentication without the keypad. C combines card reading with keypad entry, supporting card-plus-code or separately configured credential methods. D uses facial recognition as the identity input for access control. All four are categories of access-control terminal supported for the Huawei smart-module context represented by this question. They perform credential capture; the controller or access actuator applies permissions, operates the lock, records events, and reports alarms. Choosing among them depends on the required security policy, enrollment process, environment, and project compatibility. Installation must also preserve emergency egress and fire-linkage behavior, because stronger entry authentication must never prevent safe exit during an emergency.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57e003a567329a9",
+    "question": "The functions provided by Huawei’s monitoring system NetEco are: (multiple choice)",
+    "correctOptionLabels": ["A", "B", "C", "D"],
+    "explanation": "Correct answers: A, B, C, and D. A provides 2D and 3D data-center views so operators can understand equipment and alarm location spatially. B adds module-level and cabinet-level views, letting users move from the overall facility to the equipment zone where action is needed. C presents the power-distribution view, which helps trace electrical relationships and operating state. D provides a view-creation tool so project layouts can be configured efficiently instead of being limited to one fixed screen. Together these functions turn raw monitoring points into operational context. A view is still only as accurate as its configuration and live data: devices, hierarchy, signal mapping, and physical placement must be commissioned correctly, and operators should verify alarms against the actual equipment before intervention.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57e003a71133bf2",
+    "question": "A smart ETH gateway should be installed ().",
+    "correctOptionLabels": ["D"],
+    "explanation": "Correct answer: D, at the side of the cable trough. That location keeps the smart ETH gateway close to the structured monitoring-cable route, allowing orderly PoE device connections and the Ethernet uplink while preserving access for inspection and replacement. Mounting beside the trough also supports separation and strain control: cables can enter and leave without hanging across doors, aisles, or moving skylight components. A network cabinet is not the specified distributed installation point, and the door head or control skylight would expose the gateway and its cabling to movement, restricted access, or mechanical interference. During installation, the gateway should be securely fixed in the documented orientation, kept clear of sharp edges and water paths, and labeled consistently with the monitoring topology. Correct placement reduces cable damage and makes troubleshooting the downstream devices much easier.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57e003a55a2e7d8",
+    "question": "By setting the mailbox parameters, the NetEco system will send an email to notify the user according to the set rules.",
+    "correctOptionLabels": ["A"],
+    "explanation": "Correct answer: A (True). NetEco can send email notifications after its mailbox settings and notification rules are configured. The mailbox parameters establish the mail service details and sender behavior; the rule determines which events are sent, to whom, and under what conditions. This separation prevents every event from being mailed indiscriminately and lets operations teams align notifications with alarm severity and responsibility. Successful configuration requires more than entering an address: network reachability, name resolution where used, authentication, encryption settings, sender authorization, recipient lists, and the selected alarm rule must all be valid. A commissioning test should generate a controlled event and confirm receipt, content, and recovery behavior. Email is a useful remote notification channel, but the alarm remains recorded in NetEco and should not rely on email as the sole life-safety or emergency-warning mechanism.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57e003a6144a0d8",
+    "question": "The () convert RS485/CAN protocol to the TCP protocol.",
+    "correctOptionLabels": ["B"],
+    "explanation": "Correct answer: B, the ETH converter. Its role is protocol and media integration: it accepts supported field-bus communications such as RS485 or CAN from downstream equipment and makes that device data available over an Ethernet/TCP-based monitoring network. This allows the ECC800 or upper-layer management system to supervise serial devices without each device having a native Ethernet interface. A skylight actuator performs mechanical and linkage control, not general protocol conversion. A Wi-Fi converter concerns wireless access, and a smart ETH gateway distributes Ethernet/PoE connectivity rather than serving as the named RS485/CAN-to-TCP converter in this question. Commissioning must match serial parameters and device addresses on the field side and network parameters on the Ethernet side. Incorrect baud rate, polarity, addressing, or IP configuration can leave a physically connected device unreachable.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57e003a728e77a7",
+    "question": "ECC800 uses PoE bus for southbound device extension.",
+    "correctOptionLabels": ["A"],
+    "explanation": "Correct answer: A (True). The ECC800 monitoring architecture uses PoE on its southbound side to extend compatible monitoring devices through components such as smart ETH sockets or gateways. Southbound means the network facing field devices, sensors, and subsystem controllers, rather than the upstream management connection. PoE is useful here because one structured cable can carry Ethernet communications and provide suitable DC power, reducing separate power wiring and simplifying modular deployment. The architecture still distinguishes PoE device ports from FE cascade links, serial buses, and AI/DI signal inputs; identical connector shapes must not be treated as interchangeable. During installation, technicians should follow the approved topology, remain within cascade and power limits, and verify link and device registration. A powered link alone does not prove successful monitoring if addressing, device type, or controller configuration is wrong.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57e003a8a781785",
+    "question": "On the NetEco, the door status is always open, we can identify with the faulty by (). (Multiple answer).",
+    "correctOptionLabels": ["A", "B", "C", "D"],
+    "explanation": "Correct answers: A, B, C, and D. A checks the actuator cabling because loss of power or control wiring can prevent the access-control assembly from reporting correctly. B verifies that the relevant cables actually reach the access actuator and are seated in the intended terminals. C checks the physical door itself; an open or poorly latched door can make the displayed state entirely accurate. D checks the door magnet’s angle and tightness, because misalignment or movement can keep the contact outside its sensing range even when the door appears closed. This sequence separates a real open-door condition from wiring, actuator, and sensor-alignment faults. After correction, close and open the door deliberately and confirm that both local input state and NetEco indication change consistently before returning the alarm to service.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57e003a78596a80",
+    "question": "Linkage rule of the multi-functional sensor and skylight can be set on the () menu of ECC800.",
+    "correctOptionLabels": ["C"],
+    "explanation": "Correct answer: C, the PLC menu. Here PLC refers to the programmable linkage logic in the ECC800, where an input condition from a multifunction sensor can be associated with an output action such as skylight control. The rule defines the cause-and-effect behavior rather than merely displaying a live value. Version information is informational, running parameters expose device settings and state, and access-user management controls identities and permissions; none is the menu for creating this automation relationship. Linkage rules must be commissioned carefully because a skylight may interact with fire detection, aisle containment, and access-control behavior. Technicians should verify the intended trigger, action, delay or recovery behavior, and priority against the project cause-and-effect design, then test the full sequence safely. A logical rule should not override required fire-safety interlocks.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57e003a6aa3a485",
+    "question": "The report functions of NetEco has a variety of presentation forms, including visualization of bar charts, pie charts, graphs, etc.",
+    "correctOptionLabels": ["A"],
+    "explanation": "Correct answer: A (True). NetEco reporting can present operational and management data in multiple visual forms, including bar charts, pie charts, and trend graphs. Each form serves a different analytical need: bars compare values across equipment or periods, pie charts show composition at a point in time, and graphs reveal change or recurring behavior over time. The underlying purpose is to make large volumes of facility data easier to interpret for energy, capacity, alarm, and maintenance decisions. A chart does not improve poor source data, so device mapping, units, time synchronization, collection intervals, and report filters must be correct. Operators should also choose a presentation suited to the question being asked; for example, a trend is more useful than a pie chart when diagnosing a temperature excursion. Reports support analysis but do not replace live alarm handling.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57e003a6f90b15b",
+    "question": "The video can be viewed on NetEco only after the video camera is configured on the Intelligent Video Surveillance (IVS) client server.",
+    "correctOptionLabels": ["A"],
+    "explanation": "Correct answer: A (True). NetEco is the management presentation layer, while the Intelligent Video Surveillance server provides the camera integration and video service that NetEco consumes. The camera must first be added and configured in the IVS environment so credentials, stream access, channel identity, and communication are established. Only then can NetEco associate that video resource with a site or device view and display it to an authorized user. Adding an icon or IP address only in NetEco does not substitute for IVS-side camera onboarding. During commissioning, verify camera power and network reachability, time synchronization, stream availability in the IVS client, the mapping into NetEco, and the user’s video permissions. This layered check distinguishes a camera or IVS problem from a NetEco display or authorization problem.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57f0004dee3c05c",
+    "question": "On the current alarm page of NetEco, filter criteria can’t be set to search for the required alarms.",
+    "correctOptionLabels": ["B"],
+    "explanation": "Correct answer: B (False). NetEco’s current-alarm page supports filter criteria so an operator can narrow the active alarm list to the events relevant to a site, device, severity, time, or other available field. Filtering is essential in a monitored data center because a flat list can obscure the incident that needs immediate attention. It changes the displayed search result, not the underlying alarm state: an alarm excluded by the current filter still exists and remains active until its condition clears or is handled according to system behavior. Operators should check for saved or residual filters when an expected alarm seems absent, then verify the monitored device and signal path. Proper filtering speeds diagnosis, but overly narrow criteria can create the false impression that the system has no alarms.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57f0004e050c233",
+    "question": "(T or F) ECC800 can't send alarms by email.",
+    "correctOptionLabels": ["B"],
+    "explanation": "Correct answer: B (False). The ECC800 can issue alarm notifications by email when the mail service and notification settings are correctly configured. The controller or its management environment evaluates alarm events and uses the configured mailbox path to notify designated recipients according to the selected rules. Saying it cannot send email confuses an unconfigured or unreachable mail server with a missing product function. Commissioning should validate network routing, DNS if hostnames are used, sender authentication, encryption requirements, recipient addresses, and the alarm levels selected for notification. A controlled test alarm should confirm delivery and recovery messages. Email is asynchronous and depends on external infrastructure, so operators must still use the ECC800 or NetEco alarm list as the authoritative operational record and should not treat email as the only emergency indication.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57f0004ea594242",
+    "question": "(Multiple Answer) What's the function of “SW” button on ECC800？",
+    "correctOptionLabels": ["A", "B"],
+    "explanation": "Correct answers: A and B. A, restoring the default IP address, provides a recovery path when the configured network address is unknown or prevents local management access; the required press duration and resulting reset scope must follow the controller manual. B, wireless network pairing, places the ECC800’s supported wireless device network into a state where compatible nodes can join. The same physical button uses different press patterns for different maintenance actions, so a casual or incorrectly timed press can trigger an unintended function. Software update is performed through the supported update workflow, and routine alarm clearing is an application operation rather than the two functions asked here. Before using SW, identify the controller version, back up important configuration where appropriate, and observe indicators so the intended operation is confirmed.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57f0004db58f4cb",
+    "question": "NetEco cannot send work orders to processors.",
+    "correctOptionLabels": ["B"],
+    "explanation": "Correct answer: B (False). NetEco supports work-order handling and can dispatch a work order to the assigned processor as part of an operations workflow. Monitoring identifies the event, but a work order turns that information into accountable action by recording the task, responsible person, progress, and closure. This supports consistent maintenance rather than relying on an informal alarm acknowledgment. Delivery depends on correct user accounts, roles, contact or workflow configuration, and assignment rules; a failed dispatch or unavailable recipient does not mean the platform lacks the function. Operators should verify that the work order contains enough site, device, alarm, priority, and safety context for the processor to act. Closing the work order should also be tied to verification that the physical fault or maintenance need has actually been resolved.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57f0004d41a0881",
+    "question": "(Multiple Answer) On the \"report management\" of NetEco, users can ( ).",
+    "correctOptionLabels": ["A", "B", "C", "D"],
+    "explanation": "Correct answers: A, B, C, and D. A lets users view a report task and inspect its configuration or status. B creates a report task by defining the data scope, time range, schedule, and presentation needed for operations. C starts a task so it can generate output according to that definition. D stops a task when generation is no longer required or the schedule must be suspended. These controls cover the basic report-task lifecycle rather than only viewing finished files. Access depends on the user’s permissions, and stopping a task should be distinguished from deleting its definition or historical outputs. Administrators should use clear task names, appropriate schedules, and bounded data ranges so reports remain useful without placing unnecessary load on the management platform.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57f0004c35297d5",
+    "question": "() can connect to AI/DI port on the access actuator.",
+    "correctOptionLabels": ["C"],
+    "explanation": "Correct answer: C, the exit button. An exit button is a simple contact input that tells the access actuator a person is requesting egress, so it is suited to an AI/DI channel configured for the appropriate dry-contact behavior. The actuator then applies the access logic and releases the magnetic lock through its controlled output path. Credential readers such as fingerprint or IC card readers require their designated reader communications interface, while the magnetic lock is a powered output device rather than an input sensor. Correct terminal selection matters for both function and safety: installers must configure the input type, verify normally open or normally closed behavior as designed, and test that pressing the button releases the door and records the expected event. Emergency egress and fire-linkage requirements remain independent safety obligations.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57f0004c071ce21",
+    "question": "Historical data can be exported from the ECC800.",
+    "correctOptionLabels": ["A"],
+    "explanation": "Correct answer: A (True). The ECC800 provides a supported way to export historical data, allowing operators to analyze past environmental values, equipment performance, energy information, and events outside the live WebUI. Exported history is useful for trend analysis, incident reconstruction, maintenance evidence, and comparison before and after a configuration or equipment change. The function depends on the data actually being collected and retained; an export cannot reconstruct signals that were never mapped, were disabled, or fell outside the retention period. Users also need suitable permissions and should protect exported files because facility data may reveal operational patterns. After export, check the selected devices, signal names, units, and time range before drawing conclusions. Time synchronization across the ECC800 and monitored equipment is especially important when correlating an alarm with changes in power, temperature, access, or cooling behavior.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57f0004e63c252c",
+    "question": "(Single Answer) How many users can edit micro-module view at the same time on the ECC800 web UI？",
+    "correctOptionLabels": ["A"],
+    "explanation": "Correct answer: A, one user. The ECC800 WebUI allows only a single user to edit the micro-module plan view at a time. This edit lock prevents two administrators from moving devices or changing the same layout concurrently and then overwriting one another’s work. Other users may still be able to view operational information according to their permissions, but the layout-modification session is exclusive. The restriction protects configuration consistency because the plan view maps monitored devices to physical positions used for navigation and alarm location. Before editing, an administrator should obtain the approved layout, complete the changes promptly, and exit edit mode so the lock is released. If editing appears unavailable, check for another active editing session or an abandoned session before assuming that the plan-view function has failed.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57f0004ba21a77c",
+    "question": "The alarm management functions of the ECC800 include (). (Multiplel answer)",
+    "correctOptionLabels": ["A", "B", "C", "D"],
+    "explanation": "Correct answers: A, B, C, and D. A, viewing historical alarms, supports incident review after an alarm is no longer current. B, exporting alarms, lets operators preserve or analyze alarm records externally. C, filtering alarms, narrows a large event set by relevant criteria so active diagnosis is faster. D, setting alarm parameters, configures how supported signals are evaluated and presented, subject to user permissions and device capabilities. Together these functions cover review, extraction, search, and configuration. They should be used carefully: a filter can hide an alarm from the current display without clearing it, and changing parameters can suppress useful warning or create nuisance events. Alarm settings should follow the commissioning design, while exported and historical records should retain timestamps and device identity for reliable troubleshooting.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57f0004cad68a53",
+    "question": "After all the NetEco monitoring cables are connected, users need to check (). (Multiple answer)",
+    "correctOptionLabels": ["A", "B", "C", "D"],
+    "explanation": "Correct answers: A, B, C, and D. A checks that signal-cable connectors are intact, because bent contacts, cracked housings, or incomplete termination can cause intermittent data. B confirms power and signal cables are bundled separately, reducing electromagnetic coupling and making maintenance safer and clearer. C requires service slack at cable turning points so the route is not pulled tight or forced below its bend radius. D requires slack at connectors so equipment can be serviced without loading or unplugging the termination. These are physical-quality checks before logical commissioning. Afterward, technicians should verify labels, shielding and grounding where specified, route security, and end-to-end communication. A device appearing online at one moment does not excuse poor cable workmanship that can later produce unstable monitoring or difficult maintenance.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57f000ee54f2a91",
+    "question": "Which function belongs to the capacity management function of Huawei NetEco?",
+    "correctOptionLabels": ["C"],
+    "explanation": "Correct answer: C, automatically evaluating space, power, and cooling capacity and optimizing server installation position. Capacity management asks whether a proposed IT load can be placed safely and efficiently, not merely whether empty rack units exist. NetEco considers the three coupled resources: physical rack space, available electrical capacity, and cooling capability. A candidate rack may have room yet lack sufficient power or local cooling margin, so SPC evaluation helps avoid hotspots, overloaded distribution, and stranded capacity. Asset-status reports belong to asset management, refrigerant-charge detection is an equipment-monitoring function, and one-click inspection health reports belong to inspection or maintenance management. Capacity recommendations still depend on accurate rack layouts, device inventory, rated limits, and live measurements. Operators must validate the proposed placement against project rules and actual cabling, airflow, weight, and redundancy constraints before installation.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57f000eeb29d1d7",
+    "question": "Which of the following statements about ECC800-Pro collector is incorrect?",
+    "correctOptionLabels": ["B"],
+    "explanation": "Correct answer: B is the incorrect statement. The ECC800-Pro main control module exposes five AI/DI functions in the documented interface set: three dedicated AIDI ports plus two combined COM/AIDI ports. It therefore should not be described as supporting six AI/DI ports. These inputs allow the controller to acquire analog or dry-contact conditions from compatible field devices when the port type and alarm logic are configured correctly. The distinction is important during point planning: counting a nonexistent sixth input can leave a sensor without a valid termination or force an unplanned expansion component late in commissioning. Port names also matter because the combined interfaces share functions and cannot always be allocated independently. Engineers should build the I/O schedule from the exact controller hardware version and project configuration rather than counting every connector as a dedicated AI/DI channel.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57f000eece428fb",
+    "question": "Which of the following parameters affects the alarm triggering conditions of the NetEco?",
+    "correctOptionLabels": ["B"],
+    "explanation": "Correct answer: B, the alarm threshold. A threshold defines the value or boundary at which a monitored condition changes into an alarm state, such as temperature rising above an allowed level. It therefore directly affects whether and when NetEco triggers the alarm. Alarm name is descriptive metadata, severity controls priority and handling after the condition exists, and alarm sound controls notification presentation; those settings do not establish the measured boundary that causes the event. Thresholds must be chosen from equipment requirements and the facility operating envelope, with suitable recovery behavior or hysteresis where supported to avoid repeated toggling near the boundary. Setting a threshold too loosely can delay detection of a developing problem, while setting it too tightly can create nuisance alarms that operators begin to ignore. Changes should be authorized, documented, and tested.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57f000eec3153cf",
+    "question": "Which of the following ports on the smart ETH gateway is used by a device to communicate with the ECC800-Pro?",
+    "correctOptionLabels": ["A"],
+    "explanation": "Correct answer: A, the PoE port. A compatible downstream device connects to the smart ETH gateway’s PoE interface, which carries Ethernet communications toward the ECC800-Pro and can supply the device with the designed DC power over the same cable. The gateway’s FE connection serves the network uplink or cascade role, while RS485 and AI/DI are different southbound signal types used for serial equipment or direct sensor contacts. Treating those interfaces as interchangeable can damage equipment or leave it unregistered. During commissioning, connect the device to the documented PoE port, verify the gateway’s uplink to the ECC800-Pro, and then confirm that the controller discovers or communicates with the correct device. Link indication should be followed by a functional data check, because physical connectivity does not prove correct addressing, mapping, or device configuration.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57f000ec9e9a3d5",
+    "question": "The ECC800-Pro supports two AC inputs.",
+    "correctOptionLabels": ["A"],
+    "explanation": "Correct answer: A (True). The ECC800-Pro can be equipped with two AC power inputs, supporting a dual-supply arrangement for the controller. This improves monitoring availability because loss or maintenance of one source need not immediately remove the controller’s supervision, provided the other source and associated power module remain healthy. Dual inputs should come from the power paths defined by the project design so a single upstream failure does not defeat both feeds. They are not a substitute for correct protection, grounding, cable segregation, and source verification. During commissioning, technicians should confirm input voltage and phase requirements from the product documentation, label both feeds, verify each source independently, and check that power-failure alarms behave as intended. The monitored data-center equipment may continue operating even if monitoring power is lost, making resilient controller supply operationally important.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57f000ef4a7bac6",
+    "question": "During smoke sensor commissioning, no alarm is displayed on the NetEco. What are the possible causes of this problem? (Multiple answer)",
+    "correctOptionLabels": ["A", "B", "D"],
+    "explanation": "Correct answers: A, B, and D. A: if the alarm function for the connected AI/DI port is not enabled, the controller may read the input without generating the alarm event NetEco expects. B: a masked alarm is intentionally suppressed from normal reporting, so the sensor can change state without appearing as an active NetEco alarm. D: a faulty smoke sensor may never change its output during the test, leaving the input normal. These causes span configuration, suppression, and field hardware, so troubleshooting should follow the signal path in that order: verify the physical test and sensor output, observe the ECC800 input state, confirm port type and alarm enablement, check masking, and then confirm NetEco communication. Alarm severity changes priority and presentation; it normally does not prevent the underlying configured event from being generated.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57f000efbc843f3",
+    "question": "Which of the following statements about “SW” button on the ECC800-Pro are correct? (Multiple answer)",
+    "correctOptionLabels": ["A", "B", "C", "D"],
+    "explanation": "Correct answers: A, B, C, and D. A uses the SW button to enter RF_Z wireless pairing mode for compatible 802.15.4 devices. B enables the ECC800-Pro’s WLAN function for supported local wireless access. C restores the default IP address as part of a defined long-press recovery operation. D erases network parameters using its own documented press duration. These actions share one physical button but are distinguished by how long or how often it is pressed, with indicator behavior helping confirm the selected mode. Because some operations disrupt connectivity or reset configuration, technicians must identify the exact hardware and software version, follow the manual’s timing, and back up important settings before recovery work. The button should not be pressed experimentally on a live controller; an unintended reset can interrupt monitoring access and require recommissioning.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57f000ede72c38c",
+    "question": "Which is not the access control device of Huawei smart module?",
+    "correctOptionLabels": ["D"],
+    "explanation": "Correct answer: D, voice access control, is not one of the access-control device types identified for the Huawei smart-module solution in this question. The supported terminal categories include fingerprint-and-card readers with a keypad, card readers with a keypad, and facial-recognition access control. Those devices capture a credential and pass the result through the access-control system so the actuator can apply permissions, release the lock, and record the event. Voice operation is not part of that defined device set and should not be assumed available simply because other biometric methods are supported. During design, select only terminals listed for the exact module and controller version, and coordinate their wiring interface, power, enrollment, user permissions, lock type, exit button, door contact, and fire-release linkage. Access convenience must remain subordinate to reliable emergency egress.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57f000ef9ed8682",
+    "question": "If the ECC800 is configured with a SIM card, the SIM card should be installed in ().",
+    "correctOptionLabels": ["B"],
+    "explanation": "Correct answer: B, the left slot of the ECC800 main control module. The SIM belongs in the dedicated SIM-card slot associated with the main control module’s cellular communications hardware, not in a power-module bay, beneath an antenna connector, or in the USB interface. Correct placement lets the controller use the provisioned mobile service for supported communication or alarm functions when the appropriate cellular module and configuration are present. Installation should be performed with the orientation specified in the hardware guide and with electrostatic precautions; forcing the card into an unrelated opening can damage both card and controller. After insertion, configure the required mobile-network parameters, connect the proper antenna, and verify registration and signal condition. A physically installed SIM alone does not establish service if the subscription, coverage, hardware option, or controller settings are unsuitable.",
+    "needsReview": false,
+    "reviewNote": ""
+  }
+]

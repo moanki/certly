@@ -1,0 +1,498 @@
+[
+  {
+    "id": "6aa2e58700035bf99cbb",
+    "question": "Before final commissioning, while the NetCol5000-A indoor and outdoor units are awaiting refrigerant charging or the assembled line is being pressure-tested, the refrigerant line contains ().",
+    "correctOptionLabels": ["C"],
+    "explanation": "C is correct: dry nitrogen is used before final commissioning to keep an uncharged refrigerant line dry and to pressure-test the assembled circuit for leaks. Nitrogen is inert and contains none of the moisture that could freeze at a restriction, react with refrigerant oil, or promote internal corrosion. Air and oxygen are unsuitable because they introduce moisture and oxidation risk; oxygen can also create a serious reaction or fire hazard in contact with oil. After pressure testing, technicians release the nitrogen safely, evacuate the circuit to remove residual gas and moisture, verify that the vacuum holds, and charge the refrigerant specified for the model. A completed operating system contains refrigerant, whereas nitrogen belongs only to the pre-commissioning and test stages.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e58700036390b031",
+    "question": "When calculating the battery capacity, the battery discharge capacity coefficients of the different backup times are the same.",
+    "correctOptionLabels": ["B"],
+    "explanation": "The statement is False, so B is correct. A battery does not deliver the same usable ampere-hour capacity at every discharge duration. Short backup times require a higher discharge current, which increases internal voltage drop and electrochemical losses; the battery reaches its end-of-discharge voltage sooner and its effective capacity is lower. Longer backup times use a lower current and permit more of the rated capacity to be recovered. Battery-sizing methods therefore apply discharge-capacity or time-rate coefficients appropriate to the required autonomy, load, battery type, temperature, aging margin, and cutoff voltage. Reusing one coefficient for all backup times can undersize the bank, leaving the UPS unable to sustain the specified load for the required duration.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e587000373afe47e",
+    "question": "When the UPS5000 series multi-rack networking is parallel, the host should set to ().",
+    "correctOptionLabels": ["A"],
+    "explanation": "The correct answer is A, one to many. In a multi-rack parallel UPS5000 system, the designated host must supervise and exchange management information with several parallel cabinets. A one-to-many network mode represents that relationship: one host coordinates visibility of multiple member units. One-to-one would cover only a single peer, while many-to-one reverses the intended management role. This setting supports system-level monitoring and coordinated representation of the parallel group; it does not replace the dedicated parallel-control connections that synchronize inverter outputs and load sharing. During commissioning, engineers should apply unique addresses, consistent communication parameters, and the specified host/member roles, then verify that every rack appears correctly and that aggregate status, capacity, and alarms reflect the full system.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e587000373d7702b",
+    "question": "The function of the ATS input units / MCCB input unit of the integrated UPS is ().",
+    "correctOptionLabels": ["B"],
+    "explanation": "The correct answer is B: the ATS input unit or MCCB input unit provides a dual or single input to the integrated UPS cabinet. An ATS selects between two permitted incoming sources and transfers the cabinet supply according to its control logic, whereas an MCCB input unit provides protected isolation for a single incoming source. Both are therefore input-side assemblies. They are not output distribution branches for utility or UPS power, and monitoring alone is not their primary electrical function. Correct installation requires verifying source arrangement, phase sequence, protective-device ratings, neutral and earthing design, interlocks, and safe isolation. Commissioning should confirm that the selected input reaches the downstream UPS and distribution sections without unintended paralleling of independent sources.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e587001c76d0aae5",
+    "question": "NetEco does not support sending reports to customers by email.",
+    "correctOptionLabels": ["B"],
+    "explanation": "The statement is False, so B is correct. NetEco supports report management together with email delivery, allowing generated reports to be sent to configured recipients rather than requiring every user to log in and download them manually. The function depends on a valid mail-server configuration, reachable network path, sender settings, recipient addresses, report task, and suitable user permissions. A report schedule determines when content is generated, while email settings determine how that output is delivered. If delivery fails, operators should check the report task result separately from SMTP connectivity, authentication, certificates, firewall policy, and recipient filtering. The capability is therefore supported, but it is not automatic until the reporting and notification infrastructure has been correctly configured and tested.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e587001c7ca872e1",
+    "question": "In the process of using the battery, in order to reduce the deterioration of the voltage imbalance between the batteries, it is necessary to increase the charging voltage of the battery pack, and to activate and charge the battery to extend the battery life, which is called ().",
+    "correctOptionLabels": ["C"],
+    "explanation": "The correct answer is C, balanced charging. This charging stage raises the battery-string charging voltage above the normal float-maintenance level for a controlled period. Its purpose is to restore charge more fully and reduce state-of-charge or terminal-voltage differences among batteries in the string. Float charging, by contrast, maintains an already charged battery at a lower continuous voltage, while self-discharge is the natural loss of stored charge and a charging test is a diagnostic activity rather than this operating mode. Balanced charging must follow the battery manufacturer's limits because excessive voltage or duration increases gassing, temperature, water loss, and plate corrosion. It helps correct charge imbalance, but it cannot repair a battery that is physically damaged or has permanently lost capacity.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e587001c8158639f",
+    "question": "On the panel of the air conditioning unit, in the group control topology diagram, the difference between this machine and other machines is that there is a green border.",
+    "correctOptionLabels": ["A"],
+    "explanation": "The statement is True, so A is correct. In the group-control topology shown on a precision air conditioner's local panel, a green border identifies the unit whose interface is currently being viewed. The distinction matters because the same topology also displays peer units participating in coordinated control, and an operator must know whether a command or setting applies to the local unit or another member. The border is a display convention, not evidence that the bordered unit is healthier, carrying more load, or acting as the permanent group master. Before changing parameters, technicians should confirm the selected unit, its address, and the scope of the setting, then verify that group membership and communications remain normal after the change.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e587001c87c19c47",
+    "question": "In the Huawei NetCol5000-A line class precision air conditioner, the () parts are optional.",
+    "correctOptionLabels": ["D"],
+    "explanation": "The correct answer is D, electric heating. The fan, evaporator, and compressor are fundamental parts of the NetCol5000-A direct-expansion cooling process: the fan moves room air, the evaporator absorbs heat from that air, and the compressor circulates refrigerant and raises its pressure for heat rejection. Electric heating is an optional environmental-control function used when the design must add sensible heat, such as during dehumidification control or low-load conditions. Omitting it does not remove the unit's core cooling path. Whether the heater is specified should follow the selected product configuration and site humidity-control requirements. If fitted, its power demand, protective device, control interlock, and commissioning checks must be included in the electrical and functional design.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e587001c8ae771c9",
+    "question": "To modify the plane view of the ECC800 micromodule, need to log in to the web operate with administrator privileges.",
+    "correctOptionLabels": ["A"],
+    "explanation": "The statement is True, so A is correct. Modifying the ECC800 micro-module plane view changes the managed representation of cabinets, devices, or layout elements rather than merely viewing live status. That configuration can affect how operators locate alarms and interpret the physical module, so it is restricted to an administrator-level web session. Role-based access prevents ordinary monitoring users from accidentally altering the operational model. The administrator should first verify the actual installed layout, use authorized credentials, make only the intended changes, and confirm afterward that device associations and alarm locations remain accurate. Administrator privilege grants the ability to perform the operation; it does not remove the need for change control, configuration backup, and validation against the physical installation.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e587001c8e13de46",
+    "question": "ECC800 does not support historical data export.",
+    "correctOptionLabels": ["B"],
+    "explanation": "The statement is False, so B is correct. ECC800 supports exporting historical data collected from managed equipment and environmental sensors. Export lets operators perform offline trending, retain records, compare conditions over time, and support fault analysis beyond the live dashboard. The useful result depends on correct data-point collection, device communication, controller time settings, retention, and the selected export period. Historical export is different from real-time monitoring: a current value can be visible even when the desired earlier interval was never retained, and an exported file does not itself prove sensor accuracy. During commissioning, engineers should verify timestamps, units, sampling coverage, and representative values against the source equipment so exported records are dependable for maintenance and analysis.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e587001c913fadf9",
+    "question": "Which of the following air conditioning systems need to be equipped with a cooling tower or dry cooler?",
+    "correctOptionLabels": ["D"],
+    "explanation": "The correct answer is D, a water-cooled direct-expansion system. Its indoor DX refrigeration circuit rejects heat through a water-cooled condenser into a condenser-water loop. That loop must then release the heat outdoors, typically through a cooling tower or a dry cooler selected for the project conditions. A conventional air-cooled DX system rejects condenser heat directly to outdoor air through an outdoor condensing unit, so it does not require that water-loop heat-rejection equipment. Direct ventilation uses outdoor air when conditions permit, and a chilled-water air-handling unit receives chilled water from a separate plant whose exact heat-rejection arrangement is a plant-level design choice. The key mechanism is the water-cooled DX condenser's need for an external device to cool its circulating water.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e587001c91971dc7",
+    "question": "In order to implement the alarm event remote notification function on NetEco, which of the following tasks need to be set? (Multiple choice)",
+    "correctOptionLabels": ["A", "B", "C", "D"],
+    "explanation": "The correct answers are A, B, C, and D. Each setting supplies a required part of NetEco's remote-alarm workflow.\n\n- A defines the notification content template, controlling the useful alarm details included in the message.\n- B configures the notification server that transports email or another supported notification type.\n- C identifies user groups whose members are eligible recipients.\n- D creates the remote-notification rules that map qualifying alarms, severities, schedules, and recipients.\n\nTogether they answer what to send, how to send it, who receives it, and when an event should trigger delivery. Commissioning should use a controlled test alarm and verify message content, recipient scope, timestamps, recovery behavior, and delivery failures without generating unnecessary operational alerts.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e587001c932ac3d2",
+    "question": "NetEco’s access control management function cannot modify the door name.",
+    "correctOptionLabels": ["B"],
+    "explanation": "The statement is False, so B is correct. NetEco access-control management allows an authorized user to modify a door's displayed name. Meaningful names connect logical access events to the physical facility, making alarms, entry records, and operator actions easier to interpret than generic device identifiers. Renaming does not change the door controller's wiring, lock behavior, or identity unless separate configuration is performed; it changes the managed label used by the platform. Administrators should use a consistent site naming convention, ensure the selected logical door matches the real entrance, and verify event records after the change. Restricting this operation by user role prevents accidental relabeling that could misdirect security response or confuse audit records.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e587001c9be48803",
+    "question": "When four UPS2000G-20K parallel units are set and the number of redundant units in the parallel setting is set to “1”, the capacity of the system is () KVA.",
+    "correctOptionLabels": ["C"],
+    "explanation": "The correct answer is C, 60 kVA. Four parallel UPS2000G units rated at 20 kVA each provide 80 kVA of installed capacity. Configuring one unit as redundant reserves the equivalent of one 20 kVA unit so the remaining three units can carry the protected load if one unit is unavailable. The usable system capacity is therefore (4 - 1) x 20 kVA = 60 kVA. The 80 kVA figure is raw installed capacity without the N+1 reserve, while 40 kVA understates the available nonredundant units. This calculation assumes compatible units, correct parallel commissioning, and a load that also remains within the system's real-power, phase-balance, and operating limits.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e587002649448a0d",
+    "question": "You cannot search for an alarm by setting a filter condition on NetCol’s Current Alarms page.",
+    "correctOptionLabels": ["B"],
+    "explanation": "The statement is False, so B is correct. The Current Alarms page supports filter conditions that narrow the displayed list to relevant alarms. Filters help an operator focus on a device, alarm severity, status, or other available field when many events are active. They affect the search view, not the underlying alarm condition: an event hidden by the current criteria still exists until its cause clears or the system records recovery. If an expected alarm appears missing, the operator should inspect and reset overly restrictive filters before assuming monitoring has failed. Filtering improves diagnosis only when device naming, timestamps, and alarm data are correctly commissioned, and it should never substitute for resolving the physical cause of a critical cooling alarm.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5870026527a9a77",
+    "question": "When the NetCol5000-A removes the air conditioning humidifier, the steps to maintain the electrode humidifier, the steps to maintain the electrode humidifier include (). (Multiple choice)",
+    "correctOptionLabels": ["A", "B", "C", "D"],
+    "explanation": "The correct answers are A, B, C, and D; together they describe the water-side disassembly and maintenance needed for the electrode humidifier.\n\n- A disconnects the water-supply-valve and drain-valve wiring so the assembly can be removed safely.\n- B removes the drain tank and drain-valve component for access and cleaning.\n- C removes and cleans the supply valve, where deposits can restrict filling.\n- D replaces hardened or brittle hose and thoroughly flushes the drain path, preventing leakage and blockage.\n\nBefore work, isolate electrical power and water, allow hot parts to cool, and document connectors. Reassembly should restore correct hose routing, clamps, wiring, and seals, followed by a controlled fill, humidification, drain, and leak test.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e587002654c1e56e",
+    "question": "Which of the following components do not support wireless networking?",
+    "correctOptionLabels": ["C"],
+    "explanation": "The correct answer is C, the ETH converter. The access-control actuator, AC actuator, and skylight actuator are field components designed to participate in the ECC800's supported wireless device network where that project configuration is used. The ETH converter instead provides a wired Ethernet conversion or communication function, so it is not itself a wireless-networking endpoint in this classification. Wireless support still depends on compatible hardware, correct antenna installation, addressing, pairing, and acceptable radio conditions; the label does not imply that every deployment should omit control cabling. During commissioning, technicians should verify each actuator's identity, signal quality, command response, and fail-safe behavior. A wired ETH converter should be tested through its specified network interfaces rather than searched for as a wireless device.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e587002654e04c74",
+    "question": "It is necessary to remove the fixed sheet metal parts of the compressor before installing the indoor unit in the air-cooled air conditioner.",
+    "correctOptionLabels": ["A"],
+    "explanation": "The statement is True, so A is correct. Compressor fixing sheet-metal parts are transportation restraints used to prevent damaging movement while the indoor unit is shipped. They must be removed at the prescribed installation stage so the compressor can operate on its designed vibration-isolation mounts. Leaving transport restraints engaged can transmit compressor vibration into the cabinet and piping, producing abnormal noise, mechanical stress, and possible fatigue damage. Removal should follow the installation guide: identify only the marked shipping brackets, keep required structural parts in place, and inspect the compressor and refrigerant piping afterward. The unit must remain safely isolated and stable during the work. Commissioning should confirm that no shipping hardware remains and that vibration and sound are normal after startup.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e58700266104520d",
+    "question": "On the NetEco interface, a modular can only bind () ECC800 devices.",
+    "correctOptionLabels": ["A"],
+    "explanation": "The correct answer is A: one ECC800 device can be bound to a module on the NetEco interface. The ECC800 is the module-level controller that aggregates environmental, power, cooling, access, and alarm data for that physical micro-module. A one-to-one binding prevents two controllers from representing the same module or one module view from mixing inconsistent device hierarchies. Multiple modules may be managed by NetEco, but each module object is associated with its own ECC800. During configuration, operators should verify the controller address, module identity, and physical location before binding, then check that cabinets, sensors, and alarms populate under the correct module. An incorrect binding can make valid data appear in the wrong operational context and misdirect maintenance response.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e58700266199fc14",
+    "question": "What are the access control type of the micro module? (Multiple choice)",
+    "correctOptionLabels": ["A", "B", "C", "D"],
+    "explanation": "The correct answers are A, B, C, and D. The micro-module access-control offering can use several credential combinations.\n\n- A combines fingerprint, password, and card-swiping methods in one access-control terminal.\n- B combines fingerprint and card credentials.\n- C combines password and card credentials.\n- D uses face recognition as a biometric access method.\n\nThese variants let a project select the identity method and authentication strength appropriate to its security policy. Availability of a terminal type does not mean all methods should be enabled for every user. Enrollment, permissions, door linkage, emergency release, event logging, and privacy controls must be configured and tested. Access decisions should fail safely according to the approved fire and security design while remaining traceable in the management system.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e587002665b3264d",
+    "question": "Fusion Module 1000 is an indoor intelligent micro-module data center solution.",
+    "correctOptionLabels": ["B"],
+    "explanation": "The statement is False, so B is correct. FusionModule1000 is positioned as an outdoor, prefabricated modular data-center solution rather than an indoor aisle-style intelligent micro-module. It integrates facility subsystems in an enclosure suitable for deployment as a compact site, reducing the amount of conventional building work required. Indoor micro-module solutions are installed within a prepared equipment room and organize cabinets, containment, power, cooling, and monitoring inside that room. Confusing the two changes important engineering assumptions: weather exposure, enclosure protection, site foundation, external interfaces, transport, fire protection, and environmental operating conditions differ from an indoor installation. Product selection and construction drawings must therefore follow the exact FusionModule family and configuration instead of treating all modular data centers as interchangeable indoor systems.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5870026660ad4db",
+    "question": "In the “Video” function of NetEco, you can perform operations such as (). (Multiple choice)",
+    "correctOptionLabels": ["A", "B", "C", "D"],
+    "explanation": "The correct answers are A, B, C, and D. NetEco's Video function covers both camera administration and live use.\n\n- A creates a camera record so the platform can manage a new video source.\n- B deletes a camera that should no longer be present in the managed system.\n- C modifies camera parameters or descriptive information when configuration changes.\n- D provides live video browsing for authorized operational viewing.\n\nThese operations form the basic camera lifecycle: add, maintain, view, and remove. Administrators should use stable names and locations, verify network reachability and time synchronization, restrict live video and configuration by role, and confirm that deleting a logical camera does not create an untracked physical security device. Video availability also depends on the camera and network, not NetEco configuration alone.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e58700266669b70d",
+    "question": "In the naming of UPS5000-E-120k-HASBS, the letter E stands for ().",
+    "correctOptionLabels": ["B"],
+    "explanation": "The correct answer is B: E identifies the E-series modular UPS. In the UPS5000-E-120k-HASBS designation, the family suffix distinguishes this modular product series, while the remaining model characters describe other capacity or configuration attributes. It does not mean a 208 V system and does not identify whether the cabinet input switch is an ATS or MCCB; those are separate electrical configuration choices. Correctly reading the model name matters when selecting documentation, spare parts, power modules, and cabinet options because visually similar UPS5000 variants can differ in architecture and ratings. Engineers should still verify the full nameplate and project bill of materials rather than inferring an entire installation configuration from the single letter E.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5870026723d7cc6",
+    "question": "The NetCol5000-A35kW indoor unit installation needs to be connected to the zero line.",
+    "correctOptionLabels": ["B"],
+    "explanation": "The statement is False, so B is correct. The specified NetCol5000-A 35 kW indoor unit uses its designed three-phase supply arrangement and does not require a neutral, or “zero line,” connection for the unit power input. Protective earthing remains mandatory and must never be confused with a neutral conductor. Adding an unnecessary neutral or bonding neutral and earth at the equipment can create circulating current, protection problems, and unsafe touch conditions. Installation should follow the exact terminal markings and product electrical diagram, with verified voltage, phase sequence, breaker and cable sizing, isolation, and protective-earth continuity. Auxiliary options must also be checked against their approved wiring because the main unit's no-neutral requirement should not be generalized to unrelated site circuits.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e587003009c89280",
+    "question": "The EPO status interface of the UPS5000-E can select a normal open or normally closed interface according to actual use.",
+    "correctOptionLabels": ["A"],
+    "explanation": "The statement is True, so A is correct. The UPS5000-E emergency-power-off status input can be configured for a normally open or normally closed contact to match the site's emergency-control circuit. Supporting both contact conventions allows integration with different fire-control or emergency-stop designs while preserving the required logical action. The selected mode must agree with the actual field wiring; a mismatch can produce a persistent EPO state or, more seriously, prevent a real emergency command from being recognized. Normally closed monitoring is often useful for detecting an open circuit, but the project safety design governs the choice. Commissioning requires controlled testing of contact state, alarm indication, shutdown response, reset procedure, and any upstream or downstream interlocks under an approved method statement.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5870030130da5cf",
+    "question": "When ATS is in the automatic mode, the manual operating handle must be removed.",
+    "correctOptionLabels": ["A"],
+    "explanation": "The statement is True, so A is correct. The removable manual handle is intended for deliberate local operation or maintenance of the automatic transfer switch. It must not remain engaged when the ATS is returned to automatic mode because it can obstruct motor-driven movement, expose personnel to unexpected motion, or leave the mechanism in an unintended manual condition. Removing and storing the handle restores the designed automatic operating path and makes the switch state clearer to operators. Before enabling automatic control, technicians should confirm that the mechanism is fully seated, the handle is removed, source voltages and phase conditions are acceptable, interlocks are normal, and automatic transfer and retransfer logic have been tested safely. Manual operation should follow isolation and arc-flash precautions.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e58700301a7afcea",
+    "question": "NetCol5000-A air conditioning compressor exhaust temperature is too high, what are the reasons? (Multiple choice)",
+    "correctOptionLabels": ["A", "B", "C", "D"],
+    "explanation": "The correct answers are A, B, C, and D; each can drive excessive compressor discharge temperature.\n\n- A: A restriction in the refrigerant circuit can starve or overload parts of the cycle and raise compression temperature.\n- B: Incorrect outdoor-unit installation can impair airflow or heat rejection.\n- C: A dirty or blocked condenser reduces heat transfer, raising condensing pressure and compressor workload.\n- D: Too little refrigerant can cause low suction density and inadequate compressor cooling, producing high superheat and discharge temperature.\n\nDiagnosis should compare pressures, temperatures, superheat, subcooling, airflow, and fault history rather than charging refrigerant by guesswork. Work on the sealed circuit requires qualified personnel, safe isolation, leak checking, and the specified recovery and charging process.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e58700301acfd3ca",
+    "question": "The NetEco system can customize the alarm sound for different levels of alarms.",
+    "correctOptionLabels": ["A"],
+    "explanation": "The statement is True, so A is correct. NetEco can associate different audible indications with alarm levels, helping operators distinguish critical events from lower-severity conditions without reading every entry first. The sound is an attention aid layered on the alarm's configured severity, text, device, and timestamp; it does not determine the engineering seriousness of the underlying event. Administrators should choose recognizable sounds, keep mappings consistent across operator stations, and avoid excessive or confusing audio that encourages muting. Commissioning should trigger representative test alarms at each level, confirm the expected sound and visual record, and verify acknowledgement and recovery behavior. Remote notifications and escalation rules remain separately configured channels even when local alarm audio is customized.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e58700301ce94f1e",
+    "question": "The UPS5000-E can press the battery cold start button on the bypass module without the main bypass input to start the inverter and the system will automatically enter the battery inverter mode.",
+    "correctOptionLabels": ["A"],
+    "explanation": "The statement is True, so A is correct. Battery cold start allows the UPS5000-E to energize its control and inverter path from the connected battery when neither mains nor bypass input is available. Pressing the designated cold-start control on the bypass module initiates startup, after which the inverter supplies the output from battery energy and the system reports battery inverter operation. This function is useful during commissioning or an extended utility outage, but runtime is limited by battery state, load, temperature, and configured cutoff conditions. Before use, technicians must confirm correct battery polarity and voltage, closed battery protection, safe output conditions, and that the connected load can be supported. Cold start does not create an AC bypass source or remove normal startup and safety checks.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e58700302a226995",
+    "question": "The alarms of all devices can be displayed on the NetEco, but the corresponding alarm automatic formation work orders cannot be sent to the processor.",
+    "correctOptionLabels": ["B"],
+    "explanation": "The statement is False, so B is correct. NetEco can use alarm information to generate work orders automatically and route them to the configured processor as part of an operations workflow. Alarm display provides awareness; work-order integration turns a qualifying event into an assigned, trackable maintenance action. Effective automation requires rules that define which alarms create orders, the responsible personnel or group, notification channels, and escalation or closure behavior. Without those settings, alarms may still be visible while no order is dispatched, but that is a configuration state rather than a product limitation. Testing should confirm that one controlled alarm produces one correctly prioritized order, reaches the intended processor, and updates appropriately when the alarm recovers or the work is completed.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e58700302a9a59fa",
+    "question": "After the NEtCol5000-C is set to the hot backup function, no backup machine is running, and a single unit adjusts the water valve opening according to the detected actual temperature to respond to the demand.",
+    "correctOptionLabels": ["A"],
+    "explanation": "The statement is True, so A is correct. With hot-backup group control configured, the designated standby unit remains available but does not normally run while the active unit can meet demand. The operating NetCol5000-C compares the detected temperature with its control target and modulates the chilled-water valve to vary cooling output. This avoids unnecessary simultaneous operation while keeping a backup unit ready to start if the active unit fails or if conditions exceed the configured response threshold. “Hot backup” describes readiness and coordinated changeover, not continuous cooling by every member. Commissioning should verify sensor accuracy, valve direction and stroke, group addresses, active/standby roles, switchover behavior, and alarm handling so a failure does not leave the room without cooling.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e58700302f1d0bed",
+    "question": "The rated capacity of the battery: also called the nominal capacity, according to the national standard or line standard requirements, is the lowest capacity value that should be released.",
+    "correctOptionLabels": ["A"],
+    "explanation": "The statement is True, so A is correct. Rated, or nominal, battery capacity is the minimum quantity of charge a compliant battery is expected to deliver under the specified standard test conditions. Those conditions include discharge rate, end voltage, temperature, and charging preparation, because measured ampere-hours change when any of them changes. The rating is therefore a guaranteed reference value, not a promise that the battery will deliver identical capacity at every load or temperature. In a UPS design, engineers apply manufacturer discharge data plus aging, temperature, and design margins to meet the required autonomy. Capacity testing must reproduce the relevant conditions and monitor individual units; a nameplate value alone cannot demonstrate the health of an installed, aging battery string.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e58700303585334c",
+    "question": "Which of the following is not the reason why the NetCol 8000-A infrared humidifier water tray is not filled with water?",
+    "correctOptionLabels": ["B"],
+    "explanation": "The correct answer is B, infrared lamp damage; it is not a cause of the water tray failing to fill. Filling depends on the water-supply path. A blocked injection pipe prevents flow, abnormal water pressure can leave insufficient inlet force, and a closed inlet valve physically stops the supply. The infrared lamp heats water already present in the tray to produce vapor, so a failed lamp causes poor or absent humidification after filling rather than preventing water admission. Troubleshooting should first verify the inlet valve, supply pressure, pipe condition, fill command, and water-level sensing. Electrical isolation is required before inspecting the lamp or tray, and water must be controlled to avoid leakage into energized equipment. Separating fill faults from heating faults prevents unnecessary lamp replacement.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5870030359079e1",
+    "question": "NEtEco mobile app supports WiFi with a maximum effective distance of ( ) meters.",
+    "correctOptionLabels": ["D"],
+    "explanation": "The correct answer is D, 50 meters. The course specification treats 50 m as the maximum effective Wi-Fi distance for the NetEco mobile-app connection under suitable conditions. That figure is a deployment ceiling, not a guaranteed radius in every equipment room. Metal cabinets, walls, reinforced structures, antenna placement, interference, channel congestion, and client-device capability can all reduce usable range. Engineers should therefore design and validate wireless coverage at the actual site rather than placing an access point solely from the nominal distance. Commissioning should test authentication, signal stability, roaming if applicable, and app communication at required work locations while preserving network segmentation and access control. If coverage is unreliable, improve the approved wireless infrastructure rather than assuming the application itself is faulty.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5870039c652f921",
+    "question": "Cold/hot channel enclosure is an energy-saving technology used to solve data center cooling problems.",
+    "correctOptionLabels": ["A"],
+    "explanation": "The statement is True, so A is correct. Cold- or hot-aisle containment separates the supply-air path from the hot server exhaust path. This reduces recirculation of hot air into equipment inlets and prevents conditioned air from short-circuiting directly back to the cooling unit. With less mixing, inlet temperatures become more uniform, cooling capacity is used more effectively, and fan or compressor operation can often be optimized while maintaining safe IT conditions. Containment is not a source of cooling by itself; it improves airflow management around the existing cooling system. Effective deployment also requires blanking panels, sealed cable openings, suitable pressure control, fire-system coordination, and verification that doors or roof panels do not obstruct emergency access or maintenance.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5870039c71c4157",
+    "question": "Direct Ventilation Natural Cooling Solution in the direct ventilation mode, the compressor of the air conditioner stops working, mainly because the fan replaces the outdoor cold air with the indoor hot air, so the PUE is very low.",
+    "correctOptionLabels": ["A"],
+    "explanation": "The statement is True, so A is correct. In direct-ventilation natural-cooling mode, suitable cool outdoor air is moved into the data space while warmer indoor air is discharged. Fans provide the airflow needed to carry away IT heat, allowing mechanical refrigeration compressors to stop. Because fan power is normally much lower than compressor-based cooling power for the same heat load, facility overhead falls and PUE can improve. The mode is available only when outdoor temperature, humidity, cleanliness, and pressure conditions satisfy the control limits. Filtration, dampers, weather protection, and monitoring remain essential, and the system must return to mixed or mechanical cooling when outdoor air cannot maintain the required indoor environment. Low PUE results from reduced cooling energy, not from eliminating environmental control.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5870039d0b0733d",
+    "question": "After the air conditioner is commissioned, the indoor temperature is in a reasonable state, and the suction pressure is not lower than ( ).",
+    "correctOptionLabels": ["D"],
+    "explanation": "The correct answer is D, 0.7 MPa. Under the commissioning condition stated, the NetCol system's suction pressure should not fall below this threshold once indoor temperature is reasonable. Suction pressure reflects evaporating conditions and refrigerant flow returning to the compressor. An abnormally low value can indicate insufficient refrigerant, restricted flow, inadequate evaporator airflow, or an unsuitable load condition, each of which can reduce cooling and overheat the compressor. The other choices of 5, 6, or 7 MPa are far above a plausible suction-side value for this context and would confuse low-side and high-side pressure scales. Technicians should assess pressure together with refrigerant type, temperatures, superheat, airflow, and alarms, using rated instruments and the approved commissioning procedure rather than adjusting charge from one reading alone.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5870039d3b2b2fc",
+    "question": "What does NetEco basic features include? (Multiple choice)",
+    "correctOptionLabels": ["A", "B", "C", "D"],
+    "explanation": "The correct answers are A, B, C, and D. These are all core NetEco management functions.\n\n- A, video management, lets authorized operators configure cameras and browse live video.\n- B, report management, turns collected facility data into scheduled or on-demand operational reports.\n- C, access-control management, supervises doors, permissions, and access events.\n- D, user management, controls accounts, roles, and authorization within the platform.\n\nTogether they support physical visibility, operational reporting, site security, and controlled system use. Each feature depends on correct device integration and permissions: cameras and controllers must be reachable, report data must be valid, door mappings must match the site, and user rights should follow least-privilege practice. Their presence does not eliminate commissioning or governance.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5870039d6fba44e",
+    "question": "What does the gas fire extinguishing system startup principle include? (Multiple choice)",
+    "correctOptionLabels": ["A", "B", "D"],
+    "explanation": "The correct answers are A, B, and D. They are the recognized initiation paths for the gas fire-extinguishing system.\n\n- A, automatic start, uses confirmed detector and controller logic to begin the warning and discharge sequence without an operator command.\n- B, emergency start, provides a dedicated emergency means to initiate release when urgent human intervention is required.\n- D, manual start, allows authorized personnel to command the system through its prescribed manual control.\n\n“Safe start” is not a separate startup mode in this classification. All valid modes must preserve warning delays, shutdown interlocks, evacuation, and release feedback defined by the fire design. Testing requires strict controls to prevent unintended agent discharge and must distinguish simulated input checks from a live release.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5870039e4946b27",
+    "question": "Which of the following technology or scheme can effectively reduce the PUE? (Multiple choice)",
+    "correctOptionLabels": ["B", "C", "D"],
+    "explanation": "The correct answers are B, C, and D. Each reduces facility energy used to support the IT load.\n\n- B: An efficient modular UPS lowers conversion losses and can match installed power capacity more closely to demand.\n- C: A closed cold or hot passage limits mixing and recirculation, allowing cooling equipment to operate more efficiently.\n- D: Precise air supply delivers cooling where the heat load requires it, reducing bypass airflow and local overcooling.\n\nIncreasing battery capacity does not normally improve operating PUE; it adds stored-energy capability and may add charging or environmental overhead. PUE improvement must be confirmed through consistent measurement boundaries and load conditions, because an efficient component can still underperform if it is oversized, poorly controlled, or badly commissioned.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5870039e7a0f489",
+    "question": "ECC800 default management authority user name is admin, admin has all the rights to operate the web interface function.",
+    "correctOptionLabels": ["A"],
+    "explanation": "The statement is True, so A is correct. The ECC800's default management account is named admin, and that role has full permission to operate and configure web-interface functions. This level of access is needed for commissioning tasks such as device integration, layout changes, alarm settings, and user administration. It also creates security risk if default credentials or unrestricted access remain in service. The installer should change the default password, restrict management-network reachability, create named accounts with only the permissions each operator requires, and retain administrator access for controlled tasks. Activity and time settings should be verified so configuration changes are traceable. Full interface rights describe authorization capability; they do not make every action safe or appropriate without change control.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5870039f751891e",
+    "question": "UPS2000-A-(1-3kVA) closes the mains input switch and directly enters the bypass working state.",
+    "correctOptionLabels": ["A"],
+    "explanation": "The statement is True, so A is correct. When the mains input switch of the UPS2000-A 1-3 kVA model is closed, acceptable utility power is initially supplied through the bypass path while the UPS control circuits initialize and the inverter startup sequence is completed. Bypass therefore provides a controlled temporary supply path rather than requiring the load to remain de-energized throughout startup. After checks and startup conditions are satisfied, the UPS can transfer to its normal inverter operating mode. This behavior assumes the bypass source is within permitted limits and the unit has no blocking fault. Operators should verify wiring, output safety, source quality, and front-panel state, and should not mistake startup bypass for the protected double-conversion state intended during normal service.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5870039fbe0c260",
+    "question": "The technical essentials for the pumping action of the pipeline are: the degree of vacuum is not greater than ( ) Pa (absolute pressure).",
+    "correctOptionLabels": ["D"],
+    "explanation": "The correct answer is D, 60 Pa absolute pressure. Evacuating the refrigerant pipeline to no more than this absolute pressure removes air and, critically, lowers the boiling point of residual moisture so it can be extracted before charging. Moisture or non-condensable gas left in the circuit can cause unstable pressures, reduced heat transfer, oil degradation, corrosion, icing at restrictions, and premature compressor failure. The value is absolute pressure, not gauge pressure, so the measurement method and instrument scale matter. Technicians should use a suitable vacuum pump and calibrated vacuum gauge, isolate the pump, and verify that pressure holds as required; a rapid rise can indicate leakage or remaining moisture. Oxygen must never be used for pressure testing or purging a refrigeration circuit.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5870039ffdf827b",
+    "question": "When the FusionModule1000 fire protection system is adjusted, the smoke detector can be heated to simulate the fire alarm of the temperature sensor.",
+    "correctOptionLabels": ["B"],
+    "explanation": "The statement is False, so B is correct. Heating a smoke detector does not simulate the temperature detector's alarm because the two devices sense different fire signatures. A heat detector responds to its specified temperature or rate-of-rise condition, while a smoke detector responds to combustion aerosols entering its sensing chamber. Applying the wrong stimulus can fail to prove the intended input and may damage the detector. Commissioning should use the approved test method and suitable test tool for each detector type, verify the correct zone and alarm text, and confirm warning, linkage, delay, and recovery behavior. Any gas-release output must be safely isolated or placed in the prescribed test state so functional testing cannot accidentally discharge extinguishing agent while personnel are present.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e588000441802fc9",
+    "question": "At present, the industry PUE value can be optimally achieved ( ).",
+    "correctOptionLabels": ["A"],
+    "explanation": "The stored answer is A, 1.06. PUE equals total facility energy divided by IT-equipment energy, so its theoretical lower bound is 1.0: all energy would reach IT equipment with no power, cooling, lighting, or auxiliary overhead. A value of 1.06 represents only about six percent facility overhead and is therefore physically plausible for an exceptionally optimized facility using efficient power conversion, favorable cooling conditions, airflow control, and high utilization. Values below 1.0, including 0.5 and -0.5, are impossible under the definition, while 2.0 indicates much larger overhead. Because “at present” is time-sensitive and PUE depends on measurement boundary and climate, 1.06 should be treated as the course-era benchmark rather than a universal current record.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e58800044b9bb477",
+    "question": "BCB-BOX is a UPS5000-E option for connection control between battery pack and UPS system. It has overload, short circuit protection and remote management trip function.",
+    "correctOptionLabels": ["A"],
+    "explanation": "The statement is True, so A is correct. The BCB-BOX is an optional battery circuit-breaker assembly installed between the UPS5000-E and its battery string or bank. It provides a controlled means to connect and isolate the DC source and protects the battery circuit against excessive current and short-circuit faults within its rated application. Its remote trip capability also allows the UPS or associated safety logic to open the battery path when required. This does not replace correct cable sizing, battery-string protection coordination, polarity checks, or safe maintenance isolation. Installation must follow the approved DC arrangement because battery systems can deliver very high fault current even when AC input is absent. Commissioning should verify local operation, status feedback, remote trip, interlocks, and restoration procedure.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e588000454df831e",
+    "question": "Which web interface can the user log in to view the running status of the device in the micromodule?",
+    "correctOptionLabels": ["B"],
+    "explanation": "The correct answer is B, the ECC800 web interface. ECC800 is the micro-module's local management controller, collecting measurements, status, and alarms from connected power, cooling, environmental, access-control, and other devices. Logging in to its web interface gives an authorized user a consolidated operational view. A water-leak sensor, cabinet electronic lock, and sound-and-light alarm are field devices; they provide sensing or actuation but are not the management web portal for the module. Reliable visibility depends on correct device communications, addressing, time synchronization, and point mapping. During commissioning, displayed values and alarms should be checked against the source equipment, and user roles should separate routine monitoring from configuration or control privileges.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e588000458bc8515",
+    "question": "What may NetCol 5000-C insulation cotton damage result in?",
+    "correctOptionLabels": ["C"],
+    "explanation": "The correct answer is C, pipeline condensation. Insulation around chilled-water or cold refrigerant piping keeps the outer surface from falling below the surrounding air's dew point. If the insulation cotton is torn, compressed, missing, or wet, warm humid air reaches the cold pipe surface and water vapor condenses. The resulting moisture can drip into the unit or room, damage nearby equipment, promote corrosion or biological growth, and trigger leak alarms. It does not directly cause excessive fan noise, block the fan, or reduce pump drainage capacity as the primary consequence. Maintenance should replace damaged insulation with the specified material, restore vapor-barrier continuity, seal joints and penetrations, and confirm that no underlying leak is being mistaken for condensation.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e58800045a003748",
+    "question": "When there are multiple computer rooms and are monitored at the same time, it is possible to generate a hierarchical deployment of the monitoring system.",
+    "correctOptionLabels": ["A"],
+    "explanation": "The statement is True, so A is correct. A hierarchical monitoring deployment lets multiple equipment rooms or sites feed information into higher-level management while retaining local collection and organization. The hierarchy can represent campuses, buildings, rooms, modules, and devices, allowing operators to move from an enterprise overview to the location of a specific alarm. It also supports scaling and delegated responsibilities more cleanly than placing every point in one flat view. The design must define which platform level owns configuration, how alarms and historical data are forwarded, how duplicate events are avoided, and what happens if an upstream link fails. Consistent naming, time synchronization, permissions, and network security are essential so the hierarchy reflects the physical estate accurately.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e58800045c3c99d6",
+    "question": "When the NetCol5000-C commissions the drainage device, lift the high floater by hand for 5 seconds. At this time the dual water pump is turned on at the same time, and the “discharge abnormality alarm” appears.",
+    "correctOptionLabels": ["A"],
+    "explanation": "The statement is True, so A is correct. Lifting the high-level float during drainage commissioning simulates an abnormally high condensate level. Holding it for the specified five seconds allows the controller's confirmation logic to recognize the condition. Both drain pumps are then commanded to run to maximize water removal, and a discharge-abnormality alarm is generated because the high-level input indicates that normal drainage is not keeping up. This test checks the float input, pump commands, alarm path, and emergency drainage response together. Before testing, technicians should ensure the drain path is connected, pumps are safe to operate, and water cannot reach electrical equipment. After releasing the float, they should verify normal pump stopping, alarm recovery, and absence of leakage or blockage.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5880004602e0765",
+    "question": "When installing the power line on the UPS5000-E, if there are different sources on the main side, you need to remove the copper bars connected to the bypass ad the main circuit and then connect the main circuit and the bypass input respectively.",
+    "correctOptionLabels": ["A"],
+    "explanation": "The statement is True, so A is correct. The factory copper links join the rectifier mains input and bypass input for a common-source arrangement. When the UPS5000-E uses independent mains and bypass sources, those links must be removed so each source feeds only its intended input terminals. Leaving them installed could electrically tie two sources together, creating uncontrolled backfeed, severe fault current, incorrect protection operation, and danger to personnel. After isolation and absence-of-voltage verification, qualified installers should remove the specified bars, connect each source according to the wiring diagram, and confirm phase sequence, neutral and earthing arrangement, breaker coordination, and source labeling. Commissioning must verify that loss of either input produces the expected UPS state without energizing the other source path.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e588000466dda3cc",
+    "question": "In general, the air supply distance of the air duct is shorter than that of the hood air supply.",
+    "correctOptionLabels": ["B"],
+    "explanation": "The statement is False, so B is correct. Ducted air supply generally carries conditioned air farther than a simple hood or plenum discharge because the duct confines and directs the airflow to remote outlets. A hood supply releases air closer to the unit and relies more heavily on room geometry and free-jet behavior, so its effective delivery distance is usually shorter. Duct performance is not unlimited: pressure loss grows with length, bends, fittings, filters, and outlet resistance, and the fan must have sufficient external-static-pressure capability. Good design balances the branches and sizes the duct so required airflow reaches each load without excessive noise or energy use. The statement reverses the normal relationship between these two air-distribution methods.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e58800046f58f550",
+    "question": "Huawei NetCol5000-A line-level precision air conditioner mainly solves the hot issue of high- density data center.",
+    "correctOptionLabels": ["A"],
+    "explanation": "The statement is True, so A is correct. NetCol5000-A is a row-level precision air conditioner positioned close to high-density IT cabinets. The short supply and return paths reduce mixing between cold air and hot exhaust, allowing the unit to remove concentrated sensible heat more directly than distant room-level cooling alone. This helps control server inlet temperatures and local hot spots as rack power density rises. The unit still depends on correct row layout, containment, airflow direction, refrigerant piping, outdoor heat rejection, sensors, and control settings. Row cooling cannot compensate for blocked server airflow or badly arranged cabinets by itself. Commissioning should verify delivered airflow, return-air conditions, fan control, cooling capacity, and representative rack inlet temperatures under load.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e58800046ff92cac",
+    "question": "When the NetCol5000-A air conditioners was commissioned, which statement about the possible cause of the “exhaust high pressure alarm” was wrong?",
+    "correctOptionLabels": ["D"],
+    "explanation": "The correct answer is D: too little refrigerant charge is the wrong proposed cause of an exhaust high-pressure alarm. High discharge pressure occurs when the condenser cannot reject heat or when too much refrigerant occupies the high side. An outdoor fan that cannot start, an outdoor fan running too slowly, and a dirty or obstructed condenser all reduce airflow and heat transfer; excessive refrigerant charge can also elevate condensing pressure. Too little charge more commonly produces low suction pressure, inadequate cooling, bubbles or high superheat, and potentially high discharge temperature, but not high condensing pressure as the primary symptom. Diagnosis should verify fans, airflow, coil cleanliness, ambient conditions, pressures, and charge by the approved method before opening or adjusting the refrigerant circuit.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e588000d5243048a",
+    "question": "The scenario is complex, and the difficulty of creating a new site is the only challenge facing the development of traditional data center services.",
+    "correctOptionLabels": ["B"],
+    "explanation": "The statement is False, so B is correct. Difficult site creation in complex scenarios is one challenge for traditional data-center delivery, but it is not the only one. Conventional projects can also face long design and construction cycles, fragmented on-site integration, high initial investment, inefficient operation at low utilization, difficult capacity expansion, inconsistent quality, and labor-intensive maintenance. Power and cooling efficiency, reliability, manageability, space use, and adaptation to changing IT demand all affect service development. Modular and prefabricated approaches address several of these pressures through standardization, factory integration, phased capacity, and coordinated monitoring, although they still require sound site engineering. The word “only” makes the claim incorrect because it excludes the broader lifecycle challenges from planning through operation.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e588000d5c98f914",
+    "question": "When the temperature detector or smoke detector in the Fusion Module 1000 generates an alarm, () emits a continuous beeping sound to remind you to take measures as soon as possible to avoid a major accident. (Multiple choice).",
+    "correctOptionLabels": ["A", "B", "D"],
+    "explanation": "A, B, and D are correct audible notification devices. A, the controller buzzer, provides a local continuous warning when the fire-control logic enters the alarm state. B, the fire alarm bell, produces an audible site alarm so personnel can respond and evacuate promptly. D, the sound-and-light alarm, combines an audible signal with a visible indication, improving warning coverage in noisy areas or where the alarm cannot be heard clearly. The temperature detector and smoke detector have a different role: they sense heat or smoke and initiate alarm inputs; they are not being identified here as the sound-producing appliances. Commissioning should test each detector-to-notification path separately while safely inhibiting extinguishing-agent release, then verify alarm timing, audibility, visual indication, acknowledgement, and recovery against the approved cause-and-effect design.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e588000d5df64054",
+    "question": "When the battery is out of control, what is the main cause of deformation and bulging due to the internal pressure becomes larger?",
+    "correctOptionLabels": ["C"],
+    "explanation": "The correct answer is C, gas precipitation, meaning gas generation and accumulation inside the battery. During severe overcharge, excessive temperature, internal failure, or thermal runaway, electrochemical reactions produce gas faster than the valve-regulated battery can recombine or vent it. Internal pressure then rises and deforms or bulges the case. Electrolyte leakage may be a consequence of damage, not the primary pressure-generating mechanism, and simply having more electrolyte does not explain rapid swelling. Plate “gasification” is not the applicable failure description. A bulging battery is unsafe: isolate charging according to procedure, control ignition sources, ventilate the area, avoid applying pressure to the case, and have qualified personnel assess and replace the affected unit while investigating charger voltage, temperature, and string condition.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e588000d5e77bd0e",
+    "question": "The default equalized-charge voltage of the UPS2000-G is () V/cell.",
+    "correctOptionLabels": ["B"],
+    "explanation": "B is correct: the UPS2000-G preset equalized-charge voltage is 2.35 V per cell. Equalized charging temporarily applies a higher voltage to restore charge more fully and reduce state-of-charge or terminal-voltage imbalance among batteries in a series string. It differs from float charging, which uses a lower continuous voltage to compensate for self-discharge while limiting long-term gassing and corrosion. Stating the value per cell allows the UPS to derive the appropriate total string voltage from the configured battery count. Equalized charging must be used only with a supported battery configuration and within the battery manufacturer's voltage, temperature, and duration limits. Excessive voltage or time can cause heating, gas generation, water loss, plate corrosion, and shortened service life rather than improving battery condition.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e588000d60d3d9f8",
+    "question": "What are the working mode of the runner natural cooling scheme? (Multiple choice)",
+    "correctOptionLabels": ["A", "C", "D"],
+    "explanation": "The correct answers are A, C, and D. The natural-cooling scheme operates in three staged modes according to outdoor conditions and cooling demand.\n\n- A, complete compressor cooling, uses mechanical refrigeration when ambient conditions cannot provide useful natural cooling.\n- C, mixed mode, combines natural cooling with compressor operation when free cooling can meet only part of the load.\n- D, complete natural cooling, meets the cooling demand through the economizer mechanism without compressor operation when conditions permit.\n\nB, direct ventilation, is not a mode of this runner-based scheme because it would introduce outdoor air directly rather than using the scheme's controlled heat-transfer path. Automatic transitions require reliable temperature sensing, valve or pump control, and protection against unsuitable operating conditions.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e588000d66d91741",
+    "question": "The 2.4G antenna on the ECC800 should be installed in ().",
+    "correctOptionLabels": ["A"],
+    "explanation": "The correct answer is A, the RF_ZA interface. That connector is the designated radio-frequency port for the ECC800's 2.4 GHz wireless antenna. The 3G/4G antenna interface belongs to cellular communication and is tuned and connected for a different radio subsystem. RS485 is a wired serial data port, while a DO terminal is a dry-contact digital output; neither can carry antenna radio-frequency signals. Connecting the antenna to the correct port supports communication with compatible wireless sensors or actuators. Installation should use the supplied antenna, avoid forcing mismatched connectors, provide suitable orientation and separation from shielding metal, and verify device signal quality after commissioning. The antenna connection alone does not configure or pair wireless field devices.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e588000d6c8773fc",
+    "question": "The reasonable exhaust pressure range of NetCol5000-A is () MPa. (Multiple choice)",
+    "correctOptionLabels": ["A", "B", "C", "D"],
+    "explanation": "The correct answers are A, B, C, and D; each gives the expected discharge-pressure band for a different outdoor-temperature range.\n\n- A: 1.5-2.5 MPa below 15 degrees C.\n- B: 1.5-3.1 MPa from 15 to 35 degrees C.\n- C: 2.5-3.8 MPa from 35 to 45 degrees C.\n- D: 3.1-4.15 MPa above 45 degrees C.\n\nHigher ambient temperature makes condenser heat rejection harder, so normal condensing and compressor discharge pressure rises. These ranges must be interpreted with the specified refrigerant and operating conditions. A pressure outside the relevant band calls for checking condenser airflow, fan operation, coil cleanliness, refrigerant charge, restrictions, sensors, and load; it does not justify adding or removing refrigerant from pressure alone.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e588000d6cdc03f5",
+    "question": "Domains can be created in NetEco, such as campuses, buildings, machine rooms, containers, etc.",
+    "correctOptionLabels": ["A"],
+    "explanation": "The statement is True, so A is correct. NetEco domains provide a logical hierarchy for organizing monitored infrastructure by real operational boundaries such as campus, building, equipment room, or container. Devices and lower-level objects can be placed under the appropriate domain, allowing users to navigate from an estate-wide view to a specific physical area and to apply responsibilities or permissions coherently. Domains do not discover the physical site automatically; administrators must create accurate names, parent-child relationships, and device assignments. A poorly designed hierarchy can hide equipment in the wrong location, confuse alarm response, and distort reports. Before deployment, operators should establish a consistent naming convention and verify that domain structure, user scope, views, and alarm paths match the actual facility layout.",
+    "needsReview": false,
+    "reviewNote": ""
+  }
+]

@@ -1,0 +1,498 @@
+[
+  {
+    "id": "6aa2e581002027a55c0d",
+    "question": "Which system affects PUE most in data center?",
+    "correctOptionLabels": ["D"],
+    "explanation": "The correct answer is D, the cooling system. Power usage effectiveness compares total facility energy with the energy delivered to IT equipment. Cooling is usually the largest adjustable non-IT load because chillers, compressors, pumps, fans, and air-moving equipment operate for long periods and must remove nearly all heat produced by the IT load. Poor airflow management, low supply-temperature settings, recirculation, or excessive fan pressure therefore raises the numerator of PUE without increasing useful computing work. Improvements such as hot/cold aisle separation, variable-speed control, higher permissible supply temperatures, and efficient heat rejection can materially reduce facility energy. Lighting and decoration contribute comparatively little, while power-distribution losses matter but are normally smaller than the cooling burden in a conventionally cooled data center.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e58100202865d620",
+    "question": "Cold/hot aisle is used to solve the problem of heat dissipation in data center.",
+    "correctOptionLabels": ["B"],
+    "explanation": "The statement is True, so B is correct. A cold/hot aisle layout aligns cabinet fronts toward a shared cold aisle and cabinet rears toward a shared hot aisle. Servers draw conditioned air from the cold side and discharge heated air to the hot side, giving the cooling system a controlled return path. This separation reduces hot-air recirculation into equipment inlets and prevents cold supply air from short-circuiting directly back to the cooling unit. As a result, inlet temperatures become more uniform, local hot spots are easier to prevent, and cooling capacity is used more effectively. Containment can strengthen the same mechanism, but even the basic alternating-aisle arrangement directly addresses heat-removal and airflow-management problems in a data center.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e58100203031ec89",
+    "question": "Modular data center is on-demand deployment, which avoids over-investment.",
+    "correctOptionLabels": ["B"],
+    "explanation": "The statement is True, so B is correct. A modular data center packages repeatable capacity blocks—such as racks, power distribution, UPS capacity, cooling, containment, and monitoring—that can be deployed in phases. The operator can install enough infrastructure for the current IT demand and add modules as load grows, rather than building the full forecast capacity on day one. This reduces stranded electrical and cooling capacity, lowers initial capital expenditure, and keeps lightly loaded equipment from operating inefficiently for years. Standardized modules also shorten design and commissioning cycles because interfaces and configurations are predefined. Modular deployment does not eliminate capacity planning, but it aligns investment timing more closely with actual business demand and therefore helps avoid premature over-investment.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5810020342b6d78",
+    "question": "Depending on different layouts, the batteries can be deployed inside of outside FusionModule2000.",
+    "correctOptionLabels": ["A"],
+    "explanation": "The statement is True, so A is correct. FusionModule2000 designs can accommodate different room footprints, autonomy requirements, battery quantities, and safety constraints. In a suitable configuration, batteries may be installed in dedicated cabinets within the modular aisle arrangement. Where capacity, weight, ventilation, maintenance clearance, or local fire rules make internal placement unsuitable, battery cabinets or a battery area can be arranged outside the module and connected to the UPS through correctly protected DC cabling. The choice must follow the approved layout and product design; it is not an arbitrary field relocation. Cable length and voltage drop, overcurrent protection, isolation, floor loading, temperature, and service access all remain part of the engineering decision. Thus both internal and external deployment are possible depending on the selected layout.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e581002035ee6301",
+    "question": "Smart electricity meter of PDU8000 is abnormal, it is possible that ().",
+    "correctOptionLabels": ["A", "B", "C", "D"],
+    "explanation": "The correct answers are A, B, C, and D. A faulty current transformer can provide a missing or distorted secondary-current signal, causing incorrect current and power calculations. A faulty smart electricity meter can fail to acquire, process, display, or communicate otherwise valid measurements. Improperly connected voltage-collector cables can remove or distort the voltage input required for voltage, power, and energy values. An incorrectly configured current- or voltage-transformer ratio applies the wrong scaling even when the hardware and wiring are healthy. Troubleshooting should therefore compare displayed values with independent measurements, inspect CT and voltage-acquisition wiring, verify configured ratios against the installed transformers, and assess the meter itself. Because this work involves energized distribution equipment and CT secondary circuits, technicians must follow the approved isolation and service procedure.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e58100204635098f",
+    "question": "If a heat detector or smoke detector in the FusionModule1000 triggers an alarm, the () will generate continuous sound.",
+    "correctOptionLabels": ["C"],
+    "explanation": "The correct answer is C, the buzzer. Heat and smoke detectors are sensing devices: they detect a fire-related condition and send an alarm signal to the fire-control system. The buzzer is the audible notification device, so it produces the continuous sound that warns personnel when either detector triggers the relevant alarm logic. An emergency light provides visual illumination or indication, not the specified continuous audible warning. Likewise, the smoke detector and heat detector do not serve as the module's sound-producing device merely because they initiate the alarm. Understanding this signal chain is important during commissioning: the initiating detector, controller logic, audible/visual alarm devices, and extinguishing interfaces should be tested as distinct functions so a sensor event results in the intended warning and safety response.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e58100204b7e5b32",
+    "question": "The gas extinguishing equipment consists of (). (Multiple Choice)",
+    "correctOptionLabels": ["A", "C", "D"],
+    "explanation": "The correct answers are A, C, and D. The fire cylinder stores the extinguishing agent under the designed pressure and is the source used during a discharge. The electromagnetic valve is the electrically actuated release component: when the fire-control logic authorizes discharge, it operates the cylinder release path. The pressure switch provides feedback that discharge pressure has developed, allowing the system to indicate or report that gas release has occurred. These three parts therefore cover agent storage, commanded actuation, and discharge-status feedback. An ETH converter is a communications accessory and is not part of the physical gas-extinguishing assembly. Installation and testing must follow the fire-system design, including mechanical securing, correct wiring, interlocks, warning delay, and controls that prevent accidental agent release while personnel are working in the protected space.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e58100204fd64f91",
+    "question": "If a fire occurs in the FusionModule1000, the gas release indicator will display \"Do not enter while gas is being released.\"",
+    "correctOptionLabels": ["A"],
+    "explanation": "A is correct; the statement is True. The gas-release indicator warns personnel not to enter while extinguishing gas is being discharged. This is a life-safety instruction, not merely a system-status message. A gaseous-agent discharge can create an unsafe atmosphere, reduce visibility, and introduce pressure and noise hazards. Opening the protected enclosure can also reduce the agent concentration and undermine fire suppression. When the fire-control system enters the release sequence, personnel must evacuate and obey the audible and visual warnings. Re-entry is permitted only after the responsible fire-safety authority confirms that discharge is complete, the hazard has been controlled, required ventilation or atmosphere checks have been performed, and the space is safe. The indicator therefore communicates the correct restriction during active gas release.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5810020533d94e7",
+    "question": "DOD is the ratio of discharged battery capacity to rated battery capacity, expressed as a percentage.",
+    "correctOptionLabels": ["B"],
+    "explanation": "The statement is True, so B is correct. Depth of discharge (DOD) expresses how much of a battery's rated capacity has been removed during discharge. For example, using one quarter of the rated capacity corresponds to approximately 25% DOD, subject to the specified test conditions and usable-capacity assumptions. DOD is complementary to state of charge in the simple idealized sense: deeper discharge means less charge remains. The term matters because battery life is strongly influenced by discharge severity. Repeated deep cycles generally impose more electrochemical stress than shallow cycles and reduce the number of useful cycles available. Engineers therefore use DOD together with load, autonomy, temperature, discharge rate, and termination voltage when sizing batteries and evaluating expected service life; it is not simply a measure of instantaneous terminal voltage.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e58100205f76015f",
+    "question": "Which factors affect the VRLA battery lifespan?",
+    "correctOptionLabels": ["A", "B", "C", "D"],
+    "explanation": "The correct answers are A, B, C, and D. Depth of discharge affects how much active material is converted on each cycle; deeper discharges usually consume cycle life faster. The number of cycles accumulates that electrochemical wear, so frequent cycling shortens remaining life compared with stable float service. Ambient temperature strongly affects reaction and corrosion rates: sustained heat accelerates aging, while low temperature reduces available capacity and can alter charging performance. Ambient humidity also matters to the installed system because excessive moisture encourages terminal and cabinet corrosion, leakage paths, and insulation problems, while very dry or uncontrolled conditions can affect the surrounding equipment. Good battery practice therefore controls the environment, applies the specified charging regime, avoids unnecessary deep discharge, keeps connections clean and tight, and trends condition rather than relying on calendar age alone.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e581002a64d76995",
+    "question": "Batteries in the same battery string must have the same capacity, same specifications and the same manufacturer.",
+    "correctOptionLabels": ["A"],
+    "explanation": "The statement is True, so A is correct. Batteries connected in one series string carry the same charge and discharge current. If units differ in capacity, construction, age profile, or charging characteristics, their voltages and states of charge diverge under that common current. A weaker or mismatched battery can reach overcharge, deep-discharge, or termination conditions before the rest of the string, limiting usable capacity and accelerating failure. Using the same specification and manufacturer helps keep plate design, internal resistance, float-voltage behavior, and performance tolerances consistent. It also supports valid monitoring thresholds and maintenance decisions. Matching does not remove the need for commissioning measurements and periodic inspection, but it prevents deliberate mixing that would make equal charging and discharging unreliable and could compromise UPS autonomy and battery safety.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e581002a69b91837",
+    "question": "The rated voltage of a cell is ().",
+    "correctOptionLabels": ["C"],
+    "explanation": "The correct answer is C, 2 V. A lead-acid cell has a nominal voltage of about two volts, set by the electrochemical potential of its positive lead-dioxide plate, negative lead plate, and sulfuric-acid electrolyte. Common VRLA battery blocks obtain higher nominal voltages by connecting these cells internally in series; for example, a nominal 12 V block contains six 2 V cells. The actual terminal voltage changes with state of charge, charge mode, discharge current, temperature, and rest time, so “rated” or nominal voltage is not an exact operating reading at every moment. Recognizing the cell value is essential when interpreting per-cell charging settings, calculating string voltage, and checking whether a measured battery block or complete string is plausible.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e581002a7215058c",
+    "question": "To avoid voltage unbalance between batteries, batteries need to do () in period.",
+    "correctOptionLabels": ["D"],
+    "explanation": "The correct answer is D, equalized charging. Small differences in self-discharge, internal resistance, temperature, and cell condition can cause batteries or cells in a string to drift to unequal states of charge. A controlled equalized charge temporarily applies the specified higher charging condition so undercharged units can recover and string voltages become better balanced. Float charging primarily maintains a fully charged battery during standby service; it does not necessarily correct accumulated imbalance. Equalization must be performed only when permitted by the battery and UPS documentation, with the correct voltage, duration, temperature compensation, and monitoring, because excessive equalization can increase gassing, heating, grid corrosion, and water loss. The maintenance objective is controlled balance—not indiscriminate overcharging—and abnormal units should be investigated rather than repeatedly masked by equalization.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e581002a75fe5785",
+    "question": "The cycle life is the number of charge and discharge cycles under specified conditions.",
+    "correctOptionLabels": ["A"],
+    "explanation": "The statement is True, so A is correct. Battery cycle life is the number of defined charge-discharge cycles a battery can complete before its capacity or another performance measure falls below the specified end-of-life criterion. “Under specified conditions” is essential: cycle life depends on depth of discharge, discharge rate, recharge method, temperature, termination voltage, rest periods, and the manufacturer's test definition. A shallow cycle is not equivalent in stress to a deep cycle, and results obtained at a controlled laboratory temperature cannot be applied blindly to a hot battery room. Cycle life also differs from calendar or float life, which describes aging mainly with time while the battery remains on standby charge. Engineers use the relevant life measure when planning replacements and verifying that the battery duty matches its design.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e581002a79062342",
+    "question": "The appearance of a battery string is normal, but it is no current when charging. And it is no current when discharging. The reason is ().",
+    "correctOptionLabels": ["D"],
+    "explanation": "The correct answer is D, a disconnection within the battery string. A series string requires one continuous electrical path through every battery and interconnection. An open link, loose terminal, open protective device, or internal open circuit breaks that path, so no current flows during either charging or discharging even though the battery cases may look normal. Over-discharge or insufficient capacity usually produces abnormal voltage or reduced runtime but does not inherently block current in both directions. A shorted battery reduces string voltage and is also a different electrical signature. Troubleshooting should begin with the approved safe isolation procedure, then verify string and section voltages, breaker or fuse state, terminal integrity, and continuity using correctly rated instruments. Visual appearance alone cannot confirm electrical continuity, especially where an internal connection has failed.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e581002a85964fc0",
+    "question": "Power segment function is enabled on UPS2000-G-20kVA. Which will cause the loads connected with PL terminals powered-off? (Multiple choice)",
+    "correctOptionLabels": ["C", "D"],
+    "explanation": "The correct answers are C and D. With power-segment control enabled, the UPS can shed the less-prioritized loads connected to the PL terminals when battery voltage becomes low. Removing that segment preserves the remaining battery energy for more critical loads and helps avoid an uncontrolled total shutdown. The UPS can also disconnect the PL segment during an overload, reducing demand so the protected priority output has a better chance of remaining within the inverter or bypass capability. A mains interruption or undervoltage alone does not necessarily switch off PL loads, because the UPS is designed to support the load from its battery when input power is unavailable. The behavior depends on the power-segment feature being enabled and configured; the PL output is deliberately managed as a shed-able load group.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e581002a886f9969",
+    "question": "First time powering on, UPS2000-A-(1-3kVA) works in static bypass mode.",
+    "correctOptionLabels": ["A"],
+    "explanation": "The statement is True, so A is correct. On initial energization, the UPS has not yet had its inverter deliberately started and accepted as the normal source. If the bypass input is available and within its permitted range, the static bypass can supply the output while the control system initializes and the operator completes startup. This gives the load a defined source before normal double-conversion operation begins. Static bypass mode is distinct from maintenance bypass: the former uses controlled semiconductor switching inside the UPS, whereas maintenance bypass is a mechanical service path used to isolate internal power circuits. The operator should still verify input conditions, parameters, alarms, and load readiness before starting the inverter; “first power-on” does not mean the UPS is already providing conditioned inverter power.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e581002a8ae03c6b",
+    "question": "When UPS2000-G-(6-20kVA) works in ECO mode, only bypass indicator on the panel is ON.",
+    "correctOptionLabels": ["B"],
+    "explanation": "The statement is True, so B is correct. In ECO mode, acceptable utility power reaches the load through the bypass path rather than being continuously processed by the rectifier and inverter. The panel therefore identifies bypass as the active power path, which is why the bypass indicator is on. The inverter remains available to take over when bypass voltage or frequency leaves the allowed range, but it is not the normal load source while ECO conditions are satisfied. This arrangement reduces conversion losses and improves efficiency, with the tradeoff that the load is more directly exposed to input disturbances and a transfer is required when utility quality becomes unacceptable. The indicator should be interpreted as operating-path status, not as proof that the UPS is in maintenance bypass or unable to protect the load.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e581002a8f6c3647",
+    "question": "The battery capacity should be set to () when three 9AH battery groups are parallel connected to UPS2000-G-15kVA.",
+    "correctOptionLabels": ["C"],
+    "explanation": "The correct answer is C, 27 Ah. When identical battery strings or groups are connected in parallel, their ampere-hour capacities add because each group shares the discharge current at the same nominal string voltage. Three 9 Ah groups therefore provide a configured total of 3 × 9 Ah = 27 Ah. The voltage is not multiplied by the number of parallel groups; voltage increases when batteries are connected in series. Entering the correct aggregate capacity allows the UPS charging and runtime-management functions to use an appropriate battery-bank value. The groups must be compatible and installed with suitable protection and balanced cable paths so current sharing is reasonable. A numerical capacity setting does not compensate for mismatched, aged, or poorly connected strings, which still require commissioning checks and maintenance.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e581002a99d60f9e",
+    "question": "After the power segment function is disabled for UPS2000-G-20kVA, the PL ports have no output when overloaded or the battery voltage is low.",
+    "correctOptionLabels": ["A"],
+    "explanation": "The statement is False, so A is correct. Disconnecting the PL terminals during overload or low-battery conditions is the behavior provided by the enabled power-segment function. When that function is disabled, the PL output is no longer managed as a separately shed-able segment for those conditions; it follows the UPS output rather than being intentionally switched off by the segment logic. The UPS can still protect itself through its normal overload, bypass, battery end-of-discharge, and shutdown responses, so disabling segmentation does not remove all protective behavior. It simply removes the selective-load-shedding action at the PL ports. This distinction matters during commissioning: critical and noncritical loads should be assigned deliberately, and the configured feature state should be tested so operators know which outlets remain energized during constrained operation.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e58100332c0eb533",
+    "question": "The preset battery equalized charging voltage of UPS2000-G-(6-20kVA) is () V/cell.",
+    "correctOptionLabels": ["C"],
+    "explanation": "The correct answer is C, 2.35 V per cell. This preset is expressed per lead-acid cell so it can be applied consistently across battery blocks and complete strings. Equalized charging uses a voltage above normal float level to correct charge imbalance and restore undercharged cells under controlled conditions. A 12 V VRLA block contains six nominal 2 V cells, so per-cell settings must not be confused with block or string voltage. Values such as 2.15 V/cell are closer to a low float region, while 2.45 V/cell would be a substantially more aggressive charge for many VRLA applications. The preset remains a product setting, not a universal instruction: battery type, manufacturer requirements, temperature compensation, duration, and site configuration must be checked before equalized charging is enabled.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e58100332ec3d69c",
+    "question": "Modbus card, SNMP card, dry contact card and CAN bus card are all available for UPS2000-G.",
+    "correctOptionLabels": ["B"],
+    "explanation": "The statement is True, so B is correct. These cards support different integration needs around the UPS2000-G. A Modbus card provides a standard industrial communications path for supervisory systems that poll operating data and alarms. An SNMP card connects the UPS to IP-based network-management platforms for remote status, events, and management functions. A dry contact card exposes simple relay-style alarm or status signals where the receiving system does not use a data protocol. A CAN bus card supports communication on the controller-area network used by compatible equipment. Availability means the platform supports these option types; it does not mean every UPS contains all four by default. The correct card, supported model variant, slot, wiring, addressing, and management configuration must be selected for the actual monitoring architecture.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e581003330753297",
+    "question": "When connecting UPS5000-E in parallel, the parallel cables are not required to connect in a loop.",
+    "correctOptionLabels": ["B"],
+    "explanation": "The statement is False, so B is correct. In a UPS5000-E parallel system, the parallel communication cables are connected in the specified loop topology. The loop gives the controllers a defined, redundant communication path for exchanging synchronization, load-sharing, and system-status information. If a simple open chain is used instead, a single cable or connector failure can divide the communication path and compromise coordinated operation. Correct physical routing also prevents accidentally leaving a parallel port unterminated or connecting units in an unsupported order. The loop requirement concerns the control/parallel cables, not the power conductors, whose input, output, bypass, and battery connections follow their own engineered topology. During commissioning, cable identity and loop continuity should be checked before parallel parameters and inverter operation are tested.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e581003332c147c1",
+    "question": "The UPS5000-S-400K uses a *() kVA power module.",
+    "correctOptionLabels": ["A"],
+    "explanation": "The correct answer is A, a 50 kVA power module. The UPS5000-S-400K is a modular UPS whose total power is assembled from standardized power modules installed in the cabinet. Using 50 kVA modules allows the system rating and redundancy level to be built in discrete increments: eight active 50 kVA modules provide 400 kVA, while an additional module may be used where the approved configuration provides redundancy. This modular structure supports capacity expansion and serviceability without treating the entire UPS power train as one monolithic converter. The module rating must be distinguished from the cabinet's total rating and from the load actually connected. Capacity planning must also account for redundancy policy, power factor, environmental derating, bypass capability, and the manufacturer's allowed module population.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e58100333e8453f7",
+    "question": "If there is no mains input, press the battery cold-start button on the bypass module, then turn on the inverter, UPS5000-E will enter battery mode.",
+    "correctOptionLabels": ["B"],
+    "explanation": "The statement is True, so B is correct. Battery cold start allows a UPS5000-E to initialize without an available mains source. Pressing the cold-start control on the bypass module energizes the required control and DC-bus functions from the connected battery system. The inverter can then be started and converts battery DC into regulated AC for the load, placing the UPS in battery mode. This procedure depends on adequate battery voltage, correct battery-switch state, completed installation, and the absence of blocking faults. It is not a substitute for normal commissioning or a reason to connect load blindly: operators must follow the model-specific sequence and verify the output before applying load. Because stored battery energy can produce hazardous voltage even with mains absent, the operation must be treated as live electrical work.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e58100333f23295e",
+    "question": "The input line voltage of UPS5000-E supports (). (Multiple choice)",
+    "correctOptionLabels": ["B", "C", "D"],
+    "explanation": "The correct answers are B, C, and D: 400 V, 415 V, and 380 V. These are standard three-phase line-to-line nominal voltages used in low-voltage distribution systems and supported by the relevant UPS5000-E configuration. The UPS input stage is designed to operate around those nominal system values within its specified tolerance, allowing deployment across sites that use different regional three-phase standards. The 220 V option is typically a line-to-neutral value in a 380/220 V system, not the three-phase line voltage asked for here. Installation engineers must distinguish line-to-line from line-to-neutral measurements and configure the nominal voltage to match the actual distribution. They must also verify phase sequence, frequency, protective devices, cable ratings, and bypass compatibility before startup; selecting a supported nominal value alone does not validate an installation.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e581003343f102e3",
+    "question": "Commissioning UPS5000-E parallel system, the reason for triggering EPO port is ().",
+    "correctOptionLabels": ["D"],
+    "explanation": "The correct answer is D: trigger the EPO input to verify the EPO circuit and command all applicable UPS outputs to stop supplying power during the prescribed commissioning test. In a parallel system, the test confirms that the configured emergency command is received and produces the intended coordinated output shutdown across the applicable units. It is not performed to conserve battery capacity, protect loads from electric shock, or provide access for setting parallel parameters. EPO is an operational shutdown command, not electrical isolation. UPS inputs, bypass paths, batteries, capacitors, or other conductors may remain energized after it operates. Lockout/tagout, isolation of every source, the specified discharge waiting time, and absence-of-voltage verification remain mandatory before electrical work. The test must follow the approved commissioning procedure because it interrupts protected loads.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e58100334519bb04",
+    "question": "First time powering on UPS5000-E, make sure that the UPS main input switch, bypass switch, output switch, maintenance bypass switch, and battery switch are all OFF.",
+    "correctOptionLabels": ["A"],
+    "explanation": "The statement is True, so A is correct. Starting with the main input, bypass input, output, maintenance bypass, and battery switches all OFF establishes a known isolated switching state before first energization. It prevents an unexpected backfeed or load energization while installers verify cabling, protective-earth continuity, phase sequence, insulation, torque, and configuration. It also keeps the battery and alternate bypass paths from energizing internal or downstream circuits unintentionally. The switches are then operated in the prescribed startup order, with status and voltage checks between stages. Merely seeing handles in the OFF position is not a complete safety isolation—qualified personnel still follow lockout/tagout and verify absence of voltage—but the all-OFF starting state is an essential prerequisite for controlled first power-on of the UPS.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5810033472faa79",
+    "question": "The EPO ports of UPS5000-E can be selected to normal open or normal closed.",
+    "correctOptionLabels": ["A"],
+    "explanation": "The statement is True, so A is correct. The UPS5000-E dry-contact interface supports emergency power-off wiring using either a normally open or a normally closed contact arrangement, with the corresponding EPO terminals and configuration selected for the site design. In a normally open scheme, closing the contact triggers EPO. In a normally closed scheme, opening the supervised loop triggers EPO, which can provide fail-safe behavior for a broken wire. The wiring method and software setting must agree; a mismatch can cause immediate shutdown or leave the emergency control ineffective. Parallel UPS systems also require coordinated EPO connections so the intended command reaches every relevant unit. Commissioning must include a controlled functional test under an approved plan because EPO can abruptly remove power from critical loads.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e58100334e5ce869",
+    "question": "Which procedures is correct about powering on UPS5000?",
+    "correctOptionLabels": ["B"],
+    "explanation": "The correct answer is B. First turn on the mains and bypass input switches so the UPS control and power circuits have their intended AC sources. Next set the required parameters and check system status; this catches wiring, phase, input, configuration, or alarm problems before the inverter carries the load. Start the inverter only after those checks pass. Then turn on the battery switch, integrating the backup source under controlled conditions, and finally start or connect the loads. This sequence avoids energizing the battery or load before the UPS is configured and confirmed healthy. The alternatives either connect the battery too early, omit the required input-switch step, or start the inverter before parameter and status verification. Actual work must follow the exact model's commissioning guide and site switching plan.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5820001e722ea3d",
+    "question": "When doing maintenance of UPS5000-E, to make sure loads continue to be powered, we should first perform EPO and then turn on the maintenance bypass switch.",
+    "correctOptionLabels": ["B"],
+    "explanation": "The statement is False, so B is correct. EPO is intended to remove UPS output in an emergency; triggering it first can interrupt the load and defeats the goal of continuous power. For planned maintenance, the load is transferred through the controlled bypass path according to the approved sequence, its stable bypass supply is verified, and only then is the maintenance bypass operated to provide a direct mains path while internal UPS circuitry is isolated. The exact switch order and checks depend on the cabinet and site design, but they must avoid paralleling unsynchronized sources or opening the only active supply path. Maintenance bypass keeps loads energized but no longer gives them normal inverter conditioning or battery backup. Qualified personnel must also consider backfeed and verify isolation before touching internal circuits.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5820001f416c102",
+    "question": "When UPS5000-E is (), setting wizard automatically starts after power off. (Multiple choice).",
+    "correctOptionLabels": ["C", "D"],
+    "explanation": "The correct answers are C and D. On first power-on, the UPS has no confirmed site configuration, so the settings wizard starts to collect and validate essential system parameters before normal operation. After factory settings are restored, prior configuration is intentionally cleared; the unit again needs the wizard to establish its operating settings. A routine power cycle preserves saved configuration, so it should not force the initial setup workflow every time. Likewise, powering on after rectifying a fault does not inherently erase valid settings. The question's phrase “after power off” is best understood as the subsequent power-on condition. The wizard supports commissioning discipline, but operators must still verify that values match the installed mains, bypass, output, battery, parallel, and accessory configuration rather than simply accepting defaults.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5820001fa165b3c",
+    "question": "If UPS5000-E works in maintenance bypass mode, bypass module can not work.",
+    "correctOptionLabels": ["B"],
+    "explanation": "The statement is False, so B is correct. Maintenance bypass mode means the load current is routed through the mechanical maintenance-bypass path instead of through the UPS power modules. That operating state is chosen so internal equipment can be serviced while the load continues to receive utility power. It does not mean the bypass module is inherently incapable of operating; the static bypass assembly remains a functional UPS component and may still be energized or monitored depending on the cabinet's switching state. This distinction is important for safety: maintenance bypass does not automatically make every internal conductor dead, and mains or bypass backfeed may remain possible. Personnel must follow the isolation sequence, open the specified breakers, apply lockout/tagout, and verify absence of voltage before maintaining the bypass module or other internal circuits.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e58200020060cab6",
+    "question": "The ibat2.0, optional component of the UPS5000-E, can detect () of each battery.",
+    "correctOptionLabels": ["A", "C", "D"],
+    "explanation": "The correct answers are A, C, and D. iBAT 2.0 monitors each battery's internal resistance, which helps identify deterioration, poor internal condition, or abnormal connection behavior before a complete failure. It measures individual battery voltage so imbalance, overvoltage, undervoltage, and charging anomalies can be trended within the string. It also monitors battery-pole temperature, an important indicator of loose connections, excessive resistance, charging problems, or developing thermal risk. Frequency is not a battery condition parameter because the battery is a DC electrochemical source rather than an AC supply. These measurements are most valuable as trends and comparisons across similar units; one reading should be interpreted with operating state, temperature, battery type, and baseline values. Monitoring supplements rather than replaces visual inspection, capacity testing, and safe maintenance.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e582000208e5924b",
+    "question": "If the input phase sequence of integrated UOS is incorrect, the UPS cannot work properly.",
+    "correctOptionLabels": ["B"],
+    "explanation": "The statement is True, so B is correct. A three-phase integrated UPS or UOS expects its input phases in the specified sequence. Incorrect phase rotation can be detected as an input wiring fault and can prevent normal startup or transfer because the rectifier, bypass synchronization, monitoring, and associated three-phase equipment rely on a valid phase relationship. Even where an electronic rectifier is less sensitive to motor rotation, the complete integrated system and bypass path still require the designed sequence for safe coordinated operation. Phase sequence must therefore be measured at the correct terminals during commissioning, along with line voltage, frequency, neutral, and protective-earth checks. Any correction should be made under isolation by qualified personnel; swapping phases on an energized system risks arc flash, equipment damage, and unintended load interruption.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e58200020b74d4df",
+    "question": "The working principle of () humidifier is: an infrared lamp enables water to evaporate, then generate steam spreads to the air flow.",
+    "correctOptionLabels": ["C"],
+    "explanation": "The correct answer is C, an infrared humidifier. Its infrared lamp supplies radiant heat to water, causing evaporation; the resulting water vapor is then carried into the unit's airflow to raise room humidity. The operating principle named in the question directly identifies the humidifier type. An electrode humidifier instead passes electric current through conductive water to generate heat. A wet-film humidifier moves air across a wetted medium and relies on evaporative mass transfer, while a high-pressure micro-mist system atomizes water into fine droplets. Correct identification matters for maintenance because each design has different water-quality, cleaning, scale-control, and safety requirements. For an infrared unit, lamp condition, water level, cleanliness, and safe electrical isolation are central checks when humidification performance is poor.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e582000216eef0b1",
+    "question": "Every time NetCol5000-C startup, setting values need to be reset.",
+    "correctOptionLabels": ["B"],
+    "explanation": "The statement is False, so B is correct. NetCol5000-C operating parameters are stored so the controller can retain the commissioned configuration across a normal shutdown and restart. Re-entering setpoints, teamwork settings, alarm thresholds, and equipment parameters at every startup would make automatic recovery unreliable and create a high risk of inconsistent operation. A restart should therefore load the saved values and resume according to the configured control logic, subject to startup checks and active alarms. Settings may need to be established during first commissioning, deliberately changed for a new operating requirement, or restored after a factory reset or controller replacement, but those are exceptional events. Operators should verify displayed values after maintenance; they should not routinely reset them merely because the unit has restarted.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e58200021bdd5da3",
+    "question": "The () is used for high power density cabinets in data center.",
+    "correctOptionLabels": ["B"],
+    "explanation": "The correct answer is B, in-row horizontal air supply. High-density IT cabinets produce concentrated heat loads that are difficult to serve through long shared airflow paths. An in-row cooling unit sits close to the cabinets, draws hot return air locally, and supplies conditioned air horizontally toward rack inlets. The short path reduces mixing, bypass air, recirculation, and static-pressure losses, while allowing cooling capacity to track the high local load more closely. Underfloor supply can work well in broader room designs but may be constrained by floor pressure, obstructions, leakage, and the amount of air a tile can deliver to one dense rack. Blast-cap and duct arrangements generally serve more distributed airflow needs. In-row cooling is therefore the appropriate choice identified for high power-density cabinets.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e58200021e2aeb29",
+    "question": "After the hot backup function is enable for the NetCol5000-C, all the unit is settled as running unit.",
+    "correctOptionLabels": ["B"],
+    "explanation": "The statement is False, so B is correct. Hot backup is a teamwork strategy that distinguishes running units from one or more standby units. The standby unit remains ready to start when a running unit fails, capacity becomes insufficient, or the control logic calls for backup operation; it is not simply designated as another continuously running unit. This arrangement preserves redundancy while allowing the active units to meet the normal cooling demand. If every unit were set as running, there would be no reserved backup role and the intended fault-response capacity could be lost. Commissioning must define the teamwork group, active/standby allocation, startup conditions, and sensor/control behavior, then test takeover. Rotation may also be used to balance accumulated runtime without changing the underlying need for backup capacity.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e58200021e919083",
+    "question": "Wind pipe has shorter air supply distance than blast cap.",
+    "correctOptionLabels": ["B"],
+    "explanation": "The statement is False, so B is correct. A wind pipe, or ducted supply arrangement, is used to guide conditioned air over a longer, controlled path to the intended delivery points. The duct contains and directs airflow, reducing uncontrolled dispersion before the air reaches the target area. A blast cap discharges air more directly near the unit and is suited to a shorter throw or local distribution arrangement. Therefore the wind-pipe configuration has the longer effective air-supply distance, contrary to the statement. The choice between them depends on room geometry, equipment placement, pressure capability, and the required air volume. Any duct design must also account for resistance, leakage, balancing, condensation control, and service access so the longer path does not undermine delivered airflow.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e582000bdd75a0d2",
+    "question": "One NetCol520 chilled water distribution unit can support a maximum of () NetCol5000-C.",
+    "correctOptionLabels": ["D"],
+    "explanation": "The correct answer is D, 12 NetCol5000-C units. The NetCol520 is the chilled-water distribution unit that supplies and manages the secondary water circuit serving the connected row-level cooling units. In the referenced product configuration, one distribution unit supports up to twelve NetCol5000-C units, allowing multiple coolers to share controlled hydraulic distribution and monitoring. The number is a product topology limit, not proof that every group of twelve will meet the thermal design. Engineers must still calculate total sensible load, water flow, pressure drop, pipe sizing, redundancy, control behavior, and the available upstream chilled-water capacity. A smaller number may be appropriate where loads are high or redundancy is required. During commissioning, each branch, valve, sensor, address, and leak-control function must match the approved system design.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e582000be7df4b39",
+    "question": "The cold/hot aisle containment systems can improve cooling efficiency and reduce power consumption.",
+    "correctOptionLabels": ["B"],
+    "explanation": "The statement is True, so B is correct. Containment creates a physical boundary between cold supply air and hot server exhaust. By limiting recirculation and bypass airflow, it lets cooling units receive warmer return air and deliver the required inlet conditions with less excess airflow. Fans can often run at lower speed, cooling capacity is used more effectively, and supply-temperature setpoints may be raised within equipment limits. These changes reduce fan, compressor, and chilled-water energy while improving rack-inlet temperature consistency. Containment itself does not generate cooling, and poorly sealed openings or incorrect pressure control can weaken its benefit. Cable cutouts, missing blanking panels, doors, roof panels, sensors, and airflow direction must therefore be commissioned as a complete system. The efficiency gain comes from controlled air separation, not merely from installing enclosure panels.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e582000be7e05097",
+    "question": "Whether the water distribution units is equipped or not is based on installation scenario.",
+    "correctOptionLabels": ["B"],
+    "explanation": "The statement is True, so B is correct. A water distribution unit is required only in chilled-water architectures that need its hydraulic separation, pumping, flow control, monitoring, or distribution functions. Some installation scenarios may connect cooling units to a suitable site water system under the approved design, while others use a dedicated distribution unit to create the required secondary circuit and manage multiple indoor units. Air-cooled or direct-expansion configurations have a different refrigerant and heat-rejection arrangement and do not use the same chilled-water component. Selection therefore follows the product configuration and site design rather than a universal rule. Engineers must evaluate available pressure, flow, water quality, redundancy, leak containment, pipe routing, control integration, and maintenance isolation before deciding whether the distribution unit is equipped.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e582000bea67bdc5",
+    "question": "Commissioning NetCol5000-C drainage devices, after lifting the high float for 5s, two water pumps start working, and the drain abnormal alarm is generated.",
+    "correctOptionLabels": ["B"],
+    "explanation": "The statement is True, so B is correct. Raising the high-level float simulates excessive condensate water in the drain pan. Holding it for the specified five seconds allows the controller's confirmation delay to expire, after which both drainage pumps are commanded to run and a drain-abnormal alarm is generated. The two responses test different parts of the protection: pump operation attempts to remove the water, while the alarm alerts monitoring personnel that the high-level condition exists and drainage may be impaired. The test should confirm pump sound or flow, alarm display and reporting, and normal recovery after the float is released. Because the procedure deliberately simulates an abnormal water condition, commissioning personnel should prevent overflow and verify hoses, traps, power, and pump wiring beforehand.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e582000bea9b9995",
+    "question": "When the compressor of NetCol5000-A is started for the first time, the crankcase tape needs to be preheated for more than ().",
+    "correctOptionLabels": ["B"],
+    "explanation": "The correct answer is B, more than 12 hours. The crankcase heating tape warms the compressor oil before first startup. During storage or shutdown, refrigerant can migrate into the cold compressor and dissolve in the oil. If the compressor starts in that condition, rapid pressure reduction can make the refrigerant foam, reduce effective lubrication, and carry oil out of the crankcase, increasing wear or damage risk. A preheat period longer than twelve hours gives the heater time to drive migrated refrigerant from the oil before mechanical operation begins. The heater must be energized under the approved installation conditions while the compressor itself remains stopped. Technicians should also verify supply power, valve states, refrigerant piping completion, and the product's startup checklist rather than treating elapsed heater time as the only prerequisite.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e582000bfa53bfb4",
+    "question": "Before installing the indoor unit of NetCol5000-A, we should remove the sheet metals from the compressor.",
+    "correctOptionLabels": ["B"],
+    "explanation": "The statement is True, so B is correct. The sheet-metal pieces associated with the compressor are transport restraints or protective shipping parts that secure the assembly while the unit is moved. They must be removed at the specified installation stage so the compressor and its vibration-isolation system can operate as designed. Leaving transport restraints in place can transmit vibration into the cabinet and piping, increase noise, stress joints, and interfere with normal movement of the mounted compressor. Removal should follow the product instructions so technicians do not confuse shipping metalwork with structural panels or operating guards that must remain installed. Before startup, the team should also inspect the compressor mounting, piping clearances, fasteners, electrical connections, and cabinet interior for remaining packaging or loose material.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e582000c05d59d1e",
+    "question": "During nitrogen injecting, a pressure relief valve must be installed on the nitrogen cylinder.",
+    "correctOptionLabels": ["B"],
+    "explanation": "The statement is True, so B is correct. A nitrogen cylinder stores gas at far higher pressure than refrigeration piping is designed to receive. A pressure-reducing regulator and suitable relief protection are therefore required to control the outlet and prevent accidental overpressure while nitrogen is introduced for pressure testing, purging, or brazing support. Without controlled pressure, opening the cylinder valve could damage piping, gauges, valves, or personnel. The gas path, regulator, relief device, hoses, and instruments must all be rated for the service, and oxygen must never be substituted for nitrogen in refrigerant work because of fire and explosion risk. Technicians should open valves gradually, stay within the equipment's specified test pressure, isolate the cylinder after charging, and follow the approved pressure-hold and leak-check procedure.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e582000c0861e67e",
+    "question": "If the rotation function of teamwork is enabled, the active and standby air conditioners can work alternatively to prolong their service life.",
+    "correctOptionLabels": ["A"],
+    "explanation": "The statement is True, so A is correct. In a teamwork group, rotation periodically exchanges the active and standby roles among compatible air-conditioning units. This balances compressor, fan, pump, and control operating hours instead of allowing one unit to accumulate most of the wear while another remains largely idle. Regular operation also demonstrates that the standby unit is available and reduces the chance that a latent fault remains unnoticed until an emergency demand. The result can improve fleet service life and maintenance planning while preserving backup capacity. Rotation must be configured with appropriate intervals and transition logic so room temperature and pressure remain stable during the changeover. It is distinct from capacity staging, although the teamwork controller may use both functions to match cooling demand and redundancy requirements.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e582000c086c4d2d",
+    "question": "For NetCol5000-A installation, preserving positive pressure for the pipes is the same as preserving negative pressure. You can select either to hold.",
+    "correctOptionLabels": ["A"],
+    "explanation": "The statement is False, so A is correct. Positive-pressure holding and negative-pressure holding test different properties and are not interchangeable. A nitrogen positive-pressure test checks whether refrigerant piping and joints retain pressure without leaking outward. A vacuum hold test checks evacuation quality and whether air or moisture can leak inward after the vacuum pump is isolated. Passing one does not guarantee passing the other: a joint may behave differently with pressure direction, and moisture can cause vacuum behavior that a pressure test does not reveal. Correct installation therefore performs the specified pressure test, leak inspection, evacuation, and vacuum hold in the required sequence using rated instruments. Choosing only whichever test is convenient can leave leaks, air, or moisture in the refrigeration circuit and lead to poor performance or compressor damage.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e582000c0d6fc5a0",
+    "question": "In the teamwork topology diagram, a device with green frame indicates the device itself, a non-green frame indicates the other device in the group.",
+    "correctOptionLabels": ["B"],
+    "explanation": "The statement is True, so B is correct. In the teamwork topology display, the green-framed device is the local unit whose controller screen is being viewed. Units shown without that green frame are peer devices participating in the same teamwork group. This visual distinction helps a technician interpret status, role, alarms, and communication relationships without mistaking remote-unit data for the local air conditioner. It is especially useful when checking active/standby allocation, rotation, group addressing, and whether all expected members are online. The frame color is an identity cue, not by itself an indication that the unit is healthy or actively cooling; alarm symbols and operating-state fields must still be read. During commissioning, the displayed topology should be compared with physical labels and configured addresses.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e585000800faae1e",
+    "question": "The camera coding can be obtained by ().",
+    "correctOptionLabels": ["A"],
+    "explanation": "The correct answer is A, the IVS client. The intelligent video surveillance client is the tool that discovers or manages cameras and exposes the camera identifier needed for video-system configuration. That code links the selected physical camera to the surveillance platform so streams and events can be associated with the correct device. ECC800 can integrate and monitor facility subsystems, but it is not the source named for obtaining the camera code. A smart Ethernet socket and a Wi-Fi converter provide connectivity-related functions and do not identify cameras within the video management system. During commissioning, technicians should verify the code against the camera's location and label before entering it elsewhere; using another camera's identifier can produce a technically connected but operationally misleading surveillance view.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e585000816eeb3a9",
+    "question": "When the single machine is working, after the function of power-off of the UPS2000-G machine is prohibited, the PL port has no output when overload or battery power is low.",
+    "correctOptionLabels": ["B"],
+    "explanation": "The statement is False, so B is correct. The awkward phrase “function of power-off ... is prohibited” means the UPS2000-G power-segment or PL shutdown function is disabled. In that state, the PL port is not deliberately disconnected as a separate load segment merely because the UPS is overloaded or the battery becomes low. It remains tied to the general UPS output behavior. If segmentation were enabled, the controller could shed PL-connected noncritical loads under those conditions to preserve capacity for priority loads. Normal UPS protection still applies when segmentation is disabled: severe overload, exhausted battery, or another protective condition may ultimately transfer or shut down the entire output. The key distinction is selective PL-port load shedding versus whole-UPS protection, not an absence of protective action.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e58500081e336460",
+    "question": "After the UPS5000 is installed with ejector fan, you need to set the status of “Ejector Fan” as “Allow” in the menu. Otherwise, the ejector modules cannot be used normally.",
+    "correctOptionLabels": ["A"],
+    "explanation": "The statement is True, so A is correct. Installing the ejector fan hardware is only the physical part of the configuration. The UPS controller must also be told that the accessory is present by setting the Ejector Fan status to Allow. That setting enables the associated control, monitoring, and alarm logic; without it, the controller will not operate the ejector modules as part of the designed thermal-management system. This is a common commissioning principle for optional accessories: hardware, wiring, and software configuration must all agree. After enabling the setting, technicians should verify fan operation, airflow direction, feedback, and alarm behavior under the product's test procedure. The option should not be enabled where no corresponding hardware is installed, because that can create false alarms or misleading status.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e58500081ed38014",
+    "question": "Which of the following are the characteristic of Huawei NetCol5000-A row-level precision air conditioner cooling capacity adjustment?",
+    "correctOptionLabels": ["A", "C"],
+    "explanation": "The correct answers are A and C. A describes the primary modulation mechanism: the DC inverter compressor varies output continuously over the stated 20%–100% range, allowing cooling capacity to track IT heat load more closely than a fixed-speed compressor. This reduces repeated starts, improves temperature control, and supports efficient part-load operation. C describes behavior below the compressor's minimum stable cooling output: electric heat compensation can add a controlled heat load so the inverter compressor continues running rather than short-cycling. Although reheating appears counterintuitive, stable continuous refrigeration can preserve humidity and temperature control and avoid mechanical wear from frequent starts. B and D describe fixed-frequency or frequent-cycling behavior, which are not the marked characteristics of this variable-capacity NetCol5000-A design.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e58500081f9690b6",
+    "question": "The straight pipe interval fixedly supported by NetCol5000-C piping ().",
+    "correctOptionLabels": ["D"],
+    "explanation": "The correct answer is D, 2500 mm. Straight NetCol5000-C piping requires fixed supports at the specified 2.5 m interval so the pipe's weight and operating forces are carried by the building support system rather than by equipment connections or joints. Proper spacing limits sagging, vibration, joint stress, and movement that could lead to leakage or poor drainage. Supports must be compatible with the pipe material and include appropriate insulation protection so clamps do not crush insulation or create condensation bridges. The stated interval is a maximum product installation spacing for the referenced straight run, not a reason to ignore bends, valves, branches, flexible connectors, or local structural conditions; those points may require additional support. Alignment, slope where required, thermal movement, and service access must also be checked.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e585000821e22b83",
+    "question": "If the status of the access which collected by the network management is always open, it can be checked by () (multiple choice).",
+    "correctOptionLabels": ["A", "B", "C"],
+    "explanation": "The correct answers are A, B, and C. First, A checks the physical state: if the monitored door is not fully closed, an “always open” report may be accurate rather than a monitoring fault. B checks the access-control actuator and door magnetic-lock wiring, because an open circuit, incorrect terminal, or failed connection can prevent the expected closed-state signal from reaching the controller. C checks the suction plate's angle and tightness; poor alignment or a loose plate can keep the magnetic lock or door contact from reaching its closed condition even when the door appears nearly shut. The AC-actuator wiring in D is unrelated to this access-door status path. Troubleshooting should move from physical closure through alignment and wiring to controller input status, while preserving door-safety and emergency-egress functions.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e585000824f35040",
+    "question": "When installing the Huawei air-cooled air conditioner, the refrigerant pipeline positive pressure is required to be () hours.",
+    "correctOptionLabels": ["C"],
+    "explanation": "The correct answer is C, 24 hours. After the refrigerant piping is assembled, it is charged with dry nitrogen to the specified test pressure and isolated for a 24-hour hold. The extended period helps reveal small leaks that may not produce an obvious immediate pressure drop. Readings must be interpreted with ambient-temperature changes because gas pressure varies with temperature; a pressure change is not automatically a leak until that effect is considered. The test also requires leak inspection at joints and valves rather than relying only on one gauge value. Nitrogen must be introduced through correctly rated regulation and relief equipment, and the system's specified pressure must not be exceeded. Passing positive-pressure holding is followed by the prescribed evacuation and vacuum-hold process; the tests serve different purposes.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5850008271d8612",
+    "question": "The main reason for the energy-saving effect of the closed cold/hot passage is (). (Multiple choice)",
+    "correctOptionLabels": ["A", "B", "C", "D"],
+    "explanation": "The correct answers are A, B, C, and D. A is the core mechanism: containment prevents cold supply air and hot exhaust from mixing, so a greater share of delivered cooling reaches server inlets. B follows because controlled inlet conditions allow a higher air-conditioner supply temperature, reducing unnecessary cooling lift and energy. C describes hot-aisle containment's return-side benefit: hotter, more concentrated return air increases the effective temperature difference across the cooling unit and improves sensible-cooling utilization. D reflects the humidity-control consequence stated for this design: a higher supply temperature reduces unnecessary dehumidification and the compensating humidification energy that would otherwise be required. These benefits depend on sealing, airflow balance, blanking panels, and setpoint control; enclosure panels alone do not guarantee savings.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e58500082c752553",
+    "question": "After NetCol5000-A25kW half-cabinet air-conditioning refrigerant pipeline is installed, do the nitrogen charge pressure maintaining, the nitrogen pressure is ()Mpa.",
+    "correctOptionLabels": ["D"],
+    "explanation": "The correct answer is D, 3 MPa. For the referenced NetCol5000-A 25 kW half-cabinet installation, the completed refrigerant piping is pressurized with dry nitrogen to 3 MPa for the specified pressure-maintenance and leak-check procedure. This controlled test verifies the integrity of field-made joints and piping before refrigerant charging and operation. The value is model- and procedure-specific; technicians must not generalize it to other equipment or exceed the rating of any connected component, hose, manifold, or gauge. Nitrogen must be supplied through a regulator and relief arrangement, valves opened slowly, and personnel kept clear of vulnerable joints. Pressure should be stabilized and corrected for ambient-temperature effects when evaluating the hold. After a successful test, the system still requires the prescribed evacuation and vacuum verification.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e58500082f0ffc32",
+    "question": "() indicates the amount of electricity that can be discharged when the fully charged battery is discharged to the specified termination voltage according to certain discharge conditions. The unit expressed in Ah (Ah) or Watt (Wh).",
+    "correctOptionLabels": ["A"],
+    "explanation": "The correct answer is A, actual capacity. Actual capacity is the quantity of charge or energy a fully charged battery delivers under a defined discharge rate, temperature, and termination-voltage condition. It is measured from the battery's real performance and may be expressed in ampere-hours or watt-hours. Rated capacity, by contrast, is the manufacturer's nominal declared value under specified reference conditions; an installed or aged battery may deliver more or less than that label under a particular test. The distinction matters because available capacity changes with discharge rate, temperature, aging, charging history, and cutoff voltage. A capacity test must therefore document its conditions and compare the measured actual capacity with the appropriate rated reference. Terminal voltage alone cannot establish how much usable capacity the battery will deliver.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5850010f897e8a7",
+    "question": "When the status of UPS2000G battery is “NA”, it may be ().",
+    "correctOptionLabels": ["A"],
+    "explanation": "The correct answer is A: the battery is not connected. An “NA” battery status means the UPS does not have an available battery system to report in the expected operating context. A disconnected battery connector, open battery switch, or absent battery bank can therefore produce that state. Low battery voltage is a different condition and would normally be represented by a low-voltage or related battery alarm rather than simply “NA.” A correctly connected battery should provide measurable status, while a missing neutral conductor is an AC wiring issue and is not the direct explanation offered for battery availability. Troubleshooting must be performed safely: verify configured battery presence, switch and connector state, battery voltage with rated instruments, and active alarms, recognizing that the DC terminals can remain hazardous even when the UPS output is off.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5850010fbe290bd",
+    "question": "Among the components of the UPS5000-E, () can be hog plug. (Multiple choice)",
+    "correctOptionLabels": ["A", "B", "C", "D"],
+    "explanation": "The correct answers are A, B, C, and D; “hog plug” is evidently intended to mean hot plug or hot swap. The modular UPS5000-E design supports service replacement of the power module through its rack connector when capacity and redundancy conditions permit. The bypass module is likewise a removable functional module, but its safe replacement depends on the system's current power path and approved procedure. The energy control modules operate with redundancy so a designated controller module can be exchanged under the documented conditions. The dry contact card is also a hot-swappable control-module card, allowing interface service without dismantling the whole control assembly. Hot-swappable never means risk-free: technicians must check load, redundancy, module status, ready switches, alarms, and the exact maintenance sequence before removing any component.",
+    "needsReview": false,
+    "reviewNote": ""
+  }
+]

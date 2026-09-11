@@ -1,0 +1,474 @@
+[
+  {
+    "id": "6aa2e5740006dfdbc62e",
+    "question": "The intelligent battery management function of the UPS system can improve the battery life. Which of the following are supported by the battery management function of the UPS2000-G series (6 KVA to 20 KVA)?()",
+    "correctOptionLabels": ["A", "B", "C", "D"],
+    "explanation": "A, B, C, and D are correct. UPS2000-G intelligent battery management combines several controls that reduce avoidable battery stress.\n\n- A: Intelligent hibernation limits unnecessary continuous charging during long periods of normal mains operation, reducing plate corrosion and energy loss.\n- B: Automatic changeover between equalized and float charging applies stronger restorative charging when needed, then returns to a lower sustaining voltage.\n- C: Temperature compensation adjusts charging behavior because the appropriate lead-acid charging voltage changes with battery temperature; this helps prevent undercharge when cold and overcharge when warm.\n- D: An adjustable battery count lets commissioning engineers match the charger and DC bus settings to the installed string configuration.\n\nTogether these functions improve availability while avoiding charging conditions that shorten service life.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5740006d4008b25",
+    "question": "(Single Answer) When the batteries status of UPS2000-G-20kVA is NA, which situation may occur?",
+    "correctOptionLabels": ["A"],
+    "explanation": "A is correct: the batteries may not be connected. An NA battery status means the UPS does not have usable battery information or does not detect an available battery string, rather than confirming a normal connected battery. During installation or troubleshooting, this should prompt checks of the battery breaker, battery cables, connectors, polarity, and configured battery parameters before attempting battery operation. An undervoltage condition is normally a measurable battery state and should produce an undervoltage or low-battery indication, not merely NA. Properly connected batteries should likewise produce a recognizable status. A missing battery neutral can cause a wiring or battery-path abnormality, but the broad, direct condition represented by NA in this question is absence of the battery connection. Treat the DC battery circuit as hazardous and verify it only with approved procedures and PPE.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5740006b0e97d58",
+    "question": "The communication option card of UPS2000G only has Modbus card and SNMP card.",
+    "correctOptionLabels": ["B"],
+    "explanation": "False, so B is correct. The word “only” makes the statement wrong. UPS2000-G communication and monitoring are not limited to a Modbus interface and an SNMP card; the product family also supports other local or external signaling methods, including USB and dry-contact functions in the relevant configuration. These interfaces serve different integration needs. RS485/Modbus is useful for serial building-management communication, SNMP supports Ethernet-based network monitoring, USB supports local service or communication tasks, and dry contacts provide simple alarm or status signaling without requiring a network protocol. The exact fitted interfaces depend on the UPS model and installed option card, so an engineer should verify the ordered hardware and manual before commissioning. The study point is that UPS communications form a broader interface set, not a two-card-only design.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5740006d5b270d5",
+    "question": "The UPS2000-G series (6kVA to 20KVA) supports up to () UPS in parallel, providing excellent scalability.",
+    "correctOptionLabels": ["D"],
+    "explanation": "D is correct: the UPS2000-G 6–20 kVA series supports up to four UPS units in a parallel system. Parallel operation allows capacity expansion and, when the load is sized below the combined available capacity, redundancy such as N+1. The UPSs must exchange synchronization and load-sharing signals so their inverter outputs remain matched in frequency, phase, and voltage and divide current correctly. Supporting four units therefore describes a system architecture, not permission to connect arbitrary outputs together. Each unit must be a compatible model and configuration, parallel signal wiring must follow the prescribed ring arrangement, and input, bypass, output, and battery design must comply with Huawei’s installation guidance. Commissioning also requires consistent parameters and verification of load sharing. Options zero, two, and three understate the stated maximum scalability of this series.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5740006ce53d36d",
+    "question": "(Single Answer) The preset battery equalized charging voltage of UPS2000-G-(6-20K) is ( ) V/cell.",
+    "correctOptionLabels": ["B"],
+    "explanation": "B is correct: the preset equalized-charge voltage is 2.35 V per cell. Equalized charging uses a higher voltage than float charging to restore charge more actively and help bring cells in a lead-acid string toward a consistent state of charge. Expressing the setting per cell matters because the UPS controls a long series string; the total charger voltage scales with the configured number of cells. The 2.35 V/cell preset is therefore distinct from the lower 2.25 V/cell float value used for long-term charge maintenance. Values that are too high can accelerate gassing, heating, water loss, and plate corrosion, while values that are too low may leave the battery incompletely charged. Commissioning personnel should retain or change this preset only according to the approved battery specification, temperature conditions, and Huawei procedure, never by treating it as a generic value for every battery chemistry.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5740006ed4ea247",
+    "question": "The parallel signal cables of the UPS2000-G series (6 KVA to 20 KVA) are connected in () mode, which avoids the impact caused by a faulty parallel cable and enhances parallel system reliability.",
+    "correctOptionLabels": ["A"],
+    "explanation": "A is correct: the parallel signal cables are connected in a ring. In a ring, each UPS participates in a closed communication path rather than depending on one unprotected point-to-point lead. That topology gives the parallel control system an alternate path when a single cable or connection is faulty, reducing the chance that one broken signal link will disrupt synchronization and load sharing for the entire group. This is why the question connects ring wiring directly with higher parallel-system reliability. Delta-shaped and Y-shaped descriptions are not the specified Huawei parallel-control topology, and a single cable connection would create the very single point of failure the ring is intended to avoid. Installers must still connect the designated parallel ports in the documented sequence, secure the DB15 connectors, keep power configurations consistent, and verify that all units recognize the parallel system before applying protected load.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5740006c2f7d0a9",
+    "question": "When the unit is working, the load of the UPS2000-G is connected to the PL, what condition will cause the load to be de-energized? (Multiple Choice)",
+    "correctOptionLabels": ["A", "B"],
+    "explanation": "A and B are correct. With the load connected to the protected-load output, an overload can exceed the UPS inverter’s permitted capacity or duration. If the excess cannot be cleared or transferred safely to an available bypass, output protection operates and the load can become de-energized. Battery low voltage can also remove the output during battery operation: once the battery reaches its discharge limit, the UPS shuts down the inverter to prevent damaging deep discharge, so stored energy can no longer support the load. By contrast, a mains interruption or mains low voltage does not by itself require loss of load. Those are core UPS use cases; the rectifier may stop and the DC battery path sustains the inverter, provided the battery is connected, charged, and within limits. This distinction separates normal ride-through events from conditions that exhaust or exceed the available backup path.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5740006d6e61534",
+    "question": "Which of the following are the monitoring methods used by the UPS2000-A series (6 KVA to 10 KVA) with an SNMP card? (Multiple Choice)",
+    "correctOptionLabels": ["A", "B"],
+    "explanation": "A and B are correct. An SNMP card gives the UPS2000-A network connectivity that can be used in two complementary ways.\n\n- A: NetEco can collect UPS status and alarms centrally, allowing operators to supervise power equipment alongside other facility infrastructure.\n- B: The card’s WebUI provides direct browser-based access for viewing status, alarms, and permitted configuration functions on that UPS.\n\nThese methods use the network-management capability added by the SNMP card: one is centralized platform monitoring and the other is device-level web management. SMU2000 is not the monitoring method identified for this UPS-and-SNMP-card combination. In practice, the management network should be configured with approved addressing, credentials, access controls, and alarm destinations. Network monitoring improves visibility but does not replace local electrical checks, alarm investigation, or safe maintenance procedures.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5740006ee5b6bf7",
+    "question": "The UPS2000-G series (6 KVA to 20 KVA) has the () user interface, which displays the system status in real time.",
+    "correctOptionLabels": ["B"],
+    "explanation": "B is correct: the UPS2000-G 6–20 kVA series uses an LCD user interface. The LCD presents operating mode, input and output measurements, battery information, load level, alarms, and system status in a form that an installer or operator can inspect locally. That makes it more than a simple LED indicator panel: LEDs can show broad states, but they cannot provide the same menus, measurements, event detail, and parameter views. A touchscreen is a different physical interface and is not the answer specified for this series. A remote network-management system may also monitor the UPS when communications are configured, but it is external to the UPS rather than its local user interface. During commissioning, the LCD is used to confirm wiring-related measurements, mode transitions, active alarms, and settings before the protected load is accepted.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5740006c5705e6f",
+    "question": "(Single Answer) The preset battery float charging voltage of UPS2000-G-(6-20K) is ( ) V/cell.",
+    "correctOptionLabels": ["A"],
+    "explanation": "A is correct: the preset float-charge voltage is 2.25 V per cell. Float charging maintains a fully charged lead-acid battery while the UPS is on normal mains supply, replacing self-discharge without applying the stronger voltage used for equalized charging. The per-cell value is multiplied across the configured series string, which is why the battery count and charger settings must agree. The 2.25 V/cell float preset is lower than the 2.35 V/cell equalized-charge preset in this product material. That difference limits long-term overcharge, heating, gassing, and corrosion while keeping the battery ready for a mains failure. The other values do not match the stored float preset. Actual commissioning must also account for the approved battery model and temperature compensation; technicians should not manually substitute a voltage merely because it is common for another battery chemistry or installation.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e574000fc1efd559",
+    "question": "Which of the following is the operating principle of the UPS2000-G? ()",
+    "correctOptionLabels": ["B"],
+    "explanation": "B is correct: the UPS2000-G operates as an online double-conversion UPS. In normal mode, the rectifier converts incoming AC to DC, creating the DC link and supporting battery charging, while the inverter continuously converts DC back to regulated AC for the protected load. Because the load is normally supplied through the inverter, disturbances on the incoming supply are isolated from the output more effectively than in standby or line-interactive designs. If mains power fails or moves outside the accepted range, the battery continues feeding the DC link and the inverter maintains the AC output without changing the load’s normal conversion path. Bypass remains a separate path for applicable overload, fault, or maintenance conditions; it is not the primary conversion principle. “Delta conversion” is a different topology and is not the classification used for this product.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e574000ff1f26dea",
+    "question": "The standard number of batteries in a single battery pack for the UPS2000-G series (6 KVA to 20 KVA) is ().",
+    "correctOptionLabels": ["D"],
+    "explanation": "D is correct: one standard battery pack contains 20 batteries. This count is an installation configuration, not merely a capacity label. Series-connected battery blocks establish the DC voltage required by the UPS, so the physical battery count, nominal block voltage, cable arrangement, and UPS battery setting must agree. A 20-battery pack can also be combined as prescribed for models that require a higher-voltage string, but installers must follow the model-specific diagram rather than improvising series or parallel links. Counts of 16, 17, or 18 do not describe the standard pack identified in this question. Before energizing, verify polarity, inter-block links, protective devices, connector seating, and the absence of unintended grounds. A wrong count or reversed connection can cause startup failure, incorrect charging, equipment damage, or severe DC arc and shock hazards.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e574000fda42dfa6",
+    "question": "The UPS2000-G series (6 KVA to 20 KVA) features an industry-leading lightning protection design, with a lightning protection level of () and a surge protection level of (), which avoids 90% of failures caused by lightning strikes and offers reliable protection for the AC input ports on back-end devices.",
+    "correctOptionLabels": ["A"],
+    "explanation": "A is correct: the stated lightning-current protection level is 5 kA and the surge-voltage protection level is 6 kV. The two values describe different stresses. Current capability indicates the magnitude of surge current the protection path is designed to handle, while the voltage figure describes the impulse withstand or protection level associated with the incoming transient. Together they improve resilience of the UPS AC input when lightning-induced surges enter through upstream power wiring. The paired rating must be read as 5 kA and 6 kV; mixing one value with a lower current or voltage produces a different specification. This built-in protection is one layer of a coordinated facility design, not a substitute for proper earthing, bonding, upstream surge-protective devices, cable routing, and periodic inspection. Those measures control the surge path and reduce damaging potential differences across connected equipment.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e574000fd33a1104",
+    "question": "Which of the following are the operating modes of the UPS2000-A series (1 KVA to 10 KVA)? (Multiple Choice)",
+    "correctOptionLabels": ["A", "B", "C", "D"],
+    "explanation": "A, B, C, and D are correct. Each mode identifies a distinct power path or service condition.\n\n- A: In normal mode, the UPS conditions utility power and supplies the protected load through its normal conversion path.\n- B: In battery mode, stored DC energy supports the inverter when mains input is unavailable or unacceptable.\n- C: In bypass mode, the load is supplied from the bypass source when transfer conditions permit, such as an inverter overload or fault.\n- D: Maintenance bypass provides a deliberate service path around the UPS power conversion section so qualified personnel can maintain equipment while the load is externally supplied.\n\nBypass power is less protected from utility disturbances, and maintenance bypass requires a controlled switching procedure. Operators must confirm source availability and load consequences before changing modes.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e574000fd6571d2a",
+    "question": "Which of the following are the highlights of the UPS2000-G series (6 KVA to 20 KVA)? (Multiple Choice)",
+    "correctOptionLabels": ["A", "B", "C"],
+    "explanation": "A, B, and C are correct: the product highlights are reliability, efficiency, and simplicity.\n\n- A: Reliability comes from online double conversion, wide input tolerance, surge protection, battery management, fault warning, and resilient parallel signaling, all aimed at keeping the protected load supplied.\n- B: Efficiency refers to reducing conversion and operating losses, which lowers wasted energy and heat that the room cooling system must remove.\n- C: Simplicity covers practical deployment and operation features such as a clear LCD, flexible input arrangements, communications, manageable battery configurations, and scalable parallel operation.\n\nThese are broad design themes rather than three isolated operating modes. A study answer should connect each word to an engineering outcome: availability, lower lifecycle energy impact, and easier installation or operation. The actual design still requires correct sizing, wiring, environmental control, and commissioning.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e574000fdf360af5",
+    "question": "The UPS2000-G uses an optional communication card to monitor the entire parallel system.",
+    "correctOptionLabels": ["A"],
+    "explanation": "True, so A is correct. In a correctly commissioned UPS2000-G parallel group, the units exchange system information over their parallel-control connections. An optional communication card can expose monitoring for the parallel system rather than forcing the operator to treat every module as an unrelated standalone device. This allows centralized observation of operating state, alarms, load, and other available measurements through the supported management interface. The communication card performs supervisory monitoring; it does not replace the parallel DB15 signal cables that synchronize inverter operation and support load sharing. Those are separate functions and both must be wired as specified. Engineers should also confirm which UPS hosts the card, configure network or serial settings, and test alarm reporting. Monitoring improves awareness but does not make a parallel system safe if power cables, bypass sources, battery strings, or unit parameters are inconsistent.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e574000fc843680a",
+    "question": "The battery voltage of the UPS2000-G is 240V for the 6 – 10 KVA capacity models, and is 480 V for the 15 KVA and 20 KVA capacity models.",
+    "correctOptionLabels": ["A"],
+    "explanation": "True, so A is correct. The stated nominal battery voltages correspond to the different DC-bus requirements of the two capacity groups: 240 V for 6–10 kVA models and 480 V for 15–20 kVA models. With common 12 V battery blocks, those nominal values align with 20-block and 40-block series arrangements respectively. Series connection raises voltage while the ampere-hour rating of one string remains that of a single block. This is why a battery cabinet suitable for one model group must not be assumed suitable for another without checking the wiring and approved configuration. During installation, the configured battery count, polarity, midpoint or neutral arrangement where applicable, breaker rating, and cable insulation must match the UPS. Battery strings retain dangerous DC voltage even when mains power is absent, so isolation and verification procedures are essential.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e574000fe8fd2a21",
+    "question": "Multiple input/output systems can meet the requirement in customers power grid application scenarios. What input/output systems does the 10-KVA UPS2000-G support?",
+    "correctOptionLabels": ["A", "D"],
+    "explanation": "A and D are correct. The 10 kVA UPS2000-G supports single-phase input with single-phase output and three-phase input with single-phase output.\n\n- A fits sites where both the available source and protected load are single phase.\n- D lets a site feed the UPS from a three-phase distribution system while still supplying a single-phase critical load, subject to the prescribed input wiring and upstream phase-loading design.\n\nThe output for this model remains single phase in both supported arrangements, so the choices claiming three-phase output are not correct. Input flexibility does not mean terminals may be rearranged casually: installers must select the intended configuration, size conductors and protective devices accordingly, connect neutral and protective earth correctly, and verify phase-to-neutral voltages before startup. The supported topology must match the exact model nameplate and Huawei wiring diagram.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e574000fe5e5ccdf",
+    "question": "Which of the following is not the certifications obtained by the UPS2000-G series?",
+    "correctOptionLabels": ["C"],
+    "explanation": "C is correct: “Green Sites award” is not one of the certifications identified for the UPS2000-G series. The other choices refer to recognized compliance, efficiency, or incentive frameworks associated with the product material: CE addresses conformity for applicable European requirements, ENERGY STAR is an energy-efficiency certification program, and Enhanced Capital Allowance qualification relates to an eligible energy-saving product framework. A “Green Sites award” is phrased as an award, not the listed product certification. This distinction matters in procurement because certifications have defined schemes, test criteria, geographic applicability, and documentary evidence; a marketing award cannot be substituted for regulatory conformity or an efficiency listing. Engineers should always verify the certificate for the exact model, rating, market, and current project requirement rather than assuming that a family-level statement automatically covers every variant or jurisdiction.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e574000fe0ce0cb2",
+    "question": "Which of the following communication methods does the UPS2000-G (6 KVA to 20 KVA) support? (Multiple Choice)",
+    "correctOptionLabels": ["B", "C", "D", "E"],
+    "explanation": "B, C, D, and E are correct. The supported communication set covers protocol-based monitoring, local connectivity, and simple hardwired signaling.\n\n- B: RS-485 supports robust serial communication, commonly carrying Modbus data to a management system.\n- C: SNMP enables IP-network monitoring and alarm integration through the appropriate card.\n- D: USB provides a local communication or service interface for supported tasks.\n- E: Dry contacts provide voltage-free status or alarm indications for basic BMS integration and external controls.\n\nRS-232 is not part of the supported set specified by this question. These interfaces are not interchangeable: each has different wiring, distance, addressing, cybersecurity, and signal semantics. During commissioning, verify the fitted option hardware, protocol settings, termination where required, and alarm mapping, then test the end-to-end indication instead of assuming that physical connection alone proves communication.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5740019be11826d",
+    "question": "A wide input range effectively reduces the battery switch times, failure probability, and battery charge/discharge times, helping improve the battery life. The input voltage range of the UPS2000-G series (6 KVA to 20 KVA) is ().",
+    "correctOptionLabels": ["A"],
+    "explanation": "A is correct: the stated input voltage range is 80–280 V. A wide accepted range lets the rectifier continue operating through substantial utility variation instead of transferring immediately to battery whenever voltage sags or rises. Fewer battery transfers mean fewer discharge and recharge cycles, less thermal and electrochemical stress, and more stored energy available for a genuine outage. It also reduces avoidable mode changes in weak-grid or generator environments. The range must still be interpreted with the product’s load and operating conditions; wide-range limits can be associated with derating or other constraints, so they are not a promise of full rated output under every input condition. The other ranges do not match the value specified in this question. Commissioning should verify nominal voltage, frequency, conductor sizing, neutral, protective earth, and the configured input system before relying on the acceptance window.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5740019e026a0ed",
+    "question": "The UPS2000-G is a double conversion online UPS powered by mains in the normal operating state. A rectifier converts AC power into DC power, and then an inverter converts the rectifier DC power into pure AC power to be supplied to loads. A charger is used to charge the storge battery string.",
+    "correctOptionLabels": ["A"],
+    "explanation": "True, so A is correct. The statement accurately describes the UPS2000-G normal-mode energy path. The rectifier takes mains AC and produces DC for the internal DC link. The inverter then continuously reconstructs regulated AC for the critical load, which is the defining mechanism of an online double-conversion UPS. The charger maintains or restores the battery string so stored DC energy is available when the mains input fails or leaves the accepted range. During a mains event, the battery supports the same DC link and the inverter continues supplying the load, avoiding the normal-path transfer delay associated with standby designs. Bypass is a separate alternate source used under appropriate overload, fault, or maintenance conditions. Understanding these blocks is important for troubleshooting: input, DC bus, charger, battery, inverter, and bypass alarms point to different parts of the power path.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5740019b956887f",
+    "question": "The UPS2000-G series (6 KVA to 20 KVA) supports backup power supplied from battery packs and battery racks. Battery packs can be mounted on racks to save installation space.",
+    "correctOptionLabels": ["A"],
+    "explanation": "True, so A is correct. The UPS2000-G can use the supported battery-pack arrangement or batteries installed in a battery rack to provide DC backup energy. Rack mounting organizes the battery blocks vertically within the equipment footprint, which can be valuable where floor space is constrained and the required runtime needs more battery capacity than a compact arrangement provides. Physical compatibility alone is not enough: the number of batteries, series and parallel arrangement, nominal DC voltage, ampere-hour capacity, protective device, and cable size must match the UPS model and runtime design. Racks also need suitable loading capacity, ventilation, access, restraint, clearances, and environmental control. During commissioning, technicians verify polarity and string voltage before closing the battery breaker. Battery racks contain lethal DC energy and can deliver very high fault current, so approved PPE and insulated procedures are mandatory.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5740019e82ccc55",
+    "question": "Which of the following are the standard battery packs for the UPS2000-A-10KRTL? (multiple Choice)",
+    "correctOptionLabels": ["A", "B"],
+    "explanation": "A and B are correct: 7 Ah and 9 Ah are the standard battery-pack capacities identified for the UPS2000-A-10KRTL.\n\n- A: A 7 Ah pack provides the approved smaller standard capacity option for the model.\n- B: A 9 Ah pack provides a higher stored-energy standard option, generally supporting longer runtime under comparable conditions.\n\nAmpere-hours describe charge capacity, not UPS output power; actual backup time also depends on load, battery age, temperature, discharge rate, and the number and arrangement of blocks. The 11 Ah and 13 Ah choices are not the standard packs specified here. Installation personnel must use a compatible Huawei-approved pack configuration, confirm connectors and polarity, and set battery parameters correctly. Substituting a larger numerical Ah value without verifying mechanical, electrical, charger, and certification compatibility is unsafe and may not provide the expected performance.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5740019ef5289f7",
+    "question": "The UPS2000-G-(6-20kVA) did not report a fault but the load was cut off due to a poor connection of the output cable.",
+    "correctOptionLabels": ["A"],
+    "explanation": "True, so A is correct. A loose, open, or high-resistance connection downstream of the UPS output can interrupt power to the load even while the UPS itself remains healthy and therefore reports no internal fault. The UPS may still measure normal voltage at its own output terminals; the break occurs between those terminals and the load. A high-resistance joint can also heat under load, create voltage drop, carbonize insulation, or develop into arcing before it becomes fully open. This scenario is why troubleshooting must follow the entire power path rather than treating a clear UPS alarm list as proof that the load wiring is sound. Qualified personnel should isolate the circuit, verify conductor termination and specified torque, inspect for heat damage, and test continuity and voltage at appropriate points. Never tighten or probe energized high-current output connections without the approved safe-work procedure.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5740019d983d47e",
+    "question": "How many batteries does the UPS2000-G series (15 KVA to 20 KVA) support? (Multiple Choice)",
+    "correctOptionLabels": ["B", "C", "D"],
+    "explanation": "B, C, and D are correct: the 15–20 kVA UPS2000-G supports configurations of 32, 36, or 40 batteries.\n\n- B: A 32-battery string is a supported lower-count configuration.\n- C: A 36-battery string provides an intermediate supported DC-string configuration.\n- D: A 40-battery string is the supported upper count and corresponds to the nominal 480 V arrangement when 12 V blocks are used.\n\nThe adjustable count gives deployment flexibility and can help reuse a suitable existing battery installation, but it is not arbitrary. The UPS battery setting must exactly match the installed series count so charging thresholds, low-voltage protection, and state calculations are correct. Twenty-eight is outside the supported choices in this question. All blocks in a string should be compatible and similarly conditioned, with correct polarity, protection, cable sizing, and midpoint wiring where specified.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5740019dfec0b28",
+    "question": "For the 6 KVA UPS2000-G, a 1 + 1 parallel system requires () DB15 parallel cables to ensure that each UPS is connected by at least two parallel cables and to enhance the parallel system stability.",
+    "correctOptionLabels": ["C"],
+    "explanation": "C is correct: a 1+1 system requires two DB15 parallel cables. The two UPS units are connected through both parallel-signal paths, forming the prescribed redundant ring-style communication arrangement. Parallel control carries the synchronization and load-sharing information needed to keep the inverter outputs aligned. With two cables, each UPS has the required pair of connections and a single cable fault is less likely to remove all parallel communication. Zero or one cable cannot provide that redundant closed path, while three is not the specified requirement for a two-unit 1+1 arrangement. The signal cables do not carry load power and do not replace correctly sized input, bypass, output, neutral, earth, or battery conductors. Installers should secure the DB15 connectors, follow the port sequence, align unit settings, and verify stable load sharing and alarm-free operation during commissioning.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5740019c2a361cb",
+    "question": "Which of the following actions does the UPS2000-G take when the main input exceeds the allowable range? ()",
+    "correctOptionLabels": ["A"],
+    "explanation": "A is correct: the UPS switches to battery mode when the mains input moves outside its allowable range. In an online double-conversion design, the rectifier normally supplies the DC link. If input voltage or frequency becomes unacceptable, continuing to use that source could destabilize the DC bus or violate output-quality requirements. The battery then supports the DC link and the inverter continues producing regulated AC for the load. Transfer to bypass is not the normal answer because the bypass source may be the same abnormal utility supply and must itself satisfy transfer limits. Overvoltage or undervoltage protection describes protective logic but not the requested operating action, and derating is not the general response to an out-of-range mains input. Battery operation remains limited by state of charge and low-voltage protection, so persistent bad mains will eventually require orderly load shutdown or another source.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5740019cc195edb",
+    "question": "The failure warning feature for the key components of a UPS system changes post-event maintenance to pre- event maintenance protecting loads from unexpected power failures. Which of the following components of the UPS2000-G support failure warning? (Multiple choice)",
+    "correctOptionLabels": ["A", "B", "D"],
+    "explanation": "A, B, and D are correct. The failure-warning function targets components whose deterioration can be detected or estimated before a service-affecting failure.\n\n- A: Fan warning helps identify degraded cooling, such as reduced speed or abnormal operation, before overheating forces derating or shutdown.\n- B: Bus-capacitor warning tracks a critical DC-link component whose aging can increase ripple and reduce conversion reliability.\n- D: Battery warning identifies declining backup capability so a weak string can be serviced before a mains outage exposes it.\n\nThe output capacitor is not included in the supported warning set stated by this question. Predictive warnings change maintenance from purely reactive replacement to planned intervention, but they are not proof of remaining life. Operators should investigate the alarm, inspect operating conditions and records, and follow the approved diagnostic or replacement procedure while preserving load redundancy.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5760014d2ad64cd",
+    "question": "(Multiple Answer) There are four UPS5000-E-400K working in dual-bus system, No.1 and NO.2 connected in parallel, NO.3 and NO.4 connected in parallel, so how to connect the BSC cables? ( )",
+    "correctOptionLabels": ["B", "C"],
+    "explanation": "B and C are correct. The four UPSs form two parallel systems: No.1/No.2 are one bus and No.3/No.4 are the other. BSC links must cross between the two systems, connecting No.1 to No.3 and No.2 to No.4 to form the redundant synchronization loop.\n\n- B provides one cross-bus BSC path between corresponding UPSs.\n- C provides the second cross-bus path and completes the resilient loop.\n\nConnections only between No.1 and No.2 or between No.3 and No.4 stay inside a single parallel group and therefore do not synchronize the two buses. BSC keeps output frequency and phase aligned so downstream transfer equipment can switch safely; it does not combine the two buses electrically. Correct master/slave BSC settings and cable verification are required during commissioning.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5760014cdbfeadf",
+    "question": "(Multiple Answer) Which components of UPS5000-E support hot swappable ?",
+    "correctOptionLabels": ["A", "B", "C", "D"],
+    "explanation": "A, B, C, and D are correct. The UPS5000-E modular design permits the listed components to be replaced without shutting down the entire protected system, when redundancy and the approved procedure allow it.\n\n- A: A power module can be removed after confirming enough remaining capacity.\n- B: The bypass module supports service replacement under the documented operating conditions.\n- C: Redundant energy control modules allow one control module to be serviced while the other maintains control.\n- D: The dry-contact card is a pluggable monitoring component and supports online replacement.\n\nHot-swappable does not mean risk-free or removable at any moment. Personnel must confirm load rate, redundancy, module status, ready-switch position, alarms, and electrostatic and electrical precautions. Removing the wrong module without adequate capacity can force bypass or interrupt the load.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5760014c2e288be",
+    "question": "(Single Answer) When UPS5000 series are connected in parallel, the network mode of the master should be set to ( ).",
+    "correctOptionLabels": ["A"],
+    "explanation": "A is correct: set the master UPS network mode to one-to-multiple. In a parallel system, the designated master must communicate with and coordinate information for several member UPSs rather than a single peer. One-to-multiple therefore matches the topology: one master-facing management relationship covers multiple parallel units. One-to-one would describe an isolated pair and would not represent the full group, while multiple-to-one reverses the intended role. “Not required” is incorrect because consistent network settings are part of making the parallel system visible and manageable. This setting concerns supervisory communications; it does not replace the parallel-control cables that synchronize inverter outputs and share load. During commissioning, assign the master as specified, keep addressing and communication parameters consistent, confirm every unit is discovered, and verify that system-level status and alarms represent the complete parallel group.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5760014ea7627d6",
+    "question": "The UPS5000-E power module adopts fan fault- tolerant design. When two fans are faulty, how many loads in percentage is this power module still be able to carry?",
+    "correctOptionLabels": ["B"],
+    "explanation": "B is correct: with two fans faulty, the power module can still carry 30% load. The fault-tolerant cooling design allows limited continued operation instead of an immediate complete module trip, but available power must be reduced because airflow and semiconductor cooling capacity are impaired. The 30% figure preserves a thermal margin while giving operators time to transfer load, restore redundancy, or replace the faulty module. It must not be interpreted as permission to leave the condition unresolved: temperatures, remaining fan operation, alarms, and system redundancy still require close attention. Values of 25%, 50%, and 60% do not match the stated two-fan-failure capability. In a modular system, the practical response is to confirm that healthy modules can carry the protected load, then perform the approved hot-replacement procedure before another cooling fault removes the remaining margin.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5760014b3860d2b",
+    "question": "(T or F) If there is no mains input, press the battery cold-start button on the bypass module, then turn on the inverter, UPS5000-E will enter battery mode.",
+    "correctOptionLabels": ["A"],
+    "explanation": "True, so A is correct. Battery cold start allows the UPS5000-E to energize its control and DC-link functions from the battery string when no mains source is available. Pressing the designated cold-start button on the bypass module initiates battery-powered startup; after the inverter is turned on through the prescribed operation, the inverter converts battery DC into AC and the UPS enters battery mode. This is useful for commissioning or emergency startup, but it consumes finite stored energy from the moment the system starts. Before attempting it, technicians must confirm that the battery system is correctly connected, its breaker is in the required state, voltage and polarity are valid, and the load is appropriate for the available runtime. Cold start does not create a bypass source, and an exhausted or isolated battery cannot support the procedure.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5760014da0a0aab",
+    "question": "(Single Answer) When UPS5000-E works in high altitude areas, it need to be derated, what's the reason? ( )",
+    "correctOptionLabels": ["C"],
+    "explanation": "C is correct. Air density and dielectric strength decrease with altitude. Reduced air density means the cooling fans move less air mass through the UPS for the same volumetric airflow, weakening heat removal from power semiconductors, magnetics, capacitors, and other heat-producing components. Reduced dielectric strength also narrows the insulation margin between energized parts. Derating limits current, internal losses, temperature rise, and electrical stress so the UPS remains within its validated operating envelope. Low ambient temperature is not an inherent high-altitude condition, corrosion is a separate environmental issue, and altitude does materially affect UPS capability. Commissioning engineers must therefore use the model-specific Huawei altitude derating curve and account for the actual installation elevation, ambient temperature, ventilation, and load rather than assuming full rated capacity at every altitude.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5760014cb1c9ac2",
+    "question": "(Multiple Answer) The input line (phase to phase) voltage of UPS5000-E supports ( ).",
+    "correctOptionLabels": ["B", "C", "D"],
+    "explanation": "B, C, and D are correct: the UPS5000-E supports nominal line-to-line input systems of 380 V, 400 V, and 415 V.\n\n- B covers the common 380 V three-phase system.\n- C covers the widely used 400 V nominal system.\n- D covers the 415 V three-phase system used in many facilities.\n\nAll three are phase-to-phase ratings within the product’s high-voltage three-phase platform. The 220 V option is normally a phase-to-neutral value in such systems, not the supported nominal line-to-line input requested by the question. Commissioning personnel must distinguish nominal voltage from the wider operating tolerance: they should verify all three phase-to-phase readings, phase sequence, neutral arrangement where required, frequency, protective earth, and bypass compatibility before startup. An acceptable average voltage does not excuse severe phase imbalance or incorrect terminal wiring.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5760014d0bc2687",
+    "question": "(T or F) In UPS5000-E parallel system, the system configuration is N+1, shut down one UPS, the others will transfer to bypass mode automatically. ( )",
+    "correctOptionLabels": ["B"],
+    "explanation": "False, so B is correct. In an N+1 parallel system, the extra capacity is specifically intended to let the remaining N UPS capacity support the load when one UPS is shut down or unavailable. If the protected load remains within the healthy inverters’ combined rating and all parallel conditions are normal, the other UPSs continue in inverter mode; an automatic transfer to bypass is unnecessary. Bypass would be expected only if the remaining inverter capacity is insufficient, a fault or overload requires transfer, or another transfer criterion is met. This is the practical value of redundancy: planned maintenance or one failure does not automatically sacrifice conditioned inverter power. Before shutting down a unit, operators must confirm actual load, redundancy, bypass availability, battery arrangement, and alarm state. N+1 is a capacity design condition, not a guarantee when the system is overloaded or another module is impaired.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5760014ec47287e",
+    "question": "Which of the following modules int eh UPS5000-E (50 KVA power module) support online hot replacements?",
+    "correctOptionLabels": ["A", "B", "C"],
+    "explanation": "A, B, and C are correct. The UPS5000-E architecture supports online replacement of its power module, control module, and bypass module under the conditions defined for the system.\n\n- A: A faulty 50 kVA power module can be removed while redundant healthy modules carry the load.\n- B: Redundant control modules allow control service without stopping the entire UPS.\n- C: The modular bypass assembly is designed for online service using the prescribed transfer and isolation procedure.\n\nD, the power distribution module, is part of the high-current distribution path and is not identified here as an online hot-replaceable module. “Hot replacement” always depends on adequate redundancy and correct system state. Confirm load capacity, alarms, bypass condition, isolation steps, module weight-handling requirements, and ready-switch instructions before removal; otherwise an intended maintenance feature can become a load-loss hazard.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5760014df777151",
+    "question": "Which of the following UPS types does the UPS5000-E (50 KVA power module) belongs to?",
+    "correctOptionLabels": ["B", "D"],
+    "explanation": "B and D are correct: the UPS5000-E is both a high-frequency UPS and a modular UPS.\n\n- B: High-frequency power electronics perform rectification and inversion using switching technology rather than relying on a large industrial-frequency isolation transformer as the defining conversion element. This supports high efficiency and power density.\n- D: The cabinet accepts modular 50 kVA power units, allowing capacity to be assembled, expanded, and made redundant in module increments.\n\n“Industrial frequency UPS” describes a different traditional topology, and “rack and tower-mounted” describes small-UPS mechanical formats rather than this cabinet-level modular category. These classifications have deployment consequences: engineers size the cabinet and installed module count for capacity and redundancy, verify remaining capacity before hot replacement, and still design suitable upstream, bypass, output, battery, cooling, and maintenance provisions for the complete system.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e576001e08b8340d",
+    "question": "Which of the following functions and components are configured for the standard UPS5000-E (50 KVA power module)? (Multiple Choice)",
+    "correctOptionLabels": ["A", "B", "C", "D"],
+    "explanation": "A, B, C, and D are correct. The standard configuration includes network supervision, hardwired signaling, parallel capability, and dual-bus synchronization capability.\n\n- A: SNMP supports Ethernet-based monitoring and alarm integration.\n- B: The dry-contact communication card provides simple input/output alarm signaling.\n- C: Parallel-system functions let compatible cabinets synchronize and share load for capacity or redundancy.\n- D: BSC functionality synchronizes the frequency and phase of two independent UPS buses for dual-bus operation.\n\nThese roles should not be conflated. Parallel control intentionally combines inverter outputs within one system; BSC aligns separate buses without paralleling their power outputs; SNMP and dry contacts only report or exchange management signals. Commissioning must include the correct cables, topology, settings, addressing, alarm mapping, and functional tests for whichever features the site actually uses.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e576001df8484ee6",
+    "question": "The UPS5000-A is compatible with module and tower.",
+    "correctOptionLabels": ["A"],
+    "explanation": "A is correct (True) in the intended product-positioning sense. UPS5000-A is a transformerless tower-mounted UPS, but its power section uses a unit-level design and the product includes an embedded maintenance-bypass switch. During properly planned service, that bypass path can continue supplying the load while the UPS conversion section is maintained, giving the tower architecture selected maintainability characteristics associated with modular systems. The statement therefore describes a combination of tower construction and service-oriented architecture; it does not claim physical interchangeability. UPS5000-E power modules do not fit a UPS5000-A cabinet, and the two product families must not be treated as mechanically or electrically interchangeable. Engineers must follow the exact UPS5000-A maintenance-bypass sequence, verify the bypass source and load transfer, and isolate all applicable internal power sources before maintenance.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e576001e1e4d8a0a",
+    "question": "The number of battery strings for the UPS5000-E can be adjusted. To avoid replacing the whole battery string due to one faulty battery and solve the battery maintenance difficulty of traditional UPSs, how many batteries the UPS5000-E (50 KVA power module) can adjust?",
+    "correctOptionLabels": ["D"],
+    "explanation": "D is correct: the supported adjustable range is 30–44 batteries per string. The purpose of an adjustable battery count is to let the UPS charger and DC protection settings match several approved series-string voltages. In a retrofit, this flexibility can permit a sound existing string to be reconfigured after a failed block is removed, instead of forcing replacement solely because the UPS accepts only one fixed count. The setting must always equal the actual installed count; otherwise charging voltage per block, low-battery thresholds, and runtime calculations will be wrong. The narrower ranges in A, B, and C do not match the stated capability. Adjustable count does not justify mixing battery models, ages, capacities, or states of health. A qualified engineer must assess the complete string, confirm symmetry and midpoint connections, and follow the battery manufacturer’s replacement criteria.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e576001e2c99e48e",
+    "question": "What is the maximum capacity of the UPS5000-E power module?",
+    "correctOptionLabels": ["D"],
+    "explanation": "D is correct: the maximum power-module capacity identified here is 50 kVA. In the modular UPS5000-E design, these power modules are installed in a cabinet and operate together to build the required system capacity. A cabinet with several modules can therefore have a much larger total rating than one module; the 50 kVA value must not be confused with the complete UPS system capacity. Module granularity also supports N+X redundancy and staged expansion: engineers can install enough modules for the load plus the required reserve, within the cabinet’s supported limits. The 20, 30, and 40 kVA choices do not match the maximum module size in this question. Capacity planning must still consider real-power rating, load power factor, overload behavior, battery charging demand, ambient or altitude derating, and future growth, not kVA alone.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e576001e06157e31",
+    "question": "The UPS5000-E battery adopts the design without neutral wire, which facilitates battery re-utilization in the replacement of tower-mounted UPS.",
+    "correctOptionLabels": ["B"],
+    "explanation": "False, so B is correct. The retrofit-friendly battery arrangement relies on the required neutral or midpoint connection; it is not a design that simply eliminates the battery neutral wire. A split positive and negative DC bus referenced to a midpoint allows the UPS to work with the prescribed battery-string structure and can help align a replacement design with existing tower-UPS batteries. Omitting that conductor where the Huawei diagram requires it would leave the DC system incorrectly referenced and could produce startup faults, abnormal voltage distribution, or equipment damage. Battery topology must be taken from the exact model’s wiring instructions because “neutral” on the battery side is not interchangeable with protective earth or casually derivable from the AC neutral. Before energization, verify positive, negative, midpoint, polarity, string voltage, isolation, breaker arrangement, and configured battery count using approved high-voltage DC procedures.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e576001e17ae9be1",
+    "question": "The UPS5000-A has a built-in isolation transformer.",
+    "correctOptionLabels": ["B"],
+    "explanation": "False, so B is correct. The UPS5000-A is a transformerless high-frequency UPS; a built-in power-frequency isolation transformer is not part of its standard conversion path. Its rectifier and inverter use power electronics to perform online double conversion with high power density and efficiency. If a project requires galvanic isolation, voltage transformation, or a specific neutral arrangement, that need must be addressed with the approved external transformer or designated system option rather than assumed to exist inside the UPS. This distinction affects footprint, weight, losses, fault current, grounding, and protection coordination. A transformerless UPS can still regulate voltage and isolate many input disturbances through double conversion, but that is not the same as galvanic isolation. During design review, engineers should verify the source earthing system, bypass neutral, downstream neutral requirements, and any external transformer’s compatibility with the UPS and load.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e576001df364fb3f",
+    "question": "The standard protection level of the UPS5000-A is ().",
+    "correctOptionLabels": ["C"],
+    "explanation": "C is correct: the standard enclosure protection level is IP20. In the IP code, the first digit 2 indicates protection against access to hazardous parts with a finger and against solid objects of the defined size; the second digit 0 means no rated protection against water ingress. That makes the standard UPS5000-A an indoor electrical product for a controlled equipment room, not a weatherproof or washdown enclosure. IP21 or IP22 would add limited dripping-water protection that the standard rating in this question does not claim. The rating does not replace installation clearances, room temperature and humidity control, dust management, pest control, or fire protection. Designers should prevent overhead water risk and locate piping appropriately. If a project requires a higher enclosure rating, it must use a supported cabinet option or environmental solution rather than treating IP20 as equivalent.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e576001e1f3da479",
+    "question": "The communication modes in a standard UPS5000-A include (Multiple Choice)",
+    "correctOptionLabels": ["A", "B", "D"],
+    "explanation": "A, B, and D are correct. The standard UPS5000-A communication set supports hardwired, serial, and network-management integration.\n\n- A: Dry contacts exchange simple alarm or status signals with external systems and can operate without a data network.\n- B: RS485 provides robust multidrop serial communication, typically for Modbus integration with a BMS.\n- D: SNMP supports IP-network monitoring, status collection, and alarm reporting through management software.\n\nRS232 is not part of the standard communication modes specified by this question. Each interface requires its own commissioning checks: dry-contact normal state and mapping, RS485 polarity, address and termination, and SNMP addressing, credentials, permissions, and alarm destination. A link light or cable connection alone is insufficient; operators should trigger or simulate approved test conditions and verify that the correct event appears at the receiving system.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e576001df1b5bd4f",
+    "question": "The UPS5000-E can realize convenient and simple 2N power supply system only by configuring a ().",
+    "correctOptionLabels": ["A"],
+    "explanation": "A is correct: a BSC cable is configured to support the 2N dual-bus system. In 2N architecture, two independent UPS systems feed separate buses. They are not paralleled for load sharing, but their outputs must be synchronized in frequency and phase so a downstream static transfer switch can move a dual-cord or transfer load between sources without an unacceptable phase jump. The BSC connection carries that synchronization information between the master and slave bus systems. “Synchronized control” describes the function, not the required cable; a separate BSC control board or parallel card is not the specified item. Installers must connect the designated BSC ports in the documented redundant topology and set the two systems to complementary BSC master and slave modes. Correct synchronization does not remove the need to preserve electrical independence between the two 2N power paths.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e576001e16f1a3c3",
+    "question": "Which of the following statements are correct about the UPS5000-A (30-120 KVA) reliability? (Multiple Choice)",
+    "correctOptionLabels": ["A", "B", "C", "D"],
+    "explanation": "A, B, C, and D are correct. Each feature addresses a different reliability threat.\n\n- A: The 6 kV/5 kA lightning-protection design improves resilience against incoming surge voltage and current.\n- B: A wide input-voltage range lets the rectifier remain on mains through grid variation, reducing battery transfers.\n- C: High inverter overload capability helps ride through temporary load peaks without an immediate bypass transfer or shutdown.\n- D: Conformal coating protects circuit assemblies from humidity, dust, and contamination that can promote leakage, corrosion, or tracking.\n\nTogether these features reduce failures from the power source, load behavior, and environment. They do not replace coordinated surge protection, correct load sizing, cooling, cleanliness, maintenance, or redundancy. Reliability claims assume installation and operation within the exact model’s documented limits.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5760026d7160c4f",
+    "question": "The number of batteries in each UPS5000-A battery string can be adjusted within the supported range, helping simplify battery maintenance compared with traditional fixed-count designs.",
+    "correctOptionLabels": ["A"],
+    "explanation": "A is correct (True). UPS5000-A supports an approved range of series battery counts within each battery string. The configured count must exactly match the physical string so the charger applies the correct total voltage and the UPS calculates per-battery charging levels, end-of-discharge thresholds, and available capacity consistently. This flexibility can allow a supported reconfiguration when one battery fails, avoiding replacement of an otherwise serviceable whole string solely because a traditional UPS accepts only one fixed count. It does not permit improvised removal of batteries or mixing battery models, ages, capacities, or conditions. Before reconfiguration, qualified personnel must assess every battery, preserve the required string symmetry and midpoint arrangement, update the UPS battery parameters, verify polarity and total DC voltage, and follow Huawei and battery-manufacturer maintenance criteria.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5760026e7490e55",
+    "question": "The UPS5000-E has strong load adaptability. It does not derate in case of leading/lagging capacitive/inductive loads.",
+    "correctOptionLabels": ["B"],
+    "explanation": "B is correct: the stated no-derating load power-factor boundary is 0.5 for both leading and lagging loads. A leading power factor represents net capacitive behavior, while a lagging power factor represents net inductive behavior. Supporting either direction down to 0.5 shows that the inverter can supply substantial reactive current without reducing the stated load capability within that operating envelope. This matters for data centers because switch-mode power supplies, motors, filters, and mixed loads do not always present unity power factor. The value is a capability boundary, not a target operating point: low power factor increases current for a given useful kW and consumes inverter and conductor capacity. Options 0.4, 0.6, and 0.7 do not match the product claim tested. Engineers should still size from both kVA and kW and check harmonic and crest-factor requirements.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5760026c1d7f91f",
+    "question": "The UPS5000-E can keep a high efficiency and reduce loss within a wide load range. The efficiency can be up to 96% at 40% loads and 95% at 20% load respectively. What is the efficiency under ECO mode?",
+    "correctOptionLabels": ["D"],
+    "explanation": "D is correct: ECO-mode efficiency is stated as 0.99, or 99%. In ECO mode, the acceptable bypass source supplies the load through a lower-loss path while the inverter remains ready to resume conditioned supply when the source leaves the configured voltage or frequency window. Avoiding continuous full double conversion reduces semiconductor switching and conduction losses, which explains the higher efficiency compared with the cited normal-mode values at partial load. The tradeoff is that the load is more directly exposed to bypass-source quality and a transfer is required when conditions become unacceptable. Therefore ECO mode should be selected from the load’s power-quality tolerance and site reliability design, not efficiency alone. The 0.96, 0.97, and 0.98 choices are below the specified 99% figure. Commissioning should include ECO limits and transfer tests.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5760026ec50df48",
+    "question": "Which of the following IP protection level does the UPS5000-E support? (Multiple Choice)",
+    "correctOptionLabels": ["A", "B"],
+    "explanation": "A and B are correct: the UPS5000-E supports IP20 and IP21 enclosure protection levels.\n\n- A: IP20 provides finger-safe protection against access to hazardous parts and specified solid objects, with no water-ingress rating.\n- B: IP21 adds protection against vertically falling water drops for the applicable cabinet configuration.\n\nIP41 and IP55 represent substantially higher solid-object or water protection and are not supported choices for this product in the question. Both supported ratings still describe indoor equipment and do not make the UPS suitable for rain, washdown, uncontrolled condensation, or a dusty outdoor environment. The ordered cabinet option must match the project requirement. Facility design should control room humidity and temperature, keep water services away from electrical equipment, maintain clear airflow and service access, and verify that any added enclosure treatment does not compromise cooling or maintenance safety.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5760026ce3f9ed2",
+    "question": "Which of the following statements is correct about the UPS5000-S at low loads? (Multiple Choice)",
+    "correctOptionLabels": ["B", "D"],
+    "explanation": "B and D are correct. The UPS5000-S is stated to achieve 96.5% system efficiency at 20% load and 97% at 40% load.\n\n- B shows strong efficiency even when the installation is lightly loaded, where fixed converter and fan losses usually represent a larger share of input power.\n- D shows the further improvement at 40% load as those fixed losses are spread across more delivered power.\n\nA understates the 20% figure at 95%, and C understates the 40% figure at 96%. Low-load efficiency matters in modular data centers because systems are often installed for future growth or redundancy and spend long periods below full capacity. Higher efficiency reduces electricity loss and the cooling energy needed to remove that heat, but actual site performance still depends on configuration, redundancy, load profile, voltage, and environmental conditions.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5760026e21556cb",
+    "question": "Which of the following statements are correct about the UPS5000-A smart battery management? (Multiple Choice)",
+    "correctOptionLabels": ["A", "B", "C", "D"],
+    "explanation": "A, B, C, and D are correct. The four functions work together to reduce battery stress and support flexible deployment.\n\n- A: Battery hibernation reduces unnecessary continuous charging during stable mains operation.\n- B: Temperature compensation adjusts charging voltage to avoid undercharge in cold conditions and overcharge when warm.\n- C: Automatic equalized/float switchover applies restorative charging when required, then returns to a lower sustaining level.\n- D: Adjustable battery count lets the configured charger and DC limits match supported string arrangements.\n\nThese features can extend service life, but only when battery model, count, temperature sensing, and settings are correct. They cannot recover a damaged block or make mismatched batteries safe. Commissioning should verify the installed string against the configured values, and maintenance should combine UPS alarms with inspection, measurements, and the battery manufacturer’s criteria.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5760026d1a95b80",
+    "question": "The UPS5000-E features wide voltage and frequency input range. It can be used in severe grid environments and extend the battery service life. What’s the maximum input range of the UPS5000-E?",
+    "correctOptionLabels": ["C"],
+    "explanation": "C is correct: the maximum stated input-voltage range is 138–485 V. A wide rectifier input window lets the UPS remain on the mains source through deep sags and high-voltage conditions that would force a narrower-range UPS onto battery. Avoiding unnecessary discharge/recharge cycles preserves battery availability and reduces cycle-related aging in weak-grid environments. The range describes the widest supported operating envelope, not necessarily full rated output at every voltage. At the low end, input current rises for the same power and derating or load-dependent limits may apply; frequency, phase balance, bypass limits, and generator behavior also remain relevant. The 305–485 V option is too narrow, while 105–485 V extends below the stated minimum. Engineers should use the exact model’s technical table and derating conditions when sizing cables, breakers, generators, and expected load capability.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5760026ed84011e",
+    "question": "Which of the following statements are correct about the UPS5000-A smart feature? (Multiple Choice)",
+    "correctOptionLabels": ["A", "B", "C"],
+    "explanation": "A, B, and C are correct. The smart features combine centralized visibility, battery-life management, and remote alarm delivery.\n\n- A: NetEco can monitor multiple UPS systems centrally, giving operators a consolidated view of status, measurements, and alarms.\n- B: Smart battery management controls charging states, temperature compensation, and supported string parameters to reduce avoidable battery aging.\n- C: NetEco can forward alarms by SMS or email, allowing responsible personnel to learn of actionable events without remaining at the local LCD.\n\nThese functions support operations but do not replace electrical protection or maintenance. Remote alarms are useful only when recipients, mail or messaging services, severity mappings, and escalation procedures are tested. Battery management likewise depends on correct sensors and configuration. Commissioning should verify the entire path from a UPS event to the intended NetEco display and notification recipient.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5760026c0283c54",
+    "question": "The UPS5000-E (25-75 KVA has the industry-leading lightning protection, its lightning protectin level is (), and surge protection level is (). Compared with the other similar UPSs in the industry, it can efficiently reduce the lightning strike failure rate.",
+    "correctOptionLabels": ["A"],
+    "explanation": "A is correct: the stated lightning-protection level is 5 kA and the surge-protection level is 6 kV. The current and voltage figures describe complementary aspects of transient resilience. A lightning-induced surge can drive a high current through the input protection path while imposing a steep impulse voltage on insulation and connected electronics. The 5 kA/6 kV design improves the UPS5000-E input’s ability to withstand and divert those events compared with lower-rated alternatives. Options that pair 2 kA or 4 kV do not match the specified design. Internal protection is only one layer in a facility lightning-protection system. Effective performance also depends on short, low-impedance protective-earth and bonding paths, coordinated upstream surge-protective devices, correct cable routing, and inspection after severe events. No UPS surge rating makes direct lightning exposure harmless.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5760026d7bfe1a8",
+    "question": "The UPS5000-E can realize convenient and simple N+X power supply system only by configuring a ().",
+    "correctOptionLabels": ["B"],
+    "explanation": "B is correct: a parallel cable is configured to create an N+X UPS system. The cable carries the control information needed for multiple compatible UPS units to synchronize their inverter outputs and share load. N is the module or UPS capacity required by the load, while X is additional parallel capacity reserved for redundancy. A BSC cable serves a different purpose: it synchronizes two independent buses in a 2N arrangement and does not parallel their power outputs. A separate BSC control board or parallel card is not the specified requirement in this question. Physical cabling alone is not complete commissioning. All parallel units must have compatible power wiring, bypass source, phase sequence, firmware and parameters; the system must recognize every member and demonstrate stable current sharing before the critical load relies on the N+X redundancy.",
+    "needsReview": false,
+    "reviewNote": ""
+  }
+]

@@ -927,7 +927,7 @@ function Feedback({ question, selected, correct }: { question: ExamQuestion; sel
       </div>
       <div className="mt-4 border-t border-[var(--border)] pt-4">
         <p className="text-xs font-bold uppercase tracking-[0.1em] text-[var(--text-soft)]">Why the correct answer is correct</p>
-        <p className="mt-2 text-sm leading-6 text-[var(--text-soft)]">{explainCorrectAnswer(question)}</p>
+        <p className="mt-2 whitespace-pre-line text-sm leading-6 text-[var(--text-soft)]">{explainCorrectAnswer(question)}</p>
       </div>
     </div>
   );

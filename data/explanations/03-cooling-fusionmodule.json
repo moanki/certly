@@ -1,0 +1,370 @@
+[
+  {
+    "id": "6aa2e5780018fb816e76",
+    "question": "Which of the following are the functions of air conditioner?",
+    "correctOptionLabels": ["A", "B", "C"],
+    "explanation": "A, B, and C are correct. An air-conditioning system controls temperature by removing sensible heat from the room and supplying conditioned air at a suitable temperature. It controls humidity by adding or removing moisture so that equipment is protected from condensation, static-discharge risk, and out-of-range operating conditions. It also adjusts cleanliness by circulating air through filters that capture dust and other particulates before they reach sensitive electronics. These three functions together define environmental conditioning, especially in a data center where heat load is continuous and contamination can reduce reliability. Oxygen content is different: ordinary comfort or precision air conditioners recirculate and condition air, but they are not oxygen-generation or oxygen-control systems. Fresh-air ventilation, where provided, is a separate building-services function.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57800190013bef3",
+    "question": "Which of the following advantages is not for the wet film humidifier?",
+    "correctOptionLabels": ["D"],
+    "explanation": "D is correct: recyclable is not the stated advantage of a wet-film humidifier. A wet-film system passes water over an evaporative medium and moves air through it, allowing moisture to enter the air without the high electrical heating demand of steam generation. That supports large humidification capacity and energy-efficient operation. Because it avoids the electrode-cylinder scaling mechanism found in electrode humidifiers, its consumable replacement interval can also be longer when water quality and maintenance are appropriate. Recyclability, however, is a material-disposal characteristic, not a core operating advantage used to distinguish this humidification method. In practice, technicians should judge the system by capacity, energy use, water quality requirements, hygiene, inspection, and replacement needs rather than assume that the wetted medium can simply be recycled.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5780018e2779f81",
+    "question": "Which type of cooling solution is not included in the Huawei smart cooling solution?",
+    "correctOptionLabels": ["B"],
+    "explanation": "B is correct: direct ventilation is not one of the listed Huawei smart-cooling deployment types in this question. Huawei's portfolio is organized around where cooling is delivered relative to the IT load: in-room units condition the equipment room, in-row units sit close to rack rows, and in-rack solutions bring cooling closest to the heat source. Those arrangements use controlled refrigeration or chilled-water systems and managed airflow. Direct ventilation instead relies on introducing outdoor air directly into the space, making performance strongly dependent on outdoor temperature, humidity, air quality, filtration, and contamination control. It is therefore not interchangeable with the three product-placement categories being tested. The key study distinction is deployment location and controlled cooling architecture, not merely whether air moves through the data center.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57800191128c43a",
+    "question": "Compare with in-room cooling, which of the following descriptions is not correct about in-row cooling?",
+    "correctOptionLabels": ["D"],
+    "explanation": "D is correct: higher supply-air temperature is not the comparison being credited as an inherent in-row advantage here. In-row cooling places the cooling unit close to the server heat load, shortening the airflow path and reducing hot-air and cold-air mixing. That proximity supports higher rack densities because each unit can remove concentrated heat before it spreads through the room. Shorter airflow paths also reduce the external static pressure and fan work needed to move air across the space, which can contribute to lower system noise under comparable conditions. Supply-air temperature, however, is an operating setpoint chosen to maintain acceptable server inlet conditions; it is not automatically higher simply because the unit is installed in-row. Containment, load distribution, return temperature, and control strategy determine the usable setpoint.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5780019097e8cf7",
+    "question": "Which of the following features are included in iCooling feature? (Multiple answers)",
+    "correctOptionLabels": ["A", "B", "C"],
+    "explanation": "A, B, and C are correct. A provides AI-based self-optimization: operating data can be analyzed to coordinate cooling output with changing IT load and reduce unnecessary energy use. B links a 3D temperature map with load and cooling-system information, giving the controller spatial evidence of hot spots and allowing cooling capacity and airflow to follow actual demand. C provides refrigerant-capacity detection, which helps identify abnormal charge conditions and developing leakage before cooling performance degrades severely. Together these features turn cooling from isolated fixed control into measured, feedback-driven operation. Module-level cooling-system control is not one of the iCooling features identified by this question; it describes a broader control scope rather than the specific analytics, thermal visualization, and refrigerant-detection functions that form the marked set.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5780019135d0555",
+    "question": "Which sensor can detect the leakage on chilled water cooling unit?",
+    "correctOptionLabels": ["C"],
+    "explanation": "C is correct: a water sensor detects leakage from a chilled-water cooling unit. Water-detection cable or point sensors are positioned where escaping water is likely to collect, such as beneath the unit, near pipe joints, valves, or the condensate route. When water bridges the sensing elements, the monitoring system can raise an alarm and initiate configured protective actions. A temperature sensor can reveal abnormal thermal conditions but does not directly prove that water has escaped. A smoke sensor detects combustion products and belongs to fire detection, not liquid-leak monitoring. Early water detection matters because leakage can damage electronics, create slip and electrical hazards, reduce system pressure, and compromise cooling capacity. During commissioning, the sensor placement, continuity, alarm reporting, and any linkage actions should be tested without wetting vulnerable equipment.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5780018f211d230",
+    "question": "For Huawei air-cooled air conditioners, one indoor unit can correspond to multiple outdoor units.",
+    "correctOptionLabels": ["B"],
+    "explanation": "False is correct. In the configuration referenced by this question, an indoor precision air-conditioning unit is paired with its specified outdoor heat-rejection unit rather than being connected arbitrarily to multiple outdoor units. The refrigerant circuit is engineered as a matched system: compressor operation, condenser capacity, refrigerant charge, piping arrangement, pressure control, and controller logic must all correspond. Adding parallel outdoor units without an explicitly supported design can upset oil return and refrigerant distribution, produce unstable condensing pressure, and cause alarms or component damage. This should not be confused with a site containing several indoor/outdoor pairs or with other product families that may support different architectures. Installation and commissioning must follow the model-specific Huawei piping diagram, electrical interconnection, permitted pipe geometry, evacuation, leak testing, and charge instructions.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e578001907b40a0f",
+    "question": "What are the functions of refrigeration detection? (Multiple answers)",
+    "correctOptionLabels": ["A", "B", "C", "D"],
+    "explanation": "A, B, C, and D are correct. A uses trend or abnormal-condition detection to issue a predictive leakage alarm before loss of cooling becomes critical. B provides real-time monitoring of refrigerant condition or inferred charge state, giving operators visibility instead of waiting for a high-temperature failure. C supports operation with less excess refrigerant charge because detection and control reduce reliance on conservative overcharging as a margin. D contributes to leakage prevention by identifying developing abnormalities early enough for inspection and repair, limiting continued refrigerant loss. Detection cannot physically guarantee that a pipe will never leak; its preventive value comes from monitoring, warning, and timely maintenance. During commissioning, technicians should verify sensors, operating data, alarms, and control responses against the product procedure rather than deliberately releasing refrigerant.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5780018f16d17e2",
+    "question": "Sensible heat ratio = Sensible heat/Total heat = Sensible heat/(Sensible heat + Latent heat).",
+    "correctOptionLabels": ["B"],
+    "explanation": "True is correct. Sensible heat changes air temperature without changing its moisture content, while latent heat is associated with moisture removal or addition. Total heat is the sum of those two components, so the sensible heat ratio is sensible heat divided by total heat, equivalently sensible heat divided by sensible plus latent heat. Data centers normally have a high sensible load because servers convert electrical power primarily into heat, while occupancy and moisture generation are comparatively low. Precision cooling is therefore designed for a high sensible heat ratio, directing more capacity to temperature control instead of unnecessary dehumidification. A ratio near one indicates predominantly sensible cooling; a lower ratio indicates a larger latent component. The formula is an energy-load relationship, not an efficiency metric such as COP or EER.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57800191ec16587",
+    "question": "Conventional electrode humidifier has a shorter replacement interval because of scaling on the interior surface.",
+    "correctOptionLabels": ["A"],
+    "explanation": "True is correct. An electrode humidifier passes current through water, using the water's conductivity to generate heat and steam. Dissolved minerals remain behind as water evaporates and can form scale on the cylinder's internal surfaces and electrodes. Scaling changes conductivity, reduces effective electrode performance, restricts the usable volume, and makes control less reliable. The cylinder is therefore commonly treated as a consumable and replaced when deposits or operating hours reach the service threshold. Water conductivity and hardness strongly influence how quickly this occurs, so the interval is not identical at every site. Correct installation includes suitable water supply and drainage, while maintenance should follow alarms and inspection guidance. Attempting to ignore severe scale can reduce humidification output and increase electrical or thermal stress.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5780022d6ccab81",
+    "question": "Which of the following device liquidizes the superheat steam in air conditioner?",
+    "correctOptionLabels": ["A"],
+    "explanation": "A is correct: the condenser converts high-pressure superheated refrigerant vapor into liquid. Refrigerant leaving the compressor first rejects superheat, then releases latent heat while condensing at approximately constant saturation pressure, and may finally be subcooled. The rejected heat passes to outdoor air or cooling water, depending on the system design. The compressor raises vapor pressure and temperature but does not liquefy it. The evaporator performs the opposite phase change, absorbing room heat as low-pressure refrigerant evaporates. The expansion valve meters liquid refrigerant and reduces its pressure before the evaporator. The question's word “steam” refers to refrigerant vapor, not water steam. Correct condenser airflow and cleanliness are essential; restricted heat rejection raises condensing pressure, increases compressor work, and can trip protective controls.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5780022bc476003",
+    "question": "What are the i3 features of FusionModule2000? (Multiple answers)",
+    "correctOptionLabels": ["A", "B", "C"],
+    "explanation": "A, B, and C are correct. iPower covers intelligent power management: it helps operators observe and manage the electrical path, capacity, and power-related operating state supporting the IT load. iCooling addresses thermal management by matching cooling operation to actual conditions, improving visibility and energy performance while maintaining acceptable equipment inlet temperatures. iManager provides the management layer that consolidates monitoring, alarms, data, and operational control for the modular data-center environment. The value of the i3 concept is coordination: power, cooling, and management are treated as connected parts of one facility rather than isolated subsystems. For study purposes, remember the mapping by function—electrical supply, heat removal, and centralized operations—because each correct option represents one of those three pillars.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5780022db44ddca",
+    "question": "The R410A refrigerant can damage the ozone layer.",
+    "correctOptionLabels": ["B"],
+    "explanation": "False is correct. R410A is an HFC refrigerant blend and contains no chlorine, so its ozone-depletion potential is zero; it does not break down stratospheric ozone through the chlorine-catalyzed mechanism associated with older CFC and HCFC refrigerants. That does not make an R410A leak environmentally harmless. R410A has a substantial global-warming impact, and releasing it wastes charge, reduces cooling performance, and may create safety concerns in confined spaces. Technicians must still use approved recovery equipment, leak-test the circuit, and follow applicable refrigerant-handling rules. The exam distinction is specifically ozone-layer damage: R410A avoids ozone depletion, whereas environmental management must also consider greenhouse effect, energy efficiency, containment, recovery, and correct end-of-life handling.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5780022cd3408a4",
+    "question": "The condenser is used to condense the high-pressure gas refrigerant into liquid refrigerant.",
+    "correctOptionLabels": ["A"],
+    "explanation": "True is correct. After compression, the refrigerant enters the condenser as hot, high-pressure vapor. The condenser transfers that heat to the outdoor air or cooling-water circuit. As heat is rejected, the vapor is first desuperheated and then changes phase into a high-pressure liquid; additional heat rejection may subcool the liquid before it reaches the expansion device. This phase change is essential because the expansion valve must receive a stable liquid supply to meter refrigerant properly. Poor condenser airflow, fouling, fan failure, or excessive ambient temperature can raise condensing pressure and compressor power, reducing capacity and triggering protection. The condenser therefore rejects both the heat absorbed in the evaporator and the heat added by compression; it is not merely a storage vessel for refrigerant.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5780022d4d57659",
+    "question": "Which is not the four major components of the refrigerating cycle?",
+    "correctOptionLabels": ["B"],
+    "explanation": "B is correct: the fan is not one of the four major vapor-compression refrigeration-cycle components. The core cycle consists of the compressor, condenser, expansion device, and evaporator. The compressor raises refrigerant pressure; the condenser rejects heat and liquefies the refrigerant; the expansion device meters flow and drops pressure; and the evaporator absorbs heat as refrigerant boils. Fans are important auxiliary components because they move room air across the evaporator and outdoor air across an air-cooled condenser. However, a fan transports air rather than performing one of the refrigerant's four defining thermodynamic processes. This distinction helps troubleshooting: a failed fan can cause high or low pressure and poor heat transfer, but it does not replace the compressor, condenser, expansion device, or evaporator in the cycle.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5780022c0ac296c",
+    "question": "An infrared humidifier generates steam by passing current through the water using immersed electrodes.",
+    "correctOptionLabels": ["B"],
+    "explanation": "False is correct. An infrared humidifier uses infrared lamps to radiate heat onto water held in a pan, causing the water to evaporate and produce humidifying vapor. The lamps are the heat source; electrical current is not intentionally passed through the water as the operating mechanism. Passing current between immersed electrodes through conductive water describes an electrode humidifier. In that design, the water's dissolved minerals provide conductivity, electrical resistance generates heat, and steam is produced. The distinction matters during maintenance and fault diagnosis: an infrared unit is checked for lamp condition, water level, pan cleanliness, and overtemperature protection, while an electrode unit is strongly affected by water conductivity and scale on its electrodes or cylinder. The statement assigns the electrode principle to infrared equipment, so it is false.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5780022db360505",
+    "question": "Which of the following are the configurations in cooling systems: (multiple answers)",
+    "correctOptionLabels": ["A", "C", "D"],
+    "explanation": "A, C, and D are correct. In-room cooling places units at room level and uses the room, raised floor, or ductwork to distribute conditioned air. In-row cooling places units within or beside rack rows, shortening the air path and serving concentrated loads more directly. In-cabinet cooling brings heat removal closest to the equipment enclosure, limiting mixing and supporting highly localized loads. These are configuration categories based on where cooling is positioned relative to the IT load. Air cooled, by contrast, describes the condenser's heat-rejection medium rather than the indoor deployment configuration. An in-room, in-row, or in-cabinet product may use an air-cooled refrigerant circuit or another heat-rejection arrangement. Keeping “location of cooling” separate from “method of rejecting heat” prevents design and exam-category confusion.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5780022e2962698",
+    "question": "The ____________ is a comfort air conditioner.",
+    "correctOptionLabels": ["A"],
+    "explanation": "A is correct: a commercial air conditioner is a comfort air conditioner. Its primary design objective is human comfort in occupied spaces, where loads vary with people, weather, lighting, and working hours. It commonly balances sensible cooling with dehumidification and may not be intended for continuous year-round operation at the high sensible heat ratios found in data centers. A data-center air conditioner is precision cooling equipment: it maintains tighter environmental control, moves larger air volumes for a smaller air-temperature difference, and serves continuous electronic heat loads. Clean and medical air-conditioning systems add specialized contamination, pressure, hygiene, or filtration requirements. The classification depends on the protected environment and load profile, not simply on physical size or whether the unit can lower room temperature.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e5780022c03a73c3",
+    "question": "What are the advantages of precision air conditioner as compared to the comfort air conditioner? (multiple choice)",
+    "correctOptionLabels": ["B", "C", "D"],
+    "explanation": "B, C, and D are correct. B reflects tighter control of temperature and humidity, which keeps server inlet conditions stable and reduces condensation, static, and thermal-stress risks. C reflects year-round cooling capability because IT equipment produces heat continuously, including when outdoor weather is cold and occupied buildings need little comfort cooling. D describes the large airflow and small enthalpy difference used to remove high sensible loads evenly without excessively cold supply air. Precision units are designed around electronics rather than occupants and therefore emphasize sensible capacity, airflow reliability, monitoring, and continuous duty. A low sensible heat ratio is not an advantage here: data centers need a high sensible heat ratio so most cooling capacity handles temperature-producing equipment heat instead of unnecessary latent moisture removal.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57a0014a25a4a2c",
+    "question": "The functions that the ECC800 can implement are (). (Multiple choice)",
+    "correctOptionLabels": ["A", "B", "C", "D"],
+    "explanation": "A, B, C, and D are correct. A lets operators query current and historical system alarms so abnormal conditions can be located and acknowledged. B exports historical measurements or events for trend analysis, reporting, and fault investigation. C manages access-control users, connecting physical entry permissions with the modular data center's supervision system. D configures linkage rules so a detected event can trigger defined responses, such as alarm escalation or interaction with controlled components. These functions show the ECC800's role as the local management core rather than a single-purpose sensor. During commissioning, users should verify device discovery, time synchronization, alarm severity, user permissions, exported data, and each safety-related linkage. Linkage testing must follow approved procedures so doors, skylights, cooling, or alarms are not operated unexpectedly.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57a0014918be241",
+    "question": "What is the size of Smart screen of FusionModule2000?",
+    "correctOptionLabels": ["B"],
+    "explanation": "B is correct: the FusionModule2000 smart screen is 43 inches. This large display is intended as a local visual interface for the modular data-center solution, presenting operational status, alarms, environmental information, and other summarized management data where personnel can view it readily. The 7-inch and 10-inch choices are more typical of compact equipment HMIs, while 40 inches is not the specified screen size in the product material referenced by this question. Screen size alone does not perform monitoring; the display depends on correct power, network connectivity, configuration, and data from the ECC800 and connected devices. During installation, technicians should protect the panel, provide secure mounting and cable routing, then verify that displayed values and alarms agree with the management interface.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57a0014a32ddd92",
+    "question": "The ECC800 does not support wireless communication.",
+    "correctOptionLabels": ["B"],
+    "explanation": "False is correct. The ECC800 supports wireless communication for compatible southbound components in addition to wired interfaces. Wireless networking can simplify deployment of sensors or actuators where running separate communication cabling is inconvenient, while the controller remains the local point for device status, alarms, and linkage. Support does not mean every device connects wirelessly or that configuration is automatic. The selected component must be compatible, antennas and network parameters must be correct, and commissioning must confirm signal quality, device identity, alarm reporting, and fail behavior. Critical power and control functions still require the wiring specified by the product design. The statement is therefore false because it denies the wireless capability entirely, not because wireless should replace all wired communication in a FusionModule2000 installation.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57a0014902f9d09",
+    "question": "FusionModule2000 only supports auto sliding door.",
+    "correctOptionLabels": ["B"],
+    "explanation": "False is correct. FusionModule2000 is not limited to an automatic sliding-door arrangement; modular aisle-containment designs can use different supported door configurations according to layout and project requirements. The door is part of the containment boundary, so its selection affects access, escape, airflow leakage, available clearance, and integration with access control. An automatic sliding door is one option, but treating it as the only option would incorrectly restrict deployment and could lead to a layout that does not match site constraints. Whatever door type is selected, installation must preserve aisle sealing and safe egress, and commissioning must verify mechanical movement, access permissions, door-status feedback, emergency release, and any fire-alarm linkage. The controller and access actuator must also be configured for the actual hardware installed.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57a001489c2a054",
+    "question": "Sunroof actuator can drive up how many sunroof electromagnetic locks at the same time?",
+    "correctOptionLabels": ["C"],
+    "explanation": "C is correct: one sunroof actuator can drive up to six sunroof electromagnetic locks at the same time in the configuration tested. The actuator is the controlled interface between the ECC800 or fire-linkage logic and the locks that hold the aisle-containment skylight panels in their normal position. On a valid release command, the connected locks are operated so the required panels can open. The limit matters for electrical loading, wiring topology, and reliable simultaneous release; exceeding it could overload the output or leave some locks operating unpredictably. Installers should count the connected locks, follow the specified terminals and polarity, secure the cabling, and test every panel's mechanical freedom. Commissioning should include local control, management control, alarm linkage, loss-of-power behavior, and confirmation that all six or fewer locks respond together.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57a0014980aed7c",
+    "question": "The alarm management functions supported by the ECC800 are (). (Multiple choice)",
+    "correctOptionLabels": ["A", "B", "C", "D"],
+    "explanation": "A, B, C, and D are correct. A allows historical alarms to be viewed, preserving the event sequence needed for troubleshooting. B filters alarms by criteria such as device, status, or severity so operators can isolate relevant conditions. C exports alarm data for maintenance records, audits, and deeper analysis. D provides alarm-parameter settings, allowing supported thresholds, severities, or related behavior to be configured for the monitored system. Together these functions cover review, reduction of noise, external reporting, and controlled configuration. Parameter changes should be permission-restricted and documented because poor thresholds can hide developing faults or create nuisance alarms. During commissioning, technicians should generate representative alarms, confirm timestamps and device names, verify filtering and export, and check that cleared conditions return to normal without suppressing genuine safety events.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57a0014aaa1867f",
+    "question": "The user can modify the ECC800’s IP address from the () menu of the ECC800 web interface.",
+    "correctOptionLabels": ["D"],
+    "explanation": "D is correct: the ECC800 IP address is modified under the Monitoring module IP menu. The IP address belongs to the controller's monitoring-network configuration, so it is managed with the monitoring module rather than with display branding, video-device addressing, or system time. Changing it affects how browsers, upstream management platforms, and other networked services reach the ECC800. Before applying a change, the installer should confirm the approved address, subnet, gateway, and absence of an address conflict. The current session may disconnect after the new address takes effect, so access should then be tested at the new location. Commissioning should also verify communication with NetEco or other authorized northbound systems, while preserving secure credentials and documented network settings.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57a001483eb8fb8",
+    "question": "The multi-function sensor in the Fusion Module2000 modular channel can be connected to the () component.",
+    "correctOptionLabels": ["C"],
+    "explanation": "C is correct: the multifunction sensor in the modular aisle connects to the Smart ETH socket. The Smart ETH device provides the nearby communication and power-access point used to integrate compatible channel sensors into the ECC800 monitoring network. This arrangement supports practical cable routing along the cabinet-top trough and avoids treating the sensor as a direct load for unrelated actuators. A cabinet collector serves cabinet-level collection functions, while access-control and sunroof-related actuators drive their respective controlled hardware rather than acting as the normal sensor gateway. Installation should follow the designated ports and cable route, keep signal wiring orderly and protected, and avoid obstructing airflow or service access. Commissioning must confirm that each sensed quantity appears under the correct device and that alarm thresholds and location names are accurate.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57a0014aa56b06f",
+    "question": "According to different layouts, the Fusion Module 2000 can realize battery entry or not.",
+    "correctOptionLabels": ["A"],
+    "explanation": "True is correct. FusionModule2000 can be configured with the battery cabinet included within the modular aisle layout or located outside it, depending on the selected design and site conditions. Battery placement affects the module footprint, cable lengths, maintenance access, structural loading, environmental exposure, and separation from IT equipment. The choice is therefore an engineered layout option rather than a universal requirement that every battery cabinet must enter the containment. Designers must coordinate the approved Huawei solution, UPS topology, battery quantity, fire and safety requirements, ventilation, and service clearances. During installation, polarity, protective devices, grounding, cable routing, and cabinet restraint require careful verification. Commissioning should confirm battery communication and alarms as well as electrical continuity; physical placement alone does not establish a safe, working backup-power system.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57a00147ad7acf2",
+    "question": "By default, how many PDUs are configured for one cabinet of the Fusion Module 2000?",
+    "correctOptionLabels": ["B"],
+    "explanation": "B is correct: one FusionModule2000 cabinet is configured with two PDUs by default. The pair supports the common dual-feed arrangement used by servers and network equipment, allowing devices with redundant power supplies to connect one input to each distribution path. This improves maintainability and resilience compared with putting every load on a single strip, although actual redundancy still depends on the upstream UPS and distribution topology. During installation, the two PDUs should be assigned consistently to the intended A and B feeds, securely mounted, grounded where required, and loaded without exceeding branch or outlet ratings. Commissioning should verify input power, phase or feed identification, metering and communication for smart models, alarm reporting, and correct connection of dual-cord equipment. Two PDUs do not by themselves guarantee end-to-end 2N power.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57a001df3df7aa6",
+    "question": "Through the ECC800Web interface, what can users do? (Multiple choice)",
+    "correctOptionLabels": ["A", "B", "C", "D"],
+    "explanation": "A, B, C, and D are correct. A gives users real-time visibility into connected device status, measurements, and active conditions. B exposes version information, which is essential when checking compatibility, maintenance history, or an upgrade prerequisite. C exports historical data for trend analysis, capacity review, and incident reconstruction. D supports authorized software upgrades so controller or managed-component software can be maintained through the management workflow. These capabilities span operations, inventory, reporting, and lifecycle maintenance. They should be controlled by user roles: viewing status need not imply permission to change software. Before an upgrade, operators should verify the exact package, compatibility, backup requirements, stable power, and maintenance window. Afterward, device communication, alarms, configuration, and displayed versions should all be checked.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57a001dece586b2",
+    "question": "When the ECC800 detects that the connection signal to the device is interrupted, a communication interruption alarm is generated. What are the possible reasons? (Multiple choice)",
+    "correctOptionLabels": ["A", "B", "C", "D"],
+    "explanation": "A, B, C, and D are correct. A loss or abnormality of device power stops its communication interface, so the ECC800 no longer receives responses. B, a loose cable connection, can intermittently open the power or data path. C, poor cable contact, can introduce resistance, noise, or unstable signal levels even when the connector appears inserted. D, equipment failure, can leave the device powered but unable to process or transmit data. Troubleshooting should therefore proceed from fundamentals: verify device power and indicators, inspect and reseat the specified cables, check termination and addressing, then test the device or interface for failure. Restoring communications should clear the alarm only after stable polling resumes. Repeatedly suppressing the alarm would hide loss of monitoring and could allow a facility fault to develop unnoticed.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57a001dfe93207e",
+    "question": "Users can monitor the status of devices such as UPS and air conditioner on the ECC800.",
+    "correctOptionLabels": ["A"],
+    "explanation": "True is correct. The ECC800 is the local management controller for the modular data center and collects status, measurements, and alarms from connected facility devices, including the UPS and precision air conditioner. This gives operators a consolidated view of power availability and thermal operation instead of requiring separate front-panel checks. Monitoring depends on correct physical communication, protocol settings, device addressing, and data-point configuration; an installed cable alone does not prove that values are trustworthy. During commissioning, technicians should compare displayed measurements with the equipment's own interface, trigger representative non-destructive alarms, and confirm names, severity, timestamps, and recovery. User permissions should distinguish monitoring from control or configuration. The statement concerns visibility of device status, not a claim that the ECC800 replaces each device's internal protective controls.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57a001dfe263d2b",
+    "question": "Where is the recommended installation location for the Smart ETH socket?",
+    "correctOptionLabels": ["D"],
+    "explanation": "D is correct: the Smart ETH socket is recommended on the side of the cable trough at the top of the cabinet. This position keeps the gateway close to the channel sensors and actuators it serves, supports orderly short cable runs, and makes inspection possible without consuming IT rack space or placing the device in a threshold where it could be damaged. It also aligns the component with the cabinet-top monitoring cable route. The control skylight is moving containment hardware, not a suitable mounting surface, and installing the socket inside the network cabinet would use valuable equipment space and complicate distribution to aisle devices. Installation should secure the unit and cables, preserve separation from power wiring as specified, avoid sharp bends, and leave airflow, doors, and service access unobstructed.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57a001dee9187e1",
+    "question": "Huawei Fusion Module 2000 monitoring system supports users on which to monitor the status of micro-modules? (Multiple answer)",
+    "correctOptionLabels": ["A", "B", "C", "D"],
+    "explanation": "A, B, C, and D are correct. A, the ECC800 web interface, provides local browser-based monitoring and configuration for the micro-module controller. B, the NetEco web interface, provides a higher-level management view suitable for centralized supervision and historical operations. C, the mobile app, gives authorized users portable access to relevant module status and alarms. D, the pad app, supports a larger touch-oriented local or mobile viewing experience. These are different presentation channels for monitoring data, not four independent sources of truth. Their availability depends on deployment, network reachability, accounts, permissions, and supported software versions. Commissioning should verify that the same device state and alarm identity propagate correctly, while remote access must be secured and limited to approved users and networks.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57a001debe10550",
+    "question": "The sunroof actuator can control the flip sunroof of the modular data center closed channel.",
+    "correctOptionLabels": ["A"],
+    "explanation": "True is correct. The sunroof actuator controls the rotating or flip-type skylight panels on the enclosed aisle. Under normal conditions, electromagnetic locks hold the panels in the designed position. When the controller or fire-extinguishing linkage issues the required command, the actuator operates the lock circuit so the skylights can release and open as intended. This helps coordinate aisle containment with emergency ventilation or fire-protection behavior. The actuator must be connected only to the supported number and type of locks, and the panels must move freely without cable or structural obstruction. Commissioning should verify manual and automatic commands, alarm linkage, status feedback, and power-loss behavior using the approved procedure. A successful software command is insufficient if a panel remains mechanically jammed or a lock is wired incorrectly.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57a001dd79e07a9",
+    "question": "Which interface is not on the smart ETH socket?",
+    "correctOptionLabels": ["D"],
+    "explanation": "D is correct: AI/DI is not an interface on the Smart ETH socket described by this question. The Smart ETH socket provides PWR_IN and PWR_OUT interfaces for power cascading and a PoE interface for the supported network connection. Those ports let multiple distributed monitoring components receive power and communicate along the designed topology. AI/DI means analog-input or digital-input signal terminals; that type of direct sensor input belongs on other controllers or expansion components, not on this Smart ETH socket. Correct identification matters during installation because inserting a cable into an electrically incompatible port can prevent communication or damage equipment. Technicians should follow port labels and the Huawei wiring diagram, observe the permitted cascade arrangement, and confirm power and network status before connecting downstream sensors or actuators.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57a001de09165de",
+    "question": "When the device interface uses the Modbus-RTU protocol, what needs to be installed when accessing the ECC800?",
+    "correctOptionLabels": ["A"],
+    "explanation": "A is correct: an ETH converter is installed when a Modbus-RTU device must access the ECC800 through the supported Ethernet-side architecture. Modbus RTU normally runs over a serial physical link, commonly RS-485, whereas the ECC800 network aggregates devices over Ethernet or its defined southbound buses. The converter bridges the physical and protocol transport so serial device data can be presented to the controller correctly. Access-control, sunroof, and AC actuators perform physical control functions and do not translate Modbus-RTU communication. Installation must also set compatible serial parameters and device addresses, wire polarity and termination correctly, and assign network settings without conflicts. Commissioning should verify stable polling and plausible register values; seeing the converter online does not prove that baud rate, parity, address, or register mapping is correct.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57a001e0e2f59bc",
+    "question": "The user can modify the login password in the ( ) menu of the ECC800 web interface.",
+    "correctOptionLabels": ["C"],
+    "explanation": "C is correct: the login password is changed in the User Management menu. Passwords are properties of user accounts and access control, so they belong with account creation, role assignment, and credential maintenance. Version information is read-only software inventory, Electronic label identifies equipment, and System upgrade manages firmware or software packages; none is the proper location for changing a user's authentication secret. Administrators should replace default credentials during commissioning, assign the minimum necessary permissions, and use unique strong passwords according to the site's security policy. After changing a password, confirm authorized login and record the handover through the approved secure process. Credential work should not be confused with physical access-control user management, even though both enforce who may perform sensitive actions.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57a001e0b5ad525",
+    "question": "ECC800 is the core component of the micro-module local management, and its south-facing components can be extended through the PoE bus.",
+    "correctOptionLabels": ["A"],
+    "explanation": "True is correct. The ECC800 acts as the local management core for the micro-module, collecting device data, presenting alarms and status, and coordinating supported control or linkage functions. Its southbound side connects toward field devices such as sensors, collectors, and actuators. Compatible components can be extended through the PoE bus, which carries communication and power in the supported topology and reduces separate local power wiring. This does not authorize arbitrary Ethernet or PoE devices: port type, device compatibility, cascade limits, addressing, and power budget must follow the Huawei design. During commissioning, technicians should verify each southbound device is discovered under the correct identity, remains stable through the intended cable path, reports alarms accurately, and recovers properly after a controlled power cycle.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57a002a8f72233f",
+    "question": "What is the control component of the modular data center closed access door?",
+    "correctOptionLabels": ["A"],
+    "explanation": "A is correct: the access control actuator is the control component for the enclosed modular data-center door. It interfaces the controller's authorization and linkage decisions with door hardware, allowing approved entry and reporting the relevant access state. A multifunction sensor measures environmental or channel conditions; a sunroof actuator releases or controls skylight hardware; and a cabinet collector gathers cabinet-level information. Those components do not perform the door-control role. Installation must coordinate the actuator with the lock, reader, exit device, door contact, power supply, and safe egress design. Commissioning should test authorized and denied credentials, door-open and forced-entry states, emergency release, fire linkage where required, and recovery after power interruption. Security must never defeat life-safety requirements or trap personnel inside the containment.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57a002a9c123864",
+    "question": "In the FusionModule2000, a standard-sized lead-acid battery cabinet provides 45U available space.",
+    "correctOptionLabels": ["B"],
+    "explanation": "False is correct. The standard FusionModule2000 lead-acid battery cabinet referenced by this question provides 42U of available mounting space, not 45U. Rack units describe usable vertical equipment space; they are not the same as the cabinet's overall height. The distinction matters because battery trays, intelligent battery-management components, busbars, and cable clearances must fit within the approved cabinet arrangement without exceeding structural or electrical limits. Designers should use the specified battery configuration rather than infer capacity from external cabinet dimensions. During installation, technicians must follow the approved tray positions, weight distribution, polarity, interconnection sequence, protective-device settings, grounding, and service clearance. A cabinet having more physical height does not automatically provide more usable U-space, especially when internal safety and cabling zones are reserved.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57a002a9744f19e",
+    "question": "When the FusionModule2000 is configured with two rows of cabinet, which of the following is the maximum number of cabinet?",
+    "correctOptionLabels": ["D"],
+    "explanation": "D is correct: the two-row FusionModule2000 configuration supports a maximum of 48 cabinets in the product scope tested. A dual-row aisle uses opposing cabinet rows with containment, power distribution, cooling, monitoring, and cable routing coordinated as one module. The maximum is a system design boundary, not permission to install 48 cabinets without engineering checks. Actual quantity may be lower because of room dimensions, floor loading, IT power demand, cooling capacity, aisle length, egress, fire protection, maintenance clearance, and selected optional cabinets. The electrical and thermal design must be sized for the installed load, not the theoretical cabinet count. Commissioning should verify cabinet identities, sensor placement, airflow containment, power-path labeling, network reachability, and alarms across the complete row before service handover.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57a002aa134eeb8",
+    "question": "Which of the following statements about the rPDU of the FusionModule2000 cabinet are correct?",
+    "correctOptionLabels": ["A", "D"],
+    "explanation": "A and D are correct. A is correct because the FusionModule2000 rPDU is available in half-height and full-height forms, allowing the distribution hardware to match cabinet layout and outlet requirements. D is correct because the rPDU supports standard industrial connectors for the upstream power connection, enabling a defined, serviceable cabinet-power interface. The socket description in B is not the correct specification: IEC equipment outlets are designated C13 and C19, not C16 and C19. C is also incorrect because it overstates a limitation; smart rPDU functions depend on model, and remote control capabilities are not summarized accurately as monitoring with no remote shutdown. Installation must match connector rating, phase, feed, outlet type, and upstream protection, followed by communication, metering, alarm, and any authorized control tests.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57a002aabac9881",
+    "question": "Which of the following statements about the FusionModule2000 battery cabinet is false?",
+    "correctOptionLabels": ["A"],
+    "explanation": "A is correct: the statement that a 2N scenario supports a maximum of only two battery cabinets is false. A 2N power architecture has two independent power paths, and the required battery-cabinet quantity is determined by the approved UPS capacity and backup-time design rather than that stated two-cabinet maximum. The other statements describe the cabinet arrangement credited by the question: it provides space for installing and cabling the iBattery intelligent battery-management system, provides 42U of available space, and uses a single front door with double rear doors for access. Battery cabinets carry high stored energy and substantial weight, so layout decisions must also address floor loading, isolation, polarity, protection, grounding, ventilation, cable routing, and safe maintenance clearances. Always implement the project-specific Huawei battery design rather than extrapolate from cabinet count alone.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57a002aa8ada7d2",
+    "question": "The FusionModule2000 eLight use the AC actuator for power supply.",
+    "correctOptionLabels": ["B"],
+    "explanation": "False is correct. The FusionModule2000 eLight is not powered through the AC actuator. The AC actuator is a control component used to switch or interface supported air-conditioning control functions; it is not the designated lighting power source. Treating it as a general-purpose supply could overload or misapply the actuator output and could cause unreliable lighting or loss of cooling control. The eLight must be connected through the power path and control arrangement specified for the lighting system, with the correct voltage, protection, and linkage. During installation, technicians should keep lighting and actuator wiring identified and separated according to the diagrams. Commissioning should test normal switching, any door or occupancy linkage, emergency behavior, and alarms without repurposing terminals whose electrical rating and function are intended for another subsystem.",
+    "needsReview": false,
+    "reviewNote": ""
+  },
+  {
+    "id": "6aa2e57a002a9a5f3e4f",
+    "question": "The integrated UPS/Modular precision PDF of the FusionModule2000 can detect the temperature through the NTC.",
+    "correctOptionLabels": ["A"],
+    "explanation": "True is correct. The integrated UPS/modular precision power-distribution frame uses an NTC temperature sensor for temperature detection. An NTC thermistor has a negative temperature coefficient: its electrical resistance decreases as temperature rises. The controller measures that resistance and converts it into a temperature value used for monitoring, alarms, or protective decisions. This is well suited to detecting abnormal heating near power components or connections, where loose terminals, overload, or poor ventilation can create dangerous temperature rise. The sensor must be installed at the specified location and connected to the correct input; an open circuit, short circuit, or badly placed probe can produce misleading readings. Commissioning should compare the displayed value with ambient conditions and verify alarm behavior using the approved test method, without overheating live equipment.",
+    "needsReview": false,
+    "reviewNote": ""
+  }
+]

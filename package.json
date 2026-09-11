@@ -10,7 +10,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "appwrite:provision": "node --env-file=.env.local scripts/provision-appwrite.mjs",
-    "appwrite:create-admin": "node --env-file=.env.local scripts/create-admin.mjs"
+    "appwrite:create-admin": "node --env-file=.env.local scripts/create-admin.mjs",
+    "appwrite:explanations": "node --env-file=.env.local scripts/backfill-explanations.mjs"
   },
   "dependencies": {
     "@napi-rs/canvas": "0.1.80",

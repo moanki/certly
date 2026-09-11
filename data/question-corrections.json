@@ -1,0 +1,100 @@
+[
+  {
+    "id": "6aa2e58100204fd64f91",
+    "question": "If a fire occurs in the FusionModule1000, the gas release indicator will display \"Do not enter while gas is being released.\"",
+    "reason": "Corrects a safety-critical source typo that reversed the warning.",
+    "source": "Huawei FusionModule fire-suppression safety behavior"
+  },
+  {
+    "id": "6aa2e5760014da0a0aab",
+    "optionTextByLabel": {
+      "C": "At high altitude, lower air density reduces cooling effectiveness and dielectric strength, so the UPS must be derated."
+    },
+    "reason": "Removes the unsupported capacitor-inflation mechanism while preserving the correct derating rationale.",
+    "source": "Huawei UPS5000-E technical specifications; IEC 62040-3 altitude derating"
+  },
+  {
+    "id": "6aa2e5760026d7160c4f",
+    "question": "The number of batteries in each UPS5000-A battery string can be adjusted within the supported range, helping simplify battery maintenance compared with traditional fixed-count designs.",
+    "reason": "Corrects battery-string count to batteries-per-string, which are separate configuration parameters.",
+    "source": "Huawei UPS5000-A battery settings and electrical specifications"
+  },
+  {
+    "id": "6aa2e5780022c0ac296c",
+    "question": "An infrared humidifier generates steam by passing current through the water using immersed electrodes.",
+    "reason": "Replaces an ambiguous statement with the clearly false electrode-humidifier mechanism.",
+    "source": "Huawei infrared humidifier operating and troubleshooting documentation"
+  },
+  {
+    "id": "6aa2e581002035ee6301",
+    "correctOptionLabels": ["A", "B", "C", "D"],
+    "reason": "Adds abnormal voltage-acquisition wiring, which Huawei fault guidance identifies as a cause of abnormal meter readings.",
+    "source": "Huawei PDU8000 fault handling guidance"
+  },
+  {
+    "id": "6aa2e581003343f102e3",
+    "optionTextByLabel": {
+      "D": "To verify the EPO circuit and command all applicable UPS outputs to stop supplying power during the prescribed commissioning test."
+    },
+    "reason": "Clarifies that EPO is a shutdown command, not electrical isolation or protection of loads from electric shock.",
+    "source": "Huawei UPS5000-E EPO behavior"
+  },
+  {
+    "id": "6aa2e586001347473604",
+    "optionTextByLabel": {
+      "A": "Manual deflation/manual-release button"
+    },
+    "reason": "Separates the discharge-release control from the opposite emergency-stop or abort function.",
+    "source": "Huawei gas-extinguishing control sequence"
+  },
+  {
+    "id": "6aa2e585001119fd9cf9",
+    "question": "The cycle life of a battery is inversely related to depth of discharge under otherwise comparable conditions.",
+    "reason": "Corrects the stated relationship between cycle count and depth of discharge.",
+    "source": "Battery manufacturer cycle-life principles"
+  },
+  {
+    "id": "6aa2e585002cecea5c84",
+    "optionTextByLabel": {
+      "D": "The humidifier water supply is abnormal."
+    },
+    "reason": "Replaces an unsupported outdoor-unit interlock with a documented humidification failure cause.",
+    "source": "Huawei NetCol5000-A humidification troubleshooting"
+  },
+  {
+    "id": "6aa2e58700035bf99cbb",
+    "question": "Before final commissioning, while the NetCol5000-A indoor and outdoor units are awaiting refrigerant charging or the assembled line is being pressure-tested, the refrigerant line contains ().",
+    "reason": "Clarifies the installation phase in which dry nitrogen is the correct line medium.",
+    "source": "Huawei NetCol5000-A refrigerant piping procedure"
+  },
+  {
+    "id": "6aa2e588000d5c98f914",
+    "optionTextByLabel": {
+      "B": "Fire alarm bell"
+    },
+    "reason": "Distinguishes an audible notification appliance from a smoke initiating detector.",
+    "source": "Huawei ECC800-Pro fire alarm device descriptions"
+  },
+  {
+    "id": "6aa2e586000a4bda3f2b",
+    "optionTextByLabel": {
+      "B": "False"
+    },
+    "reason": "Corrects a learner-facing spelling error in a true/false option.",
+    "source": "Source normalization"
+  },
+  {
+    "id": "6aa2e585001a3474b75e",
+    "optionTextByLabel": {
+      "A": "Float charging"
+    },
+    "reason": "Uses the precise term for continuous constant-voltage compensation of self-discharge.",
+    "source": "Huawei UPS battery charging terminology"
+  },
+  {
+    "id": "6aa2e588000d5e77bd0e",
+    "question": "The default equalized-charge voltage of the UPS2000-G is () V/cell.",
+    "reason": "Adds the charging-mode qualifier needed to distinguish equalized charge from float charge.",
+    "source": "Huawei UPS2000-G battery charge specifications"
+  }
+]
