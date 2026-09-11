@@ -53,16 +53,18 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
   const [resultSummary, setResultSummary] = useState<AttemptSummary | null>(null);
   const [examSeed, setExamSeed] = useState(() => createSessionSeed());
   const [practiceSeed, setPracticeSeed] = useState(() => createSessionSeed());
+  const previousExamFirst = useRef(readLastQuestion("certly-last-exam-first"));
+  const previousPracticeFirst = useRef(readLastQuestion("certly-last-practice-first"));
   const questionOpenedAt = useRef(0);
   const submittingAttempt = useRef(false);
 
   const examQuestions = useMemo(() => {
     const count = normalizeQuestionCount(questionBank.length, hcipHuaweiPreset.questionCount);
-    return shuffleWithSeed(questionBank, examSeed).slice(0, count);
+    return avoidPreviousFirst(shuffleWithSeed(questionBank, examSeed), previousExamFirst.current).slice(0, count);
   }, [examSeed, questionBank]);
   const practiceQuestions = useMemo(() => {
     const topicQuestions = selectedTopic === "Mixed Mock" ? questionBank : questionBank.filter((question) => question.topic === selectedTopic);
-    return shuffleWithSeed(topicQuestions, practiceSeed).slice(0, normalizeQuestionCount(topicQuestions.length));
+    return avoidPreviousFirst(shuffleWithSeed(topicQuestions, practiceSeed), previousPracticeFirst.current);
   }, [practiceSeed, questionBank, selectedTopic]);
   const summary = useMemo(() => resultSummary ?? scoreAttempt(examQuestions, []), [examQuestions, resultSummary]);
   const activeQuestion = examQuestions[questionIndex];
@@ -76,6 +78,20 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
       })
       .catch(() => undefined);
   }, []);
+
+  useEffect(() => {
+    const firstId = examQuestions[0]?.id;
+    if (!firstId) return;
+    previousExamFirst.current = firstId;
+    window.localStorage.setItem("certly-last-exam-first", firstId);
+  }, [examQuestions]);
+
+  useEffect(() => {
+    const firstId = practiceQuestions[0]?.id;
+    if (!firstId) return;
+    previousPracticeFirst.current = firstId;
+    window.localStorage.setItem("certly-last-practice-first", firstId);
+  }, [practiceQuestions]);
 
   useEffect(() => {
     if (!startedAt) return;
@@ -323,7 +339,7 @@ function Landing({ candidate, setCandidate, summary, attemptHistory, questionBan
               Practice like a learner. Sit the mock like it&rsquo;s Pearson&nbsp;VUE day.
             </h2>
             <p className="mt-5 max-w-xl text-base leading-7 text-[var(--text-soft)]">
-              Certly runs the HCIP-Datacenter Facility Deployment preset end to end: 60 questions, 90 minutes, all-or-nothing multiple-answer scoring, an instant score report, and a full review — the same rhythm as the real testing center.
+              Certly runs the HCIP-Datacenter Facility Deployment preset end to end: {hcipHuaweiPreset.questionCount} questions, 90 minutes, all-or-nothing multiple-answer scoring, an instant score report, and a full review — the same rhythm as the real testing center.
             </p>
 
             <div className="mt-7 flex flex-wrap items-center gap-4 text-sm text-[var(--text-soft)]">
@@ -481,7 +497,7 @@ function ExamSetup({ candidate, setCandidate, timed, setTimed, onStart, hasDraft
         <h2 className="mt-2 text-3xl font-bold tracking-tight">Huawei-style mock exam setup</h2>
         <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--text-soft)]">Configured to mirror the official test-center experience — fixed question count, strict timing, and an all-or-nothing scoring model.</p>
         <div className="mt-6 grid gap-4 md:grid-cols-4">
-          <Metric icon={<ListChecks />} label="Questions" value="60 preset" />
+          <Metric icon={<ListChecks />} label="Questions" value={`${hcipHuaweiPreset.questionCount} preset`} />
           <Metric icon={<Clock3 />} label="Timer" value={timed ? "90 min" : "Untimed"} />
           <Metric icon={<Trophy />} label="Score scale" value="1000" />
           <Metric icon={<ShieldCheck />} label="Pass mark" value="600" />
@@ -887,14 +903,22 @@ function QuestionPanel({ question, selected, reveal, onSelect, eyebrow }: { ques
 }
 
 function Feedback({ question, correct }: { question: ExamQuestion; correct: boolean }) {
+  const correctOptions = question.options.filter((option) => option.isCorrect);
   return (
     <div className={clsx(platformCard, "mt-5 p-5")}>
       <div className="flex items-center gap-2 font-bold" style={{ color: correct ? "var(--success)" : "var(--danger)" }}>
         {correct ? <CheckCircle2 className="h-5 w-5" /> : <XCircle className="h-5 w-5" />}
         {correct ? "Correct" : "Incorrect"}
       </div>
-      <p className="mt-3 text-sm leading-6 text-[var(--text-soft)]">{question.explanation}</p>
-      <div className="mt-4 grid gap-3">{question.options.map((option) => <div key={option.id} className="rounded-lg border border-[var(--border)] bg-[var(--surface-2)] p-3 text-sm"><strong>{option.label}.</strong> {option.rationale}</div>)}</div>
+      <p className="mt-3 text-xs font-bold uppercase tracking-[0.1em] text-[var(--text-soft)]">Correct answer</p>
+      <div className="mt-2 grid gap-2">
+        {correctOptions.map((option) => (
+          <div key={option.id} className="rounded-lg border border-[var(--success-border)] bg-[var(--success-soft)] p-3 text-sm">
+            <strong>{option.label}.</strong> {option.text}
+          </div>
+        ))}
+      </div>
+      {question.explanation && <p className="mt-3 text-sm leading-6 text-[var(--text-soft)]">{question.explanation}</p>}
     </div>
   );
 }
@@ -920,6 +944,17 @@ function Metric({ icon, label, value }: { icon: React.ReactNode; label: string; 
 
 function createSessionSeed() {
   return globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random()}`;
+}
+
+function readLastQuestion(key: string) {
+  return typeof window === "undefined" ? null : window.localStorage.getItem(key);
+}
+
+function avoidPreviousFirst<T extends { id: string }>(items: T[], previousId: string | null) {
+  if (items.length > 1 && items[0].id === previousId) {
+    [items[0], items[1]] = [items[1], items[0]];
+  }
+  return items;
 }
 
 function MiniStat({ label, value }: { label: string; value: number }) {

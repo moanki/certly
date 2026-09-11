@@ -1,8 +1,19 @@
 import { describe, expect, it } from "vitest";
-import { dedupeImportQuestions, isAnswerCorrect, parseDelimitedAnswers, scoreAttempt } from "@/lib/exam-engine";
+import { dedupeImportQuestions, hcipHuaweiPreset, isAnswerCorrect, parseDelimitedAnswers, scoreAttempt, shuffleWithSeed } from "@/lib/exam-engine";
 import { sampleQuestions } from "@/lib/questions";
 
 describe("exam scoring", () => {
+  it("uses a 100-question exam preset", () => {
+    expect(hcipHuaweiPreset.questionCount).toBe(100);
+  });
+
+  it("randomizes without duplicating questions", () => {
+    const questions = Array.from({ length: 120 }, (_, index) => index);
+    const randomized = shuffleWithSeed(questions, "fresh-session").slice(0, hcipHuaweiPreset.questionCount);
+    expect(new Set(randomized).size).toBe(100);
+    expect(randomized).not.toEqual(questions.slice(0, 100));
+  });
+
   it("requires every correct option and no incorrect options", () => {
     const question = sampleQuestions.find((item) => item.type === "multiple")!;
     const correct = question.options.filter((option) => option.isCorrect).map((option) => option.id);

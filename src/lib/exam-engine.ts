@@ -12,7 +12,7 @@ export const hcipHuaweiPreset: ExamPreset = {
   id: "hcip-dcf-huawei-style",
   certificationId: "hcip-dcf",
   title: "HCIP-Datacenter Facility Deployment Huawei-style Mock",
-  questionCount: 60,
+  questionCount: 100,
   durationMinutes: 90,
   scoreScale: 1000,
   passingScore: 600,
