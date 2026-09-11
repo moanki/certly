@@ -53,19 +53,19 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
   const [resultSummary, setResultSummary] = useState<AttemptSummary | null>(null);
   const [examSeed, setExamSeed] = useState(() => createSessionSeed());
   const [practiceSeed, setPracticeSeed] = useState(() => createSessionSeed());
-  const previousExamFirst = useRef(readLastQuestion("certly-last-exam-first"));
-  const previousPracticeFirst = useRef(readLastQuestion("certly-last-practice-first"));
+  const [previousExamFirst, setPreviousExamFirst] = useState(() => readLastQuestion("certly-last-exam-first"));
+  const [previousPracticeFirst, setPreviousPracticeFirst] = useState(() => readLastQuestion("certly-last-practice-first"));
   const questionOpenedAt = useRef(0);
   const submittingAttempt = useRef(false);
 
   const examQuestions = useMemo(() => {
     const count = normalizeQuestionCount(questionBank.length, hcipHuaweiPreset.questionCount);
-    return avoidPreviousFirst(shuffleWithSeed(questionBank, examSeed), previousExamFirst.current).slice(0, count);
-  }, [examSeed, questionBank]);
+    return avoidPreviousFirst(shuffleWithSeed(questionBank, examSeed), previousExamFirst).slice(0, count);
+  }, [examSeed, previousExamFirst, questionBank]);
   const practiceQuestions = useMemo(() => {
     const topicQuestions = selectedTopic === "Mixed Mock" ? questionBank : questionBank.filter((question) => question.topic === selectedTopic);
-    return avoidPreviousFirst(shuffleWithSeed(topicQuestions, practiceSeed), previousPracticeFirst.current);
-  }, [practiceSeed, questionBank, selectedTopic]);
+    return avoidPreviousFirst(shuffleWithSeed(topicQuestions, practiceSeed), previousPracticeFirst);
+  }, [practiceSeed, previousPracticeFirst, questionBank, selectedTopic]);
   const summary = useMemo(() => resultSummary ?? scoreAttempt(examQuestions, []), [examQuestions, resultSummary]);
   const activeQuestion = examQuestions[questionIndex];
   const practiceQuestion = practiceQuestions[practiceIndex] ?? questionBank[0];
@@ -82,14 +82,12 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
   useEffect(() => {
     const firstId = examQuestions[0]?.id;
     if (!firstId) return;
-    previousExamFirst.current = firstId;
     window.localStorage.setItem("certly-last-exam-first", firstId);
   }, [examQuestions]);
 
   useEffect(() => {
     const firstId = practiceQuestions[0]?.id;
     if (!firstId) return;
-    previousPracticeFirst.current = firstId;
     window.localStorage.setItem("certly-last-practice-first", firstId);
   }, [practiceQuestions]);
 
@@ -112,6 +110,7 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
 
   function startExam() {
     if (questionBank.length === 0) return;
+    setPreviousExamFirst(examQuestions[0]?.id ?? previousExamFirst);
     setAnswers([]);
     setMarked(new Set());
     setQuestionIndex(0);
@@ -126,6 +125,7 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
   }
 
   function startPractice() {
+    setPreviousPracticeFirst(practiceQuestions[0]?.id ?? previousPracticeFirst);
     setPracticeSeed(createSessionSeed());
     setPracticeIndex(0);
     setPracticeSelected([]);
