@@ -4,7 +4,7 @@ import type React from "react";
 import { ArrowRight, Award, BarChart3, BookOpenCheck, CheckCircle2, Clock3, FileUp, Flag, GraduationCap, LayoutDashboard, ListChecks, LockKeyhole, LogOut, RotateCcw, ShieldCheck, Sparkles, Trophy, XCircle } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { clsx } from "clsx";
-import { getCorrectOptionIds, hcipHuaweiPreset, isAnswerCorrect, normalizeQuestionCount, scoreAttempt, shuffleWithSeed } from "@/lib/exam-engine";
+import { describeAnswerResult, getCorrectOptionIds, hcipHuaweiPreset, isAnswerCorrect, normalizeQuestionCount, scoreAttempt, shuffleWithSeed } from "@/lib/exam-engine";
 import { certifications, topics } from "@/lib/exam-catalog";
 import type { AttemptAnswer, AttemptSummary, Candidate, ExamQuestion, ImportPreviewQuestion } from "@/types/exam";
 import { AdminLogin } from "@/components/admin-login";
@@ -480,11 +480,11 @@ function PracticeMode(props: { topic: string; setTopic: (topic: string) => void;
       </div>
       <QuestionPanel question={feedbackQuestion} selected={props.selected} reveal={props.revealed} onSelect={(optionId) => props.setSelected(props.question.type === "multiple" ? toggleSelection(props.selected, optionId) : [optionId])} eyebrow={`Question ${props.index + 1} of ${props.total}`} />
       <div className="mt-5 flex flex-wrap gap-3">
-        <button className={platformPrimaryBtn} disabled={props.selected.length === 0 || props.checking} onClick={props.onCheck}>{props.checking ? "Checking..." : "Check answer"}</button>
+        <button className={platformPrimaryBtn} disabled={props.selected.length === 0 || props.checking || props.revealed} onClick={props.onCheck}>{props.checking ? "Checking..." : props.revealed ? "Answer checked" : "Check answer"}</button>
         <button className={platformSecondaryBtn} onClick={props.next}>Next question</button>
       </div>
       {props.status && <p aria-live="polite" className="mt-3 text-sm text-[var(--danger)]">{props.status}</p>}
-      {props.revealed && props.feedback && <Feedback question={props.feedback} correct={correct} />}
+      {props.revealed && props.feedback && <Feedback question={props.feedback} selected={props.selected} correct={correct} />}
     </section>
   );
 }
@@ -883,26 +883,30 @@ function QuestionPanel({ question, selected, reveal, onSelect, eyebrow }: { ques
       <p className="text-xs font-bold uppercase tracking-[0.14em] text-[var(--accent)]">{eyebrow}</p>
       <h3 className="mt-3 text-xl font-semibold leading-8">{question.text}</h3>
       <div className="mt-5 grid gap-3">
-        {question.options.map((option) => (
-          <button
+        {question.options.map((option) => {
+          const selectedIncorrect = reveal && selected.includes(option.id) && !option.isCorrect;
+          return (
+            <button
             key={option.id}
-            className="rounded-xl border bg-[var(--surface)] p-4 text-left transition-all"
+            className="rounded-xl border bg-[var(--surface)] p-4 text-left transition-all disabled:cursor-default"
+            disabled={reveal}
             style={{
-              borderColor: reveal && option.isCorrect ? "var(--success-border)" : selected.includes(option.id) ? "var(--accent)" : "var(--border)",
-              background: reveal && option.isCorrect ? "var(--success-soft)" : "var(--surface)",
+              borderColor: reveal && option.isCorrect ? "var(--success-border)" : selectedIncorrect ? "var(--danger-border)" : selected.includes(option.id) ? "var(--accent)" : "var(--border)",
+              background: reveal && option.isCorrect ? "var(--success-soft)" : selectedIncorrect ? "var(--danger-soft)" : "var(--surface)",
               boxShadow: !reveal && selected.includes(option.id) ? "0 0 0 3px var(--accent-soft)" : "none",
             }}
             onClick={() => onSelect(option.id)}
           >
             <span className="mr-2 font-bold text-[var(--text-soft)]">{option.label}.</span>{option.text}
           </button>
-        ))}
+          );
+        })}
       </div>
     </article>
   );
 }
 
-function Feedback({ question, correct }: { question: ExamQuestion; correct: boolean }) {
+function Feedback({ question, selected, correct }: { question: ExamQuestion; selected: string[]; correct: boolean }) {
   const correctOptions = question.options.filter((option) => option.isCorrect);
   return (
     <div className={clsx(platformCard, "mt-5 p-5")}>
@@ -910,11 +914,14 @@ function Feedback({ question, correct }: { question: ExamQuestion; correct: bool
         {correct ? <CheckCircle2 className="h-5 w-5" /> : <XCircle className="h-5 w-5" />}
         {correct ? "Correct" : "Incorrect"}
       </div>
+      <p className="mt-3 text-xs font-bold uppercase tracking-[0.1em] text-[var(--text-soft)]">Why your answer is {correct ? "right" : "wrong"}</p>
+      <p className="mt-2 text-sm leading-6 text-[var(--text)]">{describeAnswerResult(question, selected)}</p>
       <p className="mt-3 text-xs font-bold uppercase tracking-[0.1em] text-[var(--text-soft)]">Correct answer</p>
       <div className="mt-2 grid gap-2">
         {correctOptions.map((option) => (
           <div key={option.id} className="rounded-lg border border-[var(--success-border)] bg-[var(--success-soft)] p-3 text-sm">
             <strong>{option.label}.</strong> {option.text}
+            {option.rationale?.trim() && <p className="mt-1 text-[var(--text-soft)]">{option.rationale}</p>}
           </div>
         ))}
       </div>

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { dedupeImportQuestions, hcipHuaweiPreset, isAnswerCorrect, parseDelimitedAnswers, scoreAttempt, shuffleWithSeed } from "@/lib/exam-engine";
+import { dedupeImportQuestions, describeAnswerResult, hcipHuaweiPreset, isAnswerCorrect, parseDelimitedAnswers, scoreAttempt, shuffleWithSeed } from "@/lib/exam-engine";
 import { sampleQuestions } from "@/lib/questions";
 
 describe("exam scoring", () => {
@@ -20,6 +20,15 @@ describe("exam scoring", () => {
     expect(isAnswerCorrect(question, correct)).toBe(true);
     expect(isAnswerCorrect(question, correct.slice(0, -1))).toBe(false);
     expect(isAnswerCorrect(question, [...correct, question.options.find((option) => !option.isCorrect)!.id])).toBe(false);
+  });
+
+  it("explains exact matches and identifies selected and missed options", () => {
+    const question = sampleQuestions.find((item) => item.type === "multiple")!;
+
+    expect(describeAnswerResult(question, ["a", "c"])).toContain("exactly matches");
+    expect(describeAnswerResult(question, ["b", "c"])).toBe(
+      "You selected B, which is not part of the correct answer. You missed A, which is required.",
+    );
   });
 
   it("uses the 1000 point scale and 600 pass mark", () => {

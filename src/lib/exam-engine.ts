@@ -38,6 +38,30 @@ export function isAnswerCorrect(question: ExamQuestion, selectedOptionIds: strin
   return selected.length === correct.length && correct.every((id, index) => id === selected[index]);
 }
 
+export function describeAnswerResult(question: ExamQuestion, selectedOptionIds: string[]) {
+  const selected = new Set(selectedOptionIds);
+  const correctIds = new Set(getCorrectOptionIds(question));
+  const incorrectSelected = question.options.filter((option) => selected.has(option.id) && !correctIds.has(option.id));
+  const missedCorrect = question.options.filter((option) => !selected.has(option.id) && correctIds.has(option.id));
+
+  if (incorrectSelected.length === 0 && missedCorrect.length === 0) {
+    return "Your selection exactly matches every correct answer and includes no incorrect options.";
+  }
+
+  const reasons = [];
+  if (incorrectSelected.length > 0) {
+    reasons.push(`You selected ${formatOptionLabels(incorrectSelected)}, which ${incorrectSelected.length === 1 ? "is" : "are"} not part of the correct answer.`);
+  }
+  if (missedCorrect.length > 0) {
+    reasons.push(`You missed ${formatOptionLabels(missedCorrect)}, which ${missedCorrect.length === 1 ? "is" : "are"} required.`);
+  }
+  return reasons.join(" ");
+}
+
+function formatOptionLabels(options: ExamQuestion["options"]) {
+  return options.map((option) => option.label).join(", ");
+}
+
 export function scoreAttempt(
   questions: ExamQuestion[],
   answers: AttemptAnswer[],
