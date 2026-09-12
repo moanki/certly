@@ -9,6 +9,12 @@ export type PracticeProgress = QuestionHistory & {
   questionId: string;
   topic: string;
   subtopic: string;
+  recentAttempts: PracticeRecentAttempt[];
+};
+
+export type PracticeRecentAttempt = {
+  attemptedAt: string;
+  correct: boolean;
 };
 
 export type MockPerformance = {
@@ -38,7 +44,36 @@ export type ExamReadiness = {
   recommendedNext: string[];
 };
 
+export type TopicPerformanceStatus = "Strong" | "Proficient" | "Developing" | "Needs Attention" | "Insufficient Data";
+
+export type SubtopicPerformance = {
+  name: string;
+  mastery: number;
+};
+
+export type TopicPerformanceDetail = {
+  topic: string;
+  mastery: number | null;
+  status: TopicPerformanceStatus;
+  accuracy: number;
+  coverage: number;
+  recentPerformance: number;
+  questionsAttempted: number;
+  totalQuestions: number;
+  totalAttempts: number;
+  weakestSubtopics: SubtopicPerformance[];
+};
+
+export type TopicPerformanceSummary = {
+  overallMastery: number | null;
+  strongest: TopicPerformanceDetail[];
+  needsAttention: TopicPerformanceDetail[];
+  insufficientData: TopicPerformanceDetail[];
+  topics: TopicPerformanceDetail[];
+};
+
 export type PracticeActivity = {
   historyByQuestion: Record<string, QuestionHistory>;
   readiness: ExamReadiness;
+  topicPerformance: TopicPerformanceSummary;
 };

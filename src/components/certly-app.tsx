@@ -8,7 +8,7 @@ import { describeAnswerResult, explainCorrectAnswer, getCorrectOptionIds, hcipHu
 import { certifications, topics } from "@/lib/exam-catalog";
 import { advancePracticeSessionQueue, createPracticeSessionQueue, practiceQueueEyebrow, type PracticeSessionQueue } from "@/lib/practice-session";
 import type { AttemptAnswer, AttemptSummary, Candidate, ExamQuestion, ImportPreviewQuestion } from "@/types/exam";
-import type { PracticeActivity, QuestionHistory } from "@/types/practice";
+import type { PracticeActivity, QuestionHistory, TopicPerformanceDetail, TopicPerformanceStatus, TopicPerformanceSummary } from "@/types/practice";
 import { AdminLogin } from "@/components/admin-login";
 import { ThemeToggle } from "@/lib/theme";
 
@@ -295,6 +295,15 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
     setPracticeIndex((current) => current + 1);
   }
 
+  function changePracticeTopic(topic: string) {
+    setSelectedTopic(topic);
+    setPracticeIndex(0);
+    setPracticeStates({});
+    setPracticeSessionOverride(null);
+    setPracticeUnresolved(new Set());
+    setPracticeStatus("");
+  }
+
   useEffect(() => {
     if (view !== "exam" || !timed || !startedAt) return;
     const updateTimer = () => {
@@ -354,7 +363,7 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
       {view === "practice" && practiceQuestion && (
         <PracticeMode
           topic={selectedTopic}
-          setTopic={(topic) => { setSelectedTopic(topic); setPracticeIndex(0); setPracticeStates({}); setPracticeSessionOverride(null); setPracticeUnresolved(new Set()); setPracticeStatus(""); }}
+          setTopic={changePracticeTopic}
           question={practiceQuestion}
           index={practiceIndex}
           eyebrow={practiceItem ? practiceQueueEyebrow(practiceItem) : "Practice question"}
@@ -564,6 +573,7 @@ function PracticeMode(props: { topic: string; setTopic: (topic: string) => void;
         </label>
       </div>
       <ReadinessCard activity={props.activity} status={props.activityStatus} />
+      <TopicPerformanceSection performance={props.activity?.topicPerformance ?? null} onPracticeTopic={props.setTopic} />
       <div className="mb-3 mt-5 flex min-h-5 items-center gap-1.5 text-xs text-[var(--text-faint)]">
         <History className="h-3.5 w-3.5" aria-hidden="true" />
         <QuestionHistoryIndicator history={props.history} />
@@ -656,6 +666,114 @@ function QuestionHistoryIndicator({ history }: { history?: QuestionHistory }) {
       Attempted {history.totalAttempts}&times; &bull; Correct {history.correctAttempts}/{history.totalAttempts} &bull; Last: {formatHistoryDate(history.lastAttemptedAt)} &bull; Previous: {history.previousCorrect ? "Correct" : "Incorrect"}
     </span>
   );
+}
+
+function TopicPerformanceSection({ performance, onPracticeTopic }: { performance: TopicPerformanceSummary | null; onPracticeTopic: (topic: string) => void }) {
+  return (
+    <section className={clsx(platformCard, "mt-5 p-5 sm:p-6")} aria-labelledby="topic-performance-title">
+      <div className="flex flex-wrap items-end justify-between gap-3 border-b border-[var(--border)] pb-4">
+        <div>
+          <p id="topic-performance-title" className="text-xs font-bold uppercase tracking-[0.14em] text-[var(--accent)]">Topic performance</p>
+          <p className="mt-1 text-sm text-[var(--text-soft)]">Overall Topic Mastery</p>
+        </div>
+        <p className="text-3xl font-bold tabular-nums text-[var(--text)]">{performance?.overallMastery === null || performance?.overallMastery === undefined ? "--" : `${performance.overallMastery}%`}</p>
+      </div>
+
+      <div className="mt-5 grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
+        <div>
+          <h3 className="text-sm font-bold text-[var(--text)]">Strongest Topics</h3>
+          <div className="mt-2">
+            {performance?.strongest.length
+              ? performance.strongest.map((topic) => <TopicPerformanceRow key={topic.topic} topic={topic} onPracticeTopic={onPracticeTopic} />)
+              : <p className="border-t border-[var(--border)] py-3 text-sm text-[var(--text-faint)]">No sufficiently tested topics yet.</p>}
+          </div>
+        </div>
+
+        <div className="border-[var(--border)] lg:border-l lg:pl-6">
+          <h3 className="text-sm font-bold text-[var(--text)]">Needs Attention</h3>
+          <div className="mt-2 border-l-2 border-[var(--warning)] pl-3">
+            {performance?.needsAttention.length
+              ? performance.needsAttention.map((topic) => <TopicPerformanceRow key={topic.topic} topic={topic} onPracticeTopic={onPracticeTopic} emphasize />)
+              : <p className="border-t border-[var(--border)] py-3 text-sm text-[var(--text-faint)]">No sufficiently tested developing topics yet.</p>}
+          </div>
+        </div>
+      </div>
+
+      {performance?.insufficientData.length ? (
+        <details className="group mt-5 border-t border-[var(--border)] pt-4">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-bold text-[var(--text-soft)] marker:hidden">
+            <span>Insufficient Data ({performance.insufficientData.length})</span>
+            <ChevronRight className="h-4 w-4 transition-transform group-open:rotate-90" aria-hidden="true" />
+          </summary>
+          <div className="mt-2 grid gap-x-6 md:grid-cols-2">
+            {performance.insufficientData.map((topic) => <TopicPerformanceRow key={topic.topic} topic={topic} onPracticeTopic={onPracticeTopic} />)}
+          </div>
+        </details>
+      ) : null}
+    </section>
+  );
+}
+
+function TopicPerformanceRow({ topic, onPracticeTopic, emphasize = false }: { topic: TopicPerformanceDetail; onPracticeTopic: (topic: string) => void; emphasize?: boolean }) {
+  const canPractice = topic.status === "Needs Attention" || topic.status === "Developing";
+  return (
+    <details className="group border-t border-[var(--border)]">
+      <summary className={clsx("grid cursor-pointer list-none grid-cols-[1fr_auto] items-center gap-3 py-3 marker:hidden", emphasize && "py-3.5")}>
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="font-semibold text-[var(--text)]">{topic.topic}</span>
+            <TopicStatusBadge status={topic.status} />
+          </div>
+          <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[var(--border)]">
+            <div className="h-full rounded-full bg-[image:var(--gradient-primary)]" style={{ width: `${topic.mastery ?? 0}%` }} />
+          </div>
+        </div>
+        <div className="flex items-center gap-1 text-sm font-bold tabular-nums text-[var(--text)]">
+          {topic.mastery === null ? "--" : `${topic.mastery}%`}
+          <ChevronRight className="h-4 w-4 text-[var(--text-faint)] transition-transform group-open:rotate-90" aria-hidden="true" />
+        </div>
+      </summary>
+      <div className="pb-4">
+        <div className="grid gap-2 text-sm sm:grid-cols-2">
+          <TopicDetailMetric label="Accuracy" value={`${topic.accuracy}%`} />
+          <TopicDetailMetric label="Coverage" value={`${topic.coverage}%`} />
+          <TopicDetailMetric label="Recent Performance" value={`${topic.recentPerformance}%`} />
+          <TopicDetailMetric label="Questions Attempted" value={`${topic.questionsAttempted} / ${topic.totalQuestions}`} />
+        </div>
+        {topic.weakestSubtopics.length ? (
+          <div className="mt-3 border-t border-[var(--border)] pt-3">
+            <p className="text-xs font-bold uppercase tracking-[0.08em] text-[var(--text-soft)]">Weakest Areas</p>
+            <ul className="mt-2 grid gap-1 text-sm text-[var(--text-soft)]">
+              {topic.weakestSubtopics.map((subtopic) => <li key={subtopic.name}>{subtopic.name} — {subtopic.mastery}%</li>)}
+            </ul>
+          </div>
+        ) : null}
+        {canPractice && <button className={clsx(platformSecondaryBtn, "mt-3 py-2")} onClick={() => onPracticeTopic(topic.topic)}>Practice This Topic</button>}
+      </div>
+    </details>
+  );
+}
+
+function TopicDetailMetric({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-center justify-between gap-3 border-b border-[var(--border)] py-1.5">
+      <span className="text-[var(--text-soft)]">{label}</span>
+      <strong className="tabular-nums text-[var(--text)]">{value}</strong>
+    </div>
+  );
+}
+
+function TopicStatusBadge({ status }: { status: TopicPerformanceStatus }) {
+  const style = status === "Strong"
+    ? { background: "var(--success-soft)", color: "var(--success)", borderColor: "var(--success-border)" }
+    : status === "Needs Attention"
+      ? { background: "var(--danger-soft)", color: "var(--danger)", borderColor: "var(--danger-border)" }
+      : status === "Developing"
+        ? { background: "var(--warning-soft)", color: "var(--warning)", borderColor: "var(--warning)" }
+        : status === "Proficient"
+          ? { background: "var(--accent-soft)", color: "var(--accent)", borderColor: "var(--accent)" }
+          : { background: "var(--surface-2)", color: "var(--text-faint)", borderColor: "var(--border-strong)" };
+  return <span className="rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.06em]" style={style}>{status}</span>;
 }
 
 function ExamSetup({ candidate, setCandidate, timed, setTimed, onStart, hasDraft, onReset, ready }: { candidate: Candidate; setCandidate: (candidate: Candidate) => void; timed: boolean; setTimed: (timed: boolean) => void; onStart: () => void; hasDraft: boolean; onReset: () => void; ready: boolean }) {

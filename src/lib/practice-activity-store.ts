@@ -1,14 +1,14 @@
 import { createHash } from "node:crypto";
 import { ID, Query } from "node-appwrite";
 import { appwriteConfig, createAdminClient } from "@/lib/appwrite";
-import { calculateExamReadiness } from "@/lib/practice-analytics";
+import { calculateExamReadiness, calculateTopicPerformance } from "@/lib/practice-analytics";
 import type { AttemptSummary, ExamQuestion } from "@/types/exam";
 import type { MockPerformance, PracticeActivity, PracticeProgress } from "@/types/practice";
 
 const practiceKind = "practice_progress";
 const examKind = "exam_activity";
 
-export async function loadPracticeActivity(participantId: string, totalQuestions: number): Promise<PracticeActivity> {
+export async function loadPracticeActivity(participantId: string, questions: ExamQuestion[]): Promise<PracticeActivity> {
   const { tables } = createAdminClient();
   const [practiceRows, examRows] = await Promise.all([
     tables.listRows({
@@ -35,6 +35,14 @@ export async function loadPracticeActivity(participantId: string, totalQuestions
 
   const progress = practiceRows.rows.flatMap((row) => parseProgress(row.payloadJson));
   const mockPerformance = examRows.rows.flatMap((row) => parseMockPerformance(row.payloadJson));
+  const topicPerformance = calculateTopicPerformance(progress, questions);
+  const topicRecommendations = topicPerformance.topics.some((topic) => topic.mastery !== null)
+    ? [...topicPerformance.topics]
+      .filter((topic) => topic.mastery !== null)
+      .sort((left, right) => (left.mastery ?? 0) - (right.mastery ?? 0))
+      .slice(0, 3)
+      .map((topic) => topic.weakestSubtopics[0] ? `${topic.topic}: ${topic.weakestSubtopics[0].name}` : topic.topic)
+    : undefined;
   return {
     historyByQuestion: Object.fromEntries(progress.map((item) => [item.questionId, {
       totalAttempts: item.totalAttempts,
@@ -42,7 +50,8 @@ export async function loadPracticeActivity(participantId: string, totalQuestions
       lastAttemptedAt: item.lastAttemptedAt,
       previousCorrect: item.previousCorrect,
     }])),
-    readiness: calculateExamReadiness(progress, mockPerformance, totalQuestions),
+    readiness: calculateExamReadiness(progress, mockPerformance, questions.length, topicRecommendations),
+    topicPerformance,
   };
 }
 
@@ -74,6 +83,7 @@ export async function recordPracticeAttempt(
     correctAttempts: (existing?.correctAttempts ?? 0) + (isCorrect ? 1 : 0),
     lastAttemptedAt: attemptedAt,
     previousCorrect: isCorrect,
+    recentAttempts: [...(existing?.recentAttempts ?? []), { attemptedAt, correct: isCorrect }].slice(-10),
   };
   const data = {
     kind: practiceKind,
@@ -128,6 +138,9 @@ function parseProgress(value: unknown): PracticeProgress[] {
     if (!item || typeof item.questionId !== "string" || typeof item.topic !== "string" || typeof item.subtopic !== "string") return [];
     if (!Number.isInteger(item.totalAttempts) || item.totalAttempts < 1 || !Number.isInteger(item.correctAttempts) || item.correctAttempts < 0) return [];
     if (item.correctAttempts > item.totalAttempts || typeof item.lastAttemptedAt !== "string" || typeof item.previousCorrect !== "boolean") return [];
+    item.recentAttempts = Array.isArray(item.recentAttempts)
+      ? item.recentAttempts.filter((attempt) => attempt && typeof attempt.attemptedAt === "string" && typeof attempt.correct === "boolean").slice(-10)
+      : [{ attemptedAt: item.lastAttemptedAt, correct: item.previousCorrect }];
     return [item];
   } catch {
     return [];

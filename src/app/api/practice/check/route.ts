@@ -38,7 +38,7 @@ export async function POST(request: Request) {
     const selectedOptionIds = body.selectedOptionIds as string[];
     const participantId = await getOrCreateParticipantId();
     await recordPracticeAttempt(participantId, question, isAnswerCorrect(question, selectedOptionIds), new Date().toISOString());
-    const activity = await loadPracticeActivity(participantId, questions.length);
+    const activity = await loadPracticeActivity(participantId, questions);
 
     return noStoreJson({ question, activity });
   } catch {

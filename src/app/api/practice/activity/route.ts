@@ -10,7 +10,7 @@ export async function GET(request: Request) {
   try {
     const participantId = await getOrCreateParticipantId();
     const questions = await loadActiveQuestions();
-    const activity = await loadPracticeActivity(participantId, questions.length);
+    const activity = await loadPracticeActivity(participantId, questions);
     return noStoreJson({ activity });
   } catch {
     return noStoreJson({ error: "Practice activity could not be loaded." }, { status: 500 });

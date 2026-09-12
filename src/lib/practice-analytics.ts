@@ -1,4 +1,5 @@
-import type { ExamReadiness, MockPerformance, PracticeProgress, ReadinessState } from "@/types/practice";
+import type { ExamQuestion } from "@/types/exam";
+import type { ExamReadiness, MockPerformance, PracticeProgress, ReadinessState, TopicPerformanceDetail, TopicPerformanceStatus, TopicPerformanceSummary } from "@/types/practice";
 
 const weights = {
   knowledgeMastery: 0.3,
@@ -12,6 +13,7 @@ export function calculateExamReadiness(
   progress: PracticeProgress[],
   mockPerformance: MockPerformance[],
   totalQuestions: number,
+  topicRecommendations?: string[],
 ): ExamReadiness {
   const attempted = progress.length;
   const mastered = progress.filter((item) => item.previousCorrect).length;
@@ -47,7 +49,38 @@ export function calculateExamReadiness(
     score,
     state: readinessState(score),
     metrics,
-    recommendedNext: weakAreas.map((area) => area.name),
+    recommendedNext: topicRecommendations ?? weakAreas.map((area) => area.name),
+  };
+}
+
+export function calculateTopicPerformance(progress: PracticeProgress[], questions: ExamQuestion[]): TopicPerformanceSummary {
+  const questionInventory = groupBy(questions, (question) => question.topic);
+  const progressByTopic = groupBy(progress, (item) => item.topic);
+  const topics = [...questionInventory.entries()].map(([topic, topicQuestions]) => {
+    const topicProgress = progressByTopic.get(topic) ?? [];
+    return calculateTopicDetail(topic, topicProgress, topicQuestions);
+  });
+  const sufficient = topics.filter((topic) => topic.mastery !== null);
+  const strongest = [...sufficient]
+    .filter((topic) => topic.status === "Strong" || topic.status === "Proficient")
+    .sort((left, right) => (right.mastery ?? 0) - (left.mastery ?? 0) || left.topic.localeCompare(right.topic))
+    .slice(0, 3);
+  const needsAttention = [...sufficient]
+    .filter((topic) => topic.status === "Needs Attention" || topic.status === "Developing")
+    .sort((left, right) => (left.mastery ?? 0) - (right.mastery ?? 0) || left.topic.localeCompare(right.topic))
+    .slice(0, 5);
+  const insufficientData = topics
+    .filter((topic) => topic.status === "Insufficient Data")
+    .sort((left, right) => right.questionsAttempted - left.questionsAttempted || left.topic.localeCompare(right.topic));
+  const weightedTotal = sufficient.reduce((total, topic) => total + (topic.mastery ?? 0) * topic.totalQuestions, 0);
+  const representedQuestions = sufficient.reduce((total, topic) => total + topic.totalQuestions, 0);
+
+  return {
+    overallMastery: representedQuestions ? clamp(Math.round(weightedTotal / representedQuestions)) : null,
+    strongest,
+    needsAttention,
+    insufficientData,
+    topics,
   };
 }
 
@@ -73,6 +106,71 @@ function summarizeAreas(progress: PracticeProgress[]) {
     attempts: value.attempts,
     percent: percent(value.correct, value.attempts),
   }));
+}
+
+function calculateTopicDetail(topic: string, progress: PracticeProgress[], questions: ExamQuestion[]): TopicPerformanceDetail {
+  const questionsAttempted = progress.length;
+  const totalAttempts = progress.reduce((total, item) => total + item.totalAttempts, 0);
+  const correctAttempts = progress.reduce((total, item) => total + item.correctAttempts, 0);
+  const recentAttempts = progress
+    .flatMap((item) => item.recentAttempts)
+    .sort((left, right) => Date.parse(right.attemptedAt) - Date.parse(left.attemptedAt))
+    .slice(0, 10);
+  const accuracy = percent(correctAttempts, totalAttempts);
+  const coverage = percent(questionsAttempted, questions.length);
+  const recentPerformance = percent(recentAttempts.filter((attempt) => attempt.correct).length, recentAttempts.length);
+  const rawMastery = clamp(Math.round(accuracy * 0.5 + coverage * 0.3 + recentPerformance * 0.2));
+  const enoughData = questionsAttempted >= 5;
+
+  return {
+    topic,
+    mastery: enoughData ? rawMastery : null,
+    status: enoughData ? topicStatus(rawMastery) : "Insufficient Data",
+    accuracy,
+    coverage,
+    recentPerformance,
+    questionsAttempted,
+    totalQuestions: questions.length,
+    totalAttempts,
+    weakestSubtopics: calculateWeakestSubtopics(progress, questions),
+  };
+}
+
+function calculateWeakestSubtopics(progress: PracticeProgress[], questions: ExamQuestion[]) {
+  const inventory = groupBy(questions.filter((question) => usefulSubtopic(question.subtopic, question.topic)), (question) => question.subtopic);
+  if (inventory.size < 2) return [];
+  const progressBySubtopic = groupBy(progress, (item) => item.subtopic);
+  return [...inventory.entries()]
+    .flatMap(([name, subtopicQuestions]) => {
+      const subtopicProgress = progressBySubtopic.get(name) ?? [];
+      if (subtopicProgress.length < 2) return [];
+      const attempts = subtopicProgress.reduce((total, item) => total + item.totalAttempts, 0);
+      const correct = subtopicProgress.reduce((total, item) => total + item.correctAttempts, 0);
+      const recent = subtopicProgress.flatMap((item) => item.recentAttempts)
+        .sort((left, right) => Date.parse(right.attemptedAt) - Date.parse(left.attemptedAt))
+        .slice(0, 10);
+      const mastery = Math.round(
+        percent(correct, attempts) * 0.5
+          + percent(subtopicProgress.length, subtopicQuestions.length) * 0.3
+          + percent(recent.filter((attempt) => attempt.correct).length, recent.length) * 0.2,
+      );
+      return [{ name, mastery: clamp(mastery) }];
+    })
+    .sort((left, right) => left.mastery - right.mastery || left.name.localeCompare(right.name))
+    .slice(0, 3);
+}
+
+function topicStatus(mastery: number): TopicPerformanceStatus {
+  if (mastery >= 80) return "Strong";
+  if (mastery >= 65) return "Proficient";
+  if (mastery >= 50) return "Developing";
+  return "Needs Attention";
+}
+
+function groupBy<T>(items: T[], key: (item: T) => string) {
+  const groups = new Map<string, T[]>();
+  for (const item of items) groups.set(key(item), [...(groups.get(key(item)) ?? []), item]);
+  return groups;
 }
 
 function usefulSubtopic(subtopic: string, topic: string) {
