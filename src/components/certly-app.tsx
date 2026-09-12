@@ -6,6 +6,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { clsx } from "clsx";
 import { describeAnswerResult, explainCorrectAnswer, getCorrectOptionIds, hcipHuaweiPreset, isAnswerCorrect, normalizeQuestionCount, scoreAttempt, shuffleWithSeed } from "@/lib/exam-engine";
 import { certifications, topics } from "@/lib/exam-catalog";
+import { advancePracticeSessionQueue, createPracticeSessionQueue, practiceQueueEyebrow, type PracticeSessionQueue } from "@/lib/practice-session";
 import type { AttemptAnswer, AttemptSummary, Candidate, ExamQuestion, ImportPreviewQuestion } from "@/types/exam";
 import type { PracticeActivity, QuestionHistory } from "@/types/practice";
 import { AdminLogin } from "@/components/admin-login";
@@ -47,6 +48,8 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
   const [questionIndex, setQuestionIndex] = useState(0);
   const [practiceIndex, setPracticeIndex] = useState(0);
   const [practiceStates, setPracticeStates] = useState<Record<string, PracticeQuestionState>>({});
+  const [practiceSessionOverride, setPracticeSessionOverride] = useState<PracticeSessionQueue | null>(null);
+  const [practiceUnresolved, setPracticeUnresolved] = useState<Set<string>>(new Set());
   const [practiceActivity, setPracticeActivity] = useState<PracticeActivity | null>(null);
   const [practiceActivityStatus, setPracticeActivityStatus] = useState("Loading activity...");
   const [practiceChecking, setPracticeChecking] = useState(false);
@@ -76,10 +79,23 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
     const topicQuestions = selectedTopic === "Mixed Mock" ? questionBank : questionBank.filter((question) => question.topic === selectedTopic);
     return avoidPreviousFirst(shuffleWithSeed(topicQuestions, practiceSeed), previousPracticeFirst);
   }, [practiceSeed, previousPracticeFirst, questionBank, selectedTopic]);
+  const initialPracticeSession = useMemo(
+    () => createPracticeSessionQueue(practiceQuestions.map((question) => question.id)),
+    [practiceQuestions],
+  );
+  const practiceSession = practiceSessionOverride ?? initialPracticeSession;
+  const practiceItem = practiceSession.items[practiceIndex];
+  const practiceQuestionById = useMemo(() => new Map(practiceQuestions.map((question) => [question.id, question])), [practiceQuestions]);
   const summary = useMemo(() => resultSummary ?? scoreAttempt(examQuestions, []), [examQuestions, resultSummary]);
   const activeQuestion = examQuestions[questionIndex];
-  const practiceQuestion = practiceQuestions[practiceIndex] ?? questionBank[0];
-  const practiceState = practiceQuestion ? practiceStates[practiceQuestion.id] ?? emptyPracticeState : emptyPracticeState;
+  const practiceQuestion = practiceItem ? practiceQuestionById.get(practiceItem.questionId) : undefined;
+  const practiceState = practiceItem ? practiceStates[practiceItem.key] ?? emptyPracticeState : emptyPracticeState;
+  const advancedPracticeSession = useMemo(
+    () => advancePracticeSessionQueue(practiceSession, [...practiceUnresolved]),
+    [practiceSession, practiceUnresolved],
+  );
+  const practiceCanGoNext = practiceIndex < practiceSession.items.length - 1
+    || advancedPracticeSession.items.length > practiceSession.items.length;
 
   useEffect(() => {
     void fetch("/api/questions")
@@ -156,6 +172,8 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
     setPracticeSeed(createSessionSeed());
     setPracticeIndex(0);
     setPracticeStates({});
+    setPracticeSessionOverride(null);
+    setPracticeUnresolved(new Set());
     setPracticeStatus("");
     setView("practice");
   }
@@ -220,7 +238,7 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
   }, [activeQuestion, answers, candidate, examQuestions, marked, startedAt, timed]);
 
   async function checkPracticeAnswer() {
-    if (!practiceQuestion || practiceState.selected.length === 0 || practiceCheckInFlight.current || practiceState.revealed) return;
+    if (!practiceQuestion || !practiceItem || practiceState.selected.length === 0 || practiceCheckInFlight.current || practiceState.revealed) return;
     practiceCheckInFlight.current = true;
     setPracticeChecking(true);
     setPracticeStatus("");
@@ -234,8 +252,15 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
       if (!response.ok || !data.question) throw new Error(data.error ?? "Answer could not be checked.");
       setPracticeStates((current) => ({
         ...current,
-        [practiceQuestion.id]: { ...practiceState, feedback: data.question ?? null, revealed: true },
+        [practiceItem.key]: { ...practiceState, feedback: data.question ?? null, revealed: true },
       }));
+      const correct = isAnswerCorrect(data.question, practiceState.selected);
+      setPracticeUnresolved((current) => {
+        const next = new Set(current);
+        if (correct) next.delete(practiceQuestion.id);
+        else next.add(practiceQuestion.id);
+        return next;
+      });
       if (data.activity) {
         setPracticeActivity(data.activity);
         setPracticeActivityStatus("");
@@ -249,14 +274,25 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
   }
 
   function selectPracticeOption(optionId: string) {
-    if (!practiceQuestion || practiceState.revealed) return;
+    if (!practiceQuestion || !practiceItem || practiceState.revealed) return;
     const selected = practiceQuestion.type === "multiple"
       ? toggleSelection(practiceState.selected, optionId)
       : [optionId];
     setPracticeStates((current) => ({
       ...current,
-      [practiceQuestion.id]: { ...practiceState, selected },
+      [practiceItem.key]: { ...practiceState, selected },
     }));
+  }
+
+  function moveToNextPracticeQuestion() {
+    setPracticeStatus("");
+    if (practiceIndex < practiceSession.items.length - 1) {
+      setPracticeIndex((current) => current + 1);
+      return;
+    }
+    if (advancedPracticeSession.items.length === practiceSession.items.length) return;
+    setPracticeSessionOverride(advancedPracticeSession);
+    setPracticeIndex((current) => current + 1);
   }
 
   useEffect(() => {
@@ -318,10 +354,10 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
       {view === "practice" && practiceQuestion && (
         <PracticeMode
           topic={selectedTopic}
-          setTopic={(topic) => { setSelectedTopic(topic); setPracticeIndex(0); setPracticeStates({}); setPracticeStatus(""); }}
+          setTopic={(topic) => { setSelectedTopic(topic); setPracticeIndex(0); setPracticeStates({}); setPracticeSessionOverride(null); setPracticeUnresolved(new Set()); setPracticeStatus(""); }}
           question={practiceQuestion}
           index={practiceIndex}
-          total={practiceQuestions.length}
+          eyebrow={practiceItem ? practiceQueueEyebrow(practiceItem) : "Practice question"}
           selected={practiceState.selected}
           onSelect={selectPracticeOption}
           revealed={practiceState.revealed}
@@ -333,7 +369,8 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
           status={practiceStatus}
           onCheck={() => void checkPracticeAnswer()}
           previous={() => { setPracticeIndex((current) => Math.max(0, current - 1)); setPracticeStatus(""); }}
-          next={() => { setPracticeIndex((current) => Math.min(practiceQuestions.length - 1, current + 1)); setPracticeStatus(""); }}
+          canGoNext={practiceCanGoNext}
+          next={moveToNextPracticeQuestion}
         />
       )}
       {view === "practice" && !practiceQuestion && <QuestionBankUnavailable />}
@@ -508,7 +545,7 @@ function GlassMetric({ icon, label, value }: { icon: React.ReactNode; label: str
 // (Pearson VUE style: neutral surfaces, structured cards, disciplined accent use)
 // ---------------------------------------------------------------------------
 
-function PracticeMode(props: { topic: string; setTopic: (topic: string) => void; question: ExamQuestion; index: number; total: number; selected: string[]; onSelect: (optionId: string) => void; revealed: boolean; feedback: ExamQuestion | null; activity: PracticeActivity | null; activityStatus: string; history?: QuestionHistory; checking: boolean; status: string; onCheck: () => void; previous: () => void; next: () => void }) {
+function PracticeMode(props: { topic: string; setTopic: (topic: string) => void; question: ExamQuestion; index: number; eyebrow: string; selected: string[]; onSelect: (optionId: string) => void; revealed: boolean; feedback: ExamQuestion | null; activity: PracticeActivity | null; activityStatus: string; history?: QuestionHistory; checking: boolean; status: string; onCheck: () => void; previous: () => void; canGoNext: boolean; next: () => void }) {
   const feedbackQuestion = props.feedback ?? props.question;
   const correct = props.revealed && Boolean(props.feedback) && isAnswerCorrect(feedbackQuestion, props.selected);
   return (
@@ -531,14 +568,14 @@ function PracticeMode(props: { topic: string; setTopic: (topic: string) => void;
         <History className="h-3.5 w-3.5" aria-hidden="true" />
         <QuestionHistoryIndicator history={props.history} />
       </div>
-      <QuestionPanel question={feedbackQuestion} selected={props.selected} reveal={props.revealed} onSelect={props.onSelect} eyebrow={`Question ${props.index + 1} of ${props.total}`} />
+      <QuestionPanel question={feedbackQuestion} selected={props.selected} reveal={props.revealed} onSelect={props.onSelect} eyebrow={props.eyebrow} />
       <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
-        <button className={platformSecondaryBtn} disabled={props.index === 0} onClick={props.previous}>
+        <button className={platformSecondaryBtn} disabled={props.index === 0 || props.checking} onClick={props.previous}>
           <ChevronLeft className="h-4 w-4" /> Previous
         </button>
         <div className="flex flex-wrap justify-end gap-3">
           <button className={platformPrimaryBtn} disabled={props.selected.length === 0 || props.checking || props.revealed} onClick={props.onCheck}>{props.checking ? "Checking..." : props.revealed ? "Answer checked" : "Check answer"}</button>
-          <button className={platformSecondaryBtn} disabled={props.index === props.total - 1} onClick={props.next}>
+          <button className={platformSecondaryBtn} disabled={!props.canGoNext || props.checking} onClick={props.next}>
             Next <ChevronRight className="h-4 w-4" />
           </button>
         </div>
