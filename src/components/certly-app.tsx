@@ -1,12 +1,13 @@
 "use client";
 
 import type React from "react";
-import { ArrowRight, Award, BarChart3, BookOpenCheck, CheckCircle2, Clock3, FileUp, Flag, GraduationCap, LayoutDashboard, ListChecks, LockKeyhole, LogOut, RotateCcw, ShieldCheck, Sparkles, Trophy, XCircle } from "lucide-react";
+import { ArrowRight, Award, BarChart3, BookOpenCheck, CheckCircle2, ChevronLeft, ChevronRight, Clock3, FileUp, Flag, GraduationCap, History, LayoutDashboard, ListChecks, LockKeyhole, LogOut, RotateCcw, ShieldCheck, Sparkles, Trophy, XCircle } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { clsx } from "clsx";
 import { describeAnswerResult, explainCorrectAnswer, getCorrectOptionIds, hcipHuaweiPreset, isAnswerCorrect, normalizeQuestionCount, scoreAttempt, shuffleWithSeed } from "@/lib/exam-engine";
 import { certifications, topics } from "@/lib/exam-catalog";
 import type { AttemptAnswer, AttemptSummary, Candidate, ExamQuestion, ImportPreviewQuestion } from "@/types/exam";
+import type { PracticeActivity, QuestionHistory } from "@/types/practice";
 import { AdminLogin } from "@/components/admin-login";
 import { ThemeToggle } from "@/lib/theme";
 
@@ -31,15 +32,23 @@ type AttemptHistoryItem = {
   durationSeconds: number;
 };
 
+type PracticeQuestionState = {
+  selected: string[];
+  revealed: boolean;
+  feedback: ExamQuestion | null;
+};
+
+const emptyPracticeState: PracticeQuestionState = { selected: [], revealed: false, feedback: null };
+
 export function CertlyApp({ initialView = "dashboard" }: { initialView?: View }) {
   const [view, setView] = useState<View>(initialView);
   const [candidate, setCandidate] = useState<Candidate>({ name: "", email: "" });
   const [selectedTopic, setSelectedTopic] = useState("Mixed Mock");
   const [questionIndex, setQuestionIndex] = useState(0);
   const [practiceIndex, setPracticeIndex] = useState(0);
-  const [practiceSelected, setPracticeSelected] = useState<string[]>([]);
-  const [practiceRevealed, setPracticeRevealed] = useState(false);
-  const [practiceFeedback, setPracticeFeedback] = useState<ExamQuestion | null>(null);
+  const [practiceStates, setPracticeStates] = useState<Record<string, PracticeQuestionState>>({});
+  const [practiceActivity, setPracticeActivity] = useState<PracticeActivity | null>(null);
+  const [practiceActivityStatus, setPracticeActivityStatus] = useState("Loading activity...");
   const [practiceChecking, setPracticeChecking] = useState(false);
   const [practiceStatus, setPracticeStatus] = useState("");
   const [answers, setAnswers] = useState<AttemptAnswer[]>([]);
@@ -57,6 +66,7 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
   const [previousPracticeFirst, setPreviousPracticeFirst] = useState(() => readLastQuestion("certly-last-practice-first"));
   const questionOpenedAt = useRef(0);
   const submittingAttempt = useRef(false);
+  const practiceCheckInFlight = useRef(false);
 
   const examQuestions = useMemo(() => {
     const count = normalizeQuestionCount(questionBank.length, hcipHuaweiPreset.questionCount);
@@ -69,6 +79,7 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
   const summary = useMemo(() => resultSummary ?? scoreAttempt(examQuestions, []), [examQuestions, resultSummary]);
   const activeQuestion = examQuestions[questionIndex];
   const practiceQuestion = practiceQuestions[practiceIndex] ?? questionBank[0];
+  const practiceState = practiceQuestion ? practiceStates[practiceQuestion.id] ?? emptyPracticeState : emptyPracticeState;
 
   useEffect(() => {
     void fetch("/api/questions")
@@ -90,6 +101,23 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
     if (!firstId) return;
     window.localStorage.setItem("certly-last-practice-first", firstId);
   }, [practiceQuestions]);
+
+  useEffect(() => {
+    if (view !== "practice") return;
+    const controller = new AbortController();
+    void fetch("/api/practice/activity", { signal: controller.signal })
+      .then(async (response) => {
+        const data = (await response.json()) as { activity?: PracticeActivity; error?: string };
+        if (!response.ok || !data.activity) throw new Error(data.error ?? "Practice activity could not be loaded.");
+        setPracticeActivity(data.activity);
+        setPracticeActivityStatus("");
+      })
+      .catch((error: unknown) => {
+        if (error instanceof DOMException && error.name === "AbortError") return;
+        setPracticeActivityStatus("Readiness and question history are temporarily unavailable.");
+      });
+    return () => controller.abort();
+  }, [view]);
 
   useEffect(() => {
     if (!startedAt) return;
@@ -118,7 +146,6 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
     setRemainingSeconds(hcipHuaweiPreset.durationMinutes * 60);
     setSaveStatus("");
     setResultSummary(null);
-    setPracticeFeedback(null);
     setExamSeed(createSessionSeed());
     questionOpenedAt.current = Date.now();
     setView("exam");
@@ -128,9 +155,7 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
     setPreviousPracticeFirst(practiceQuestions[0]?.id ?? previousPracticeFirst);
     setPracticeSeed(createSessionSeed());
     setPracticeIndex(0);
-    setPracticeSelected([]);
-    setPracticeRevealed(false);
-    setPracticeFeedback(null);
+    setPracticeStates({});
     setPracticeStatus("");
     setView("practice");
   }
@@ -195,24 +220,43 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
   }, [activeQuestion, answers, candidate, examQuestions, marked, startedAt, timed]);
 
   async function checkPracticeAnswer() {
-    if (!practiceQuestion || practiceSelected.length === 0 || practiceChecking) return;
+    if (!practiceQuestion || practiceState.selected.length === 0 || practiceCheckInFlight.current || practiceState.revealed) return;
+    practiceCheckInFlight.current = true;
     setPracticeChecking(true);
     setPracticeStatus("");
     try {
       const response = await fetch("/api/practice/check", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ questionId: practiceQuestion.id, selectedOptionIds: practiceSelected }),
+        body: JSON.stringify({ questionId: practiceQuestion.id, selectedOptionIds: practiceState.selected }),
       });
-      const data = (await response.json()) as { error?: string; question?: ExamQuestion };
+      const data = (await response.json()) as { error?: string; question?: ExamQuestion; activity?: PracticeActivity };
       if (!response.ok || !data.question) throw new Error(data.error ?? "Answer could not be checked.");
-      setPracticeFeedback(data.question);
-      setPracticeRevealed(true);
+      setPracticeStates((current) => ({
+        ...current,
+        [practiceQuestion.id]: { ...practiceState, feedback: data.question ?? null, revealed: true },
+      }));
+      if (data.activity) {
+        setPracticeActivity(data.activity);
+        setPracticeActivityStatus("");
+      }
     } catch {
       setPracticeStatus("Answer could not be checked. Try again.");
     } finally {
+      practiceCheckInFlight.current = false;
       setPracticeChecking(false);
     }
+  }
+
+  function selectPracticeOption(optionId: string) {
+    if (!practiceQuestion || practiceState.revealed) return;
+    const selected = practiceQuestion.type === "multiple"
+      ? toggleSelection(practiceState.selected, optionId)
+      : [optionId];
+    setPracticeStates((current) => ({
+      ...current,
+      [practiceQuestion.id]: { ...practiceState, selected },
+    }));
   }
 
   useEffect(() => {
@@ -274,18 +318,22 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
       {view === "practice" && practiceQuestion && (
         <PracticeMode
           topic={selectedTopic}
-          setTopic={(topic) => { setSelectedTopic(topic); setPracticeIndex(0); setPracticeSelected([]); setPracticeRevealed(false); setPracticeFeedback(null); setPracticeStatus(""); }}
+          setTopic={(topic) => { setSelectedTopic(topic); setPracticeIndex(0); setPracticeStates({}); setPracticeStatus(""); }}
           question={practiceQuestion}
           index={practiceIndex}
           total={practiceQuestions.length}
-          selected={practiceSelected}
-          setSelected={setPracticeSelected}
-          revealed={practiceRevealed}
-          feedback={practiceFeedback}
+          selected={practiceState.selected}
+          onSelect={selectPracticeOption}
+          revealed={practiceState.revealed}
+          feedback={practiceState.feedback}
+          activity={practiceActivity}
+          activityStatus={practiceActivityStatus}
+          history={practiceActivity?.historyByQuestion[practiceQuestion.id]}
           checking={practiceChecking}
           status={practiceStatus}
           onCheck={() => void checkPracticeAnswer()}
-          next={() => { setPracticeIndex((current) => (current + 1) % practiceQuestions.length); setPracticeSelected([]); setPracticeRevealed(false); setPracticeFeedback(null); setPracticeStatus(""); }}
+          previous={() => { setPracticeIndex((current) => Math.max(0, current - 1)); setPracticeStatus(""); }}
+          next={() => { setPracticeIndex((current) => Math.min(practiceQuestions.length - 1, current + 1)); setPracticeStatus(""); }}
         />
       )}
       {view === "practice" && !practiceQuestion && <QuestionBankUnavailable />}
@@ -460,7 +508,7 @@ function GlassMetric({ icon, label, value }: { icon: React.ReactNode; label: str
 // (Pearson VUE style: neutral surfaces, structured cards, disciplined accent use)
 // ---------------------------------------------------------------------------
 
-function PracticeMode(props: { topic: string; setTopic: (topic: string) => void; question: ExamQuestion; index: number; total: number; selected: string[]; setSelected: (selected: string[]) => void; revealed: boolean; feedback: ExamQuestion | null; checking: boolean; status: string; onCheck: () => void; next: () => void }) {
+function PracticeMode(props: { topic: string; setTopic: (topic: string) => void; question: ExamQuestion; index: number; total: number; selected: string[]; onSelect: (optionId: string) => void; revealed: boolean; feedback: ExamQuestion | null; activity: PracticeActivity | null; activityStatus: string; history?: QuestionHistory; checking: boolean; status: string; onCheck: () => void; previous: () => void; next: () => void }) {
   const feedbackQuestion = props.feedback ?? props.question;
   const correct = props.revealed && Boolean(props.feedback) && isAnswerCorrect(feedbackQuestion, props.selected);
   return (
@@ -478,14 +526,98 @@ function PracticeMode(props: { topic: string; setTopic: (topic: string) => void;
           </select>
         </label>
       </div>
-      <QuestionPanel question={feedbackQuestion} selected={props.selected} reveal={props.revealed} onSelect={(optionId) => props.setSelected(props.question.type === "multiple" ? toggleSelection(props.selected, optionId) : [optionId])} eyebrow={`Question ${props.index + 1} of ${props.total}`} />
-      <div className="mt-5 flex flex-wrap gap-3">
-        <button className={platformPrimaryBtn} disabled={props.selected.length === 0 || props.checking || props.revealed} onClick={props.onCheck}>{props.checking ? "Checking..." : props.revealed ? "Answer checked" : "Check answer"}</button>
-        <button className={platformSecondaryBtn} onClick={props.next}>Next question</button>
+      <ReadinessCard activity={props.activity} status={props.activityStatus} />
+      <div className="mb-3 mt-5 flex min-h-5 items-center gap-1.5 text-xs text-[var(--text-faint)]">
+        <History className="h-3.5 w-3.5" aria-hidden="true" />
+        <QuestionHistoryIndicator history={props.history} />
+      </div>
+      <QuestionPanel question={feedbackQuestion} selected={props.selected} reveal={props.revealed} onSelect={props.onSelect} eyebrow={`Question ${props.index + 1} of ${props.total}`} />
+      <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
+        <button className={platformSecondaryBtn} disabled={props.index === 0} onClick={props.previous}>
+          <ChevronLeft className="h-4 w-4" /> Previous
+        </button>
+        <div className="flex flex-wrap justify-end gap-3">
+          <button className={platformPrimaryBtn} disabled={props.selected.length === 0 || props.checking || props.revealed} onClick={props.onCheck}>{props.checking ? "Checking..." : props.revealed ? "Answer checked" : "Check answer"}</button>
+          <button className={platformSecondaryBtn} disabled={props.index === props.total - 1} onClick={props.next}>
+            Next <ChevronRight className="h-4 w-4" />
+          </button>
+        </div>
       </div>
       {props.status && <p aria-live="polite" className="mt-3 text-sm text-[var(--danger)]">{props.status}</p>}
       {props.revealed && props.feedback && <Feedback question={props.feedback} selected={props.selected} correct={correct} />}
     </section>
+  );
+}
+
+function ReadinessCard({ activity, status }: { activity: PracticeActivity | null; status: string }) {
+  const readiness = activity?.readiness;
+  const score = readiness?.score ?? 0;
+  const metrics = readiness?.metrics;
+  const metricRows = [
+    ["Knowledge Mastery", metrics?.knowledgeMastery],
+    ["Topic Coverage", metrics?.topicCoverage],
+    ["Recent Accuracy", metrics?.recentAccuracy],
+    ["Weak-Area Performance", metrics?.weakAreaPerformance],
+    ["Mock Exam Performance", metrics?.mockExamPerformance],
+  ] as const;
+
+  return (
+    <section className={clsx(platformCard, "p-5 sm:p-6")} aria-labelledby="exam-readiness-title">
+      <div className="grid gap-6 md:grid-cols-[160px_1fr] md:items-center">
+        <div className="flex flex-col items-center text-center">
+          <p id="exam-readiness-title" className="text-xs font-bold uppercase tracking-[0.14em] text-[var(--accent)]">Exam readiness</p>
+          <div
+            className="mt-3 grid h-32 w-32 place-items-center rounded-full p-2"
+            style={{ background: `conic-gradient(var(--turquoise) ${score * 3.6}deg, var(--border) 0deg)` }}
+            role="progressbar"
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={readiness ? score : undefined}
+            aria-label="Exam readiness"
+          >
+            <div className="grid h-full w-full place-content-center rounded-full border border-[var(--border)] bg-[var(--surface)]">
+              <span className="text-3xl font-bold tabular-nums text-[var(--text)]">{readiness ? `${score}%` : "--"}</span>
+              <span className="mt-0.5 text-xs font-semibold text-[var(--text-soft)]">{readiness?.state ?? "Calculating"}</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div className="grid gap-x-8 gap-y-3 sm:grid-cols-2">
+            {metricRows.map(([label, value]) => (
+              <div key={label}>
+                <div className="flex items-center justify-between gap-3 text-sm">
+                  <span className="font-medium text-[var(--text-soft)]">{label}</span>
+                  <span className="font-bold tabular-nums text-[var(--text)]">{value === undefined ? "--" : `${value}%`}</span>
+                </div>
+                <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-[var(--border)]">
+                  <div className="h-full rounded-full bg-[image:var(--gradient-primary)] transition-[width] duration-500" style={{ width: `${value ?? 0}%` }} />
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-5 border-t border-[var(--border)] pt-4">
+            <p className="text-xs font-bold uppercase tracking-[0.1em] text-[var(--text-soft)]">Recommended next</p>
+            {readiness?.recommendedNext.length ? (
+              <ul className="mt-2 grid gap-1.5 text-sm text-[var(--text)] sm:grid-cols-3">
+                {readiness.recommendedNext.map((topic) => <li key={topic} className="font-medium">{topic}</li>)}
+              </ul>
+            ) : (
+              <p className="mt-2 text-sm text-[var(--text-faint)]">No practice performance recorded yet.</p>
+            )}
+          </div>
+          {status && <p aria-live="polite" className="mt-3 text-xs text-[var(--text-faint)]">{status}</p>}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function QuestionHistoryIndicator({ history }: { history?: QuestionHistory }) {
+  if (!history) return <span>Not attempted yet</span>;
+  return (
+    <span>
+      Attempted {history.totalAttempts}&times; &bull; Correct {history.correctAttempts}/{history.totalAttempts} &bull; Last: {formatHistoryDate(history.lastAttemptedAt)} &bull; Previous: {history.previousCorrect ? "Correct" : "Incorrect"}
+    </span>
   );
 }
 
@@ -890,6 +1022,7 @@ function QuestionPanel({ question, selected, reveal, onSelect, eyebrow }: { ques
             key={option.id}
             className="rounded-xl border bg-[var(--surface)] p-4 text-left transition-all disabled:cursor-default"
             disabled={reveal}
+            aria-pressed={selected.includes(option.id)}
             style={{
               borderColor: reveal && option.isCorrect ? "var(--success-border)" : selectedIncorrect ? "var(--danger-border)" : selected.includes(option.id) ? "var(--accent)" : "var(--border)",
               background: reveal && option.isCorrect ? "var(--success-soft)" : selectedIncorrect ? "var(--danger-soft)" : "var(--surface)",
@@ -958,6 +1091,12 @@ function createSessionSeed() {
 
 function readLastQuestion(key: string) {
   return typeof window === "undefined" ? null : window.localStorage.getItem(key);
+}
+
+function formatHistoryDate(value: string) {
+  const date = new Date(value);
+  if (!Number.isFinite(date.getTime())) return "Unknown";
+  return new Intl.DateTimeFormat("en", { month: "short", day: "numeric" }).format(date);
 }
 
 function avoidPreviousFirst<T extends { id: string }>(items: T[], previousId: string | null) {

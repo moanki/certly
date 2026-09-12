@@ -3,6 +3,8 @@ import { requireAdmin } from "@/lib/admin-auth";
 import { appwriteConfig, createAdminClient } from "@/lib/appwrite";
 import { hcipHuaweiPreset, normalizeQuestionCount, scoreAttempt } from "@/lib/exam-engine";
 import { loadActiveQuestions } from "@/lib/question-store";
+import { getOrCreateParticipantId } from "@/lib/participant";
+import { recordExamActivity } from "@/lib/practice-activity-store";
 import { enforceBodyLimit, enforceRateLimit, enforceSameOrigin, noStoreJson, securityLog } from "@/lib/security";
 import type { AttemptAnswer, Candidate, ExamQuestion } from "@/types/exam";
 
@@ -79,6 +81,7 @@ export async function POST(request: Request) {
 
     let attemptId: string | null = null;
     let saved = false;
+    const participantId = await getOrCreateParticipantId();
     try {
       const { tables } = createAdminClient();
       const candidate = payload.candidate as Candidate;
@@ -119,6 +122,14 @@ export async function POST(request: Request) {
       saved = true;
     } catch {
       securityLog("attempt_persistence_failed");
+    }
+
+    if (saved) {
+      try {
+        await recordExamActivity(participantId, summary, submittedAt.toISOString());
+      } catch {
+        securityLog("exam_activity_persistence_failed");
+      }
     }
 
     return noStoreJson({ attemptId, saved, summary }, { status: 201 });
