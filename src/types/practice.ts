@@ -10,6 +10,8 @@ export type PracticeProgress = QuestionHistory & {
   topic: string;
   subtopic: string;
   recentAttempts: PracticeRecentAttempt[];
+  candidateName?: string;
+  candidateEmail?: string;
 };
 
 export type PracticeRecentAttempt = {

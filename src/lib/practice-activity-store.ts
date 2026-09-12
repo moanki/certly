@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import { ID, Query } from "node-appwrite";
 import { appwriteConfig, createAdminClient } from "@/lib/appwrite";
 import { calculateExamReadiness, calculateTopicPerformance } from "@/lib/practice-analytics";
-import type { AttemptSummary, ExamQuestion } from "@/types/exam";
+import type { AttemptSummary, Candidate, ExamQuestion } from "@/types/exam";
 import type { MockPerformance, PracticeActivity, PracticeProgress } from "@/types/practice";
 
 const practiceKind = "practice_progress";
@@ -60,6 +60,7 @@ export async function recordPracticeAttempt(
   question: ExamQuestion,
   isCorrect: boolean,
   attemptedAt: string,
+  candidate?: Candidate,
 ) {
   const { tables } = createAdminClient();
   const rowId = stableRowId("practice", participantId, question.id);
@@ -84,6 +85,8 @@ export async function recordPracticeAttempt(
     lastAttemptedAt: attemptedAt,
     previousCorrect: isCorrect,
     recentAttempts: [...(existing?.recentAttempts ?? []), { attemptedAt, correct: isCorrect }].slice(-10),
+    candidateName: candidate?.name.trim() || existing?.candidateName,
+    candidateEmail: candidate?.email.trim().toLowerCase() || existing?.candidateEmail,
   };
   const data = {
     kind: practiceKind,

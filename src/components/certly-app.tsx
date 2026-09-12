@@ -9,6 +9,7 @@ import { certifications, topics } from "@/lib/exam-catalog";
 import { advancePracticeSessionQueue, createPracticeSessionQueue, practiceQueueEyebrow, type PracticeSessionQueue } from "@/lib/practice-session";
 import type { AttemptAnswer, AttemptSummary, Candidate, ExamQuestion, ImportPreviewQuestion } from "@/types/exam";
 import type { PracticeActivity, QuestionHistory, TopicPerformanceDetail, TopicPerformanceStatus, TopicPerformanceSummary } from "@/types/practice";
+import type { AdminPerformanceDashboard, AdminScoreboard } from "@/types/admin";
 import { AdminLogin } from "@/components/admin-login";
 import { ThemeToggle } from "@/lib/theme";
 
@@ -246,7 +247,11 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
       const response = await fetch("/api/practice/check", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ questionId: practiceQuestion.id, selectedOptionIds: practiceState.selected }),
+        body: JSON.stringify({
+          questionId: practiceQuestion.id,
+          selectedOptionIds: practiceState.selected,
+          ...(candidate.name.trim() ? { candidate } : {}),
+        }),
       });
       const data = (await response.json()) as { error?: string; question?: ExamQuestion; activity?: PracticeActivity };
       if (!response.ok || !data.question) throw new Error(data.error ?? "Answer could not be checked.");
@@ -950,6 +955,8 @@ function AdminImport() {
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
   const [dragging, setDragging] = useState(false);
+  const [performance, setPerformance] = useState<AdminPerformanceDashboard | null>(null);
+  const [performanceStatus, setPerformanceStatus] = useState("Loading performance...");
   const preview = batches.flatMap((batch) => batch.questions.map((question) => ({ ...question, fileName: batch.fileName })));
 
   useEffect(() => {
@@ -961,6 +968,24 @@ function AdminImport() {
       })
       .catch(() => setAuth("guest"));
   }, []);
+
+  useEffect(() => {
+    if (auth !== "admin") return;
+    const controller = new AbortController();
+    void fetch("/api/admin/performance", { signal: controller.signal })
+      .then(async (response) => {
+        const data = (await response.json()) as { performance?: AdminPerformanceDashboard; error?: string };
+        if (response.status === 401) setAuth("guest");
+        if (!response.ok || !data.performance) throw new Error(data.error ?? "Performance data could not be loaded.");
+        setPerformance(data.performance);
+        setPerformanceStatus("");
+      })
+      .catch((error: unknown) => {
+        if (error instanceof DOMException && error.name === "AbortError") return;
+        setPerformanceStatus("Performance data could not be loaded.");
+      });
+    return () => controller.abort();
+  }, [auth]);
 
   async function login(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -977,6 +1002,7 @@ function AdminImport() {
         setStatus(data.error ?? "Sign-in failed.");
         return;
       }
+      setPerformanceStatus("Loading performance...");
       setAuth("admin");
       setAdminName(data.user?.name ?? "Admin");
       setPassword("");
@@ -991,6 +1017,8 @@ function AdminImport() {
     await fetch("/api/auth/logout", { method: "DELETE" });
     setAuth("guest");
     setBatches([]);
+    setPerformance(null);
+    setPerformanceStatus("Loading performance...");
     setStatus("Signed out.");
     setBusy(false);
   }
@@ -1093,6 +1121,7 @@ function AdminImport() {
 
   return (
     <section className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+      <AdminPerformanceSection performance={performance} status={performanceStatus} />
       <div className={clsx(platformCard, "p-6")}>
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="flex items-center gap-3">
@@ -1162,6 +1191,141 @@ function AdminImport() {
       )}
     </section>
   );
+}
+
+function AdminPerformanceSection({ performance, status }: { performance: AdminPerformanceDashboard | null; status: string }) {
+  if (!performance) {
+    return <div className={clsx(platformCard, "mb-6 p-6 text-sm text-[var(--text-soft)]")} aria-live="polite">{status}</div>;
+  }
+
+  return (
+    <div className="mb-6 space-y-6">
+      <AdminScoreboardSection title="Practice scoreboard" scoreboard={performance.practice} scoreSuffix="%" />
+      <AdminScoreboardSection title="Exam scoreboard" scoreboard={performance.exam} scoreSuffix="/1000" />
+    </div>
+  );
+}
+
+function AdminScoreboardSection({ title, scoreboard, scoreSuffix }: { title: string; scoreboard: AdminScoreboard; scoreSuffix: string }) {
+  return (
+    <section className={clsx(platformCard, "overflow-hidden")} aria-labelledby={`${title.toLowerCase().replaceAll(" ", "-")}-title`}>
+      <div className="flex items-center gap-3 border-b border-[var(--border)] p-5 sm:p-6">
+        <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[var(--accent-soft)] text-[var(--accent)]"><Trophy className="h-4.5 w-4.5" aria-hidden="true" /></span>
+        <div>
+          <p className="text-xs font-bold uppercase tracking-[0.14em] text-[var(--accent)]">Top scorers</p>
+          <h2 id={`${title.toLowerCase().replaceAll(" ", "-")}-title`} className="text-xl font-bold text-[var(--text)]">{title}</h2>
+        </div>
+      </div>
+
+      {scoreboard.leaders.length ? (
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[760px] border-collapse text-left text-sm">
+            <thead className="bg-[var(--surface-2)] text-xs uppercase text-[var(--text-soft)]">
+              <tr>
+                <th className="p-3 font-bold">Rank</th>
+                <th className="p-3 font-bold">Learner</th>
+                <th className="p-3 font-bold">Latest attempt</th>
+                <th className="p-3 font-bold">Attempted (incl. repeats)</th>
+                <th className="p-3 font-bold">Unique questions</th>
+                <th className="p-3 text-right font-bold">Total score</th>
+              </tr>
+            </thead>
+            <tbody>
+              {scoreboard.leaders.map((leader, index) => (
+                <tr key={leader.userId} className="border-t border-[var(--border)]" style={index === 0 ? { background: "var(--accent-soft)" } : undefined}>
+                  <td className="p-3 font-bold text-[var(--text-soft)]">#{index + 1}</td>
+                  <td className="p-3 font-semibold text-[var(--text)]">{leader.name}</td>
+                  <td className="p-3 whitespace-nowrap text-[var(--text-soft)]">{formatAdminDate(leader.latestAttemptedAt)}</td>
+                  <td className="p-3 tabular-nums text-[var(--text)]">{leader.questionsAttempted}</td>
+                  <td className="p-3 tabular-nums text-[var(--text)]">{leader.uniqueQuestionsAttempted}</td>
+                  <td className="p-3 text-right font-bold tabular-nums text-[var(--accent)]">{leader.totalScore}{scoreSuffix}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <p className="p-6 text-sm text-[var(--text-soft)]">No completed {title.toLowerCase().replace(" scoreboard", "")} attempts yet.</p>
+      )}
+
+      <div className="border-t border-[var(--border)] p-5 sm:p-6">
+        <div className="mb-4 flex items-center gap-2">
+          <BarChart3 className="h-4 w-4 text-[var(--success)]" aria-hidden="true" />
+          <h3 className="text-sm font-bold text-[var(--text)]">Progress and learning curve</h3>
+        </div>
+        <LearningCurveChart scoreboard={scoreboard} title={title} />
+      </div>
+    </section>
+  );
+}
+
+function LearningCurveChart({ scoreboard, title }: { scoreboard: AdminScoreboard; title: string }) {
+  const series = scoreboard.series.filter((item) => item.points.length > 0);
+  if (!series.length) return <p className="text-sm text-[var(--text-soft)]">No learning-curve data yet.</p>;
+
+  const width = 760;
+  const height = 260;
+  const left = 52;
+  const right = 18;
+  const top = 14;
+  const bottom = 34;
+  const plotWidth = width - left - right;
+  const plotHeight = height - top - bottom;
+  const maximumAttempts = Math.max(2, ...series.map((item) => item.points.length));
+  const x = (attemptNumber: number) => left + ((attemptNumber - 1) / (maximumAttempts - 1)) * plotWidth;
+  const y = (score: number) => top + plotHeight - (score / scoreboard.scoreScale) * plotHeight;
+  const gridValues = [0, 0.25, 0.5, 0.75, 1];
+
+  return (
+    <div>
+      <div className="aspect-[19/7] min-h-[220px] w-full overflow-hidden">
+        <svg className="h-full w-full" viewBox={`0 0 ${width} ${height}`} role="img" aria-label={`${title} learning curve by learner`}>
+          {gridValues.map((ratio) => {
+            const value = Math.round(scoreboard.scoreScale * ratio);
+            return (
+              <g key={ratio}>
+                <line x1={left} x2={width - right} y1={y(value)} y2={y(value)} stroke="var(--border)" strokeWidth="1" />
+                <text x={left - 9} y={y(value) + 4} textAnchor="end" fontSize="11" fill="var(--text-faint)">{value}</text>
+              </g>
+            );
+          })}
+          <line x1={left} x2={width - right} y1={height - bottom} y2={height - bottom} stroke="var(--border-strong)" strokeWidth="1" />
+          <text x={left} y={height - 10} fontSize="11" fill="var(--text-faint)">Attempt 1</text>
+          <text x={width - right} y={height - 10} textAnchor="end" fontSize="11" fill="var(--text-faint)">Attempt {maximumAttempts}</text>
+          {series.map((item, index) => {
+            const color = chartSeriesColor(index);
+            const points = item.points.map((point) => `${x(point.attemptNumber)},${y(point.score)}`).join(" ");
+            const last = item.points[item.points.length - 1];
+            return (
+              <g key={item.userId}>
+                {item.points.length > 1 && <polyline points={points} fill="none" stroke={color} strokeWidth="3" strokeLinejoin="round" strokeLinecap="round" />}
+                <circle cx={x(last.attemptNumber)} cy={y(last.score)} r="4.5" fill={color} stroke="var(--surface)" strokeWidth="2" />
+              </g>
+            );
+          })}
+        </svg>
+      </div>
+      <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-xs text-[var(--text-soft)]">
+        {series.map((item, index) => (
+          <span key={item.userId} className="inline-flex items-center gap-2">
+            <span className="h-2.5 w-2.5 rounded-full" style={{ background: chartSeriesColor(index) }} />
+            {item.name}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function chartSeriesColor(index: number) {
+  const colors = ["var(--accent)", "var(--success)", "var(--warning)", "var(--danger)"];
+  return colors[index] ?? `hsl(${(index * 137.5 + 190) % 360} 68% 46%)`;
+}
+
+function formatAdminDate(value: string) {
+  const date = new Date(value);
+  if (!Number.isFinite(date.getTime())) return "Unknown";
+  return new Intl.DateTimeFormat("en", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" }).format(date);
 }
 
 function QuestionPanel({ question, selected, reveal, onSelect, eyebrow }: { question: ExamQuestion; selected: string[]; reveal: boolean; onSelect: (optionId: string) => void; eyebrow: string }) {

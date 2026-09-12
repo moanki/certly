@@ -5,6 +5,7 @@ import { hcipHuaweiPreset, normalizeQuestionCount, scoreAttempt } from "@/lib/ex
 import { loadActiveQuestions } from "@/lib/question-store";
 import { getOrCreateParticipantId } from "@/lib/participant";
 import { recordExamActivity } from "@/lib/practice-activity-store";
+import { fingerprintQuestion } from "@/lib/admin-performance";
 import { enforceBodyLimit, enforceRateLimit, enforceSameOrigin, noStoreJson, securityLog } from "@/lib/security";
 import type { AttemptAnswer, Candidate, ExamQuestion } from "@/types/exam";
 
@@ -85,9 +86,10 @@ export async function POST(request: Request) {
     try {
       const { tables } = createAdminClient();
       const candidate = payload.candidate as Candidate;
-      const attemptPayload = JSON.stringify({
+      const attemptData = {
         candidateName: candidate.name.trim(),
         candidateEmail: candidate.email.trim().toLowerCase(),
+        participantId,
         certificationId: payload.certificationId,
         mode: payload.mode,
         timed: payload.timed,
@@ -104,7 +106,10 @@ export async function POST(request: Request) {
           ...answer,
           isCorrect: summary.results.find((result) => result.question.id === answer.questionId)?.isCorrect ?? false,
         })),
-      });
+      };
+      const questionKeys = questionIds.map(fingerprintQuestion);
+      let attemptPayload = JSON.stringify({ ...attemptData, questionKeys });
+      if (attemptPayload.length > 15_000) attemptPayload = JSON.stringify(attemptData);
       if (attemptPayload.length > 15_000) throw new Error("Attempt payload exceeds storage limit.");
       const attempt = await tables.createRow({
         databaseId: appwriteConfig.databaseId,
