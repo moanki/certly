@@ -6,9 +6,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { clsx } from "clsx";
 import { describeAnswerResult, explainCorrectAnswer, getCorrectOptionIds, hcipHuaweiPreset, isAnswerCorrect, normalizeQuestionCount, scoreAttempt, shuffleWithSeed } from "@/lib/exam-engine";
 import { certifications, topics } from "@/lib/exam-catalog";
-import { advancePracticeSessionQueue, createPracticeSessionQueue, practiceQueueEyebrow, type PracticeSessionQueue } from "@/lib/practice-session";
+import { advancePracticeSessionQueue, createPracticeSessionQueue, normalizePracticeDisplayName, practiceQueueEyebrow, schedulePracticeReinforcement, type PracticeQueuePhase, type PracticeSessionQueue } from "@/lib/practice-session";
 import type { AttemptAnswer, AttemptSummary, Candidate, ExamQuestion, ImportPreviewQuestion } from "@/types/exam";
-import type { PracticeActivity, QuestionHistory, TopicPerformanceDetail, TopicPerformanceStatus, TopicPerformanceSummary } from "@/types/practice";
+import type { PracticeActivity, PracticeSessionSummary, QuestionHistory, TopicPerformanceDetail, TopicPerformanceStatus, TopicPerformanceSummary } from "@/types/practice";
 import type { AdminPerformanceDashboard, AdminScoreboard } from "@/types/admin";
 import { AdminLogin } from "@/components/admin-login";
 import { ThemeToggle } from "@/lib/theme";
@@ -16,6 +16,9 @@ import { ThemeToggle } from "@/lib/theme";
 export type View = "dashboard" | "practice" | "exam-setup" | "exam" | "results" | "admin";
 
 const storageKey = "certly-active-attempt";
+const practiceNameKey = "certly-practice-name";
+const practiceSessionKey = "certly-practice-session";
+const sessionIdPattern = /^[a-f0-9]{32}$/;
 
 // Shared "production platform" style tokens — driven by CSS variables so the
 // whole app follows the light/dark theme toggle.
@@ -55,6 +58,11 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
   const [practiceActivityStatus, setPracticeActivityStatus] = useState("Loading activity...");
   const [practiceChecking, setPracticeChecking] = useState(false);
   const [practiceStatus, setPracticeStatus] = useState("");
+  const [practiceNameDraft, setPracticeNameDraft] = useState("");
+  const [practiceNameLoaded, setPracticeNameLoaded] = useState(false);
+  const [practiceAccess, setPracticeAccess] = useState(false);
+  const [practiceSessionId, setPracticeSessionId] = useState<string | null>(null);
+  const [practiceBlockWrong, setPracticeBlockWrong] = useState<Set<string>>(new Set());
   const [answers, setAnswers] = useState<AttemptAnswer[]>([]);
   const [timed, setTimed] = useState(true);
   const [startedAt, setStartedAt] = useState<string | null>(null);
@@ -67,7 +75,7 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
   const [examSeed, setExamSeed] = useState(() => createSessionSeed());
   const [practiceSeed, setPracticeSeed] = useState(() => createSessionSeed());
   const [previousExamFirst, setPreviousExamFirst] = useState(() => readLastQuestion("certly-last-exam-first"));
-  const [previousPracticeFirst, setPreviousPracticeFirst] = useState(() => readLastQuestion("certly-last-practice-first"));
+  const [previousPracticeFirst] = useState(() => readLastQuestion("certly-last-practice-first"));
   const questionOpenedAt = useRef(0);
   const submittingAttempt = useRef(false);
   const practiceCheckInFlight = useRef(false);
@@ -78,25 +86,46 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
   }, [examSeed, previousExamFirst, questionBank]);
   const practiceQuestions = useMemo(() => {
     const topicQuestions = selectedTopic === "Mixed Mock" ? questionBank : questionBank.filter((question) => question.topic === selectedTopic);
-    return avoidPreviousFirst(shuffleWithSeed(topicQuestions, practiceSeed), previousPracticeFirst);
-  }, [practiceSeed, previousPracticeFirst, questionBank, selectedTopic]);
-  const initialPracticeSession = useMemo(
-    () => createPracticeSessionQueue(practiceQuestions.map((question) => question.id)),
-    [practiceQuestions],
-  );
-  const practiceSession = practiceSessionOverride ?? initialPracticeSession;
+    const shuffled = shuffleWithSeed(topicQuestions, practiceSessionId ?? practiceSeed);
+    return practiceSessionId ? shuffled : avoidPreviousFirst(shuffled, previousPracticeFirst);
+  }, [practiceSeed, practiceSessionId, previousPracticeFirst, questionBank, selectedTopic]);
+  const practiceSession = practiceSessionOverride ?? createPracticeSessionQueue([]);
   const practiceItem = practiceSession.items[practiceIndex];
   const practiceQuestionById = useMemo(() => new Map(practiceQuestions.map((question) => [question.id, question])), [practiceQuestions]);
   const summary = useMemo(() => resultSummary ?? scoreAttempt(examQuestions, []), [examQuestions, resultSummary]);
   const activeQuestion = examQuestions[questionIndex];
   const practiceQuestion = practiceItem ? practiceQuestionById.get(practiceItem.questionId) : undefined;
   const practiceState = practiceItem ? practiceStates[practiceItem.key] ?? emptyPracticeState : emptyPracticeState;
+  const practiceFeedbackQuestion = practiceState.feedback ?? practiceQuestion;
+  const practiceDisplayQuestion = useMemo(() => {
+    if (!practiceFeedbackQuestion || !practiceItem || practiceItem.phase === "new") return practiceFeedbackQuestion;
+    return {
+      ...practiceFeedbackQuestion,
+      options: shuffleWithSeed(practiceFeedbackQuestion.options, `${practiceSessionId}:${practiceItem.key}`).map((option, index) => ({
+        ...option,
+        label: String.fromCharCode(65 + index),
+      })),
+    };
+  }, [practiceFeedbackQuestion, practiceItem, practiceSessionId]);
   const advancedPracticeSession = useMemo(
-    () => advancePracticeSessionQueue(practiceSession, [...practiceUnresolved]),
-    [practiceSession, practiceUnresolved],
+    () => advancePracticeSessionQueue(practiceSession, [...practiceUnresolved], [...practiceBlockWrong]),
+    [practiceBlockWrong, practiceSession, practiceUnresolved],
   );
   const practiceCanGoNext = practiceIndex < practiceSession.items.length - 1
     || advancedPracticeSession.items.length > practiceSession.items.length;
+
+  useEffect(() => {
+    const savedName = window.localStorage.getItem(practiceNameKey)?.trim().replace(/\s+/g, " ") ?? "";
+    const savedSession = window.localStorage.getItem(practiceSessionKey) ?? "";
+    queueMicrotask(() => {
+      if (savedName.length >= 2 && savedName.length <= 40) {
+        setPracticeNameDraft(savedName);
+        setCandidate((current) => ({ ...current, name: savedName }));
+      }
+      if (sessionIdPattern.test(savedSession)) setPracticeSessionId(savedSession);
+      setPracticeNameLoaded(true);
+    });
+  }, []);
 
   useEffect(() => {
     void fetch("/api/questions")
@@ -120,21 +149,32 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
   }, [practiceQuestions]);
 
   useEffect(() => {
-    if (view !== "practice") return;
+    if (view !== "practice" || !practiceAccess || !practiceSessionId) return;
     const controller = new AbortController();
-    void fetch("/api/practice/activity", { signal: controller.signal })
+    void fetch(`/api/practice/activity?sessionId=${encodeURIComponent(practiceSessionId)}`, { signal: controller.signal })
       .then(async (response) => {
         const data = (await response.json()) as { activity?: PracticeActivity; error?: string };
         if (!response.ok || !data.activity) throw new Error(data.error ?? "Practice activity could not be loaded.");
         setPracticeActivity(data.activity);
         setPracticeActivityStatus("");
+        setPracticeSessionOverride(createPracticeSessionQueue(
+          practiceQuestions.map((question) => question.id),
+          100,
+          data.activity.sessionProgress,
+          questionBank.length,
+        ));
+        setPracticeIndex(0);
+        setPracticeStates({});
+        setPracticeUnresolved(new Set(data.activity.sessionProgress.filter((item) => !item.previousCorrect).map((item) => item.questionId)));
+        const activeBlock = data.activity.session.blockNumber;
+        setPracticeBlockWrong(new Set(data.activity.sessionProgress.filter((item) => item.blockNumber === activeBlock && !item.firstAttemptCorrect).map((item) => item.questionId)));
       })
       .catch((error: unknown) => {
         if (error instanceof DOMException && error.name === "AbortError") return;
         setPracticeActivityStatus("Readiness and question history are temporarily unavailable.");
       });
     return () => controller.abort();
-  }, [view]);
+  }, [practiceAccess, practiceQuestions, practiceSessionId, questionBank.length, view]);
 
   useEffect(() => {
     if (!startedAt) return;
@@ -169,14 +209,44 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
   }
 
   function startPractice() {
-    setPreviousPracticeFirst(practiceQuestions[0]?.id ?? previousPracticeFirst);
-    setPracticeSeed(createSessionSeed());
+    if (view !== "practice") setPracticeAccess(false);
+    setView("practice");
+  }
+
+  function continuePractice() {
+    const displayName = normalizePracticeDisplayName(practiceNameDraft);
+    if (!displayName) {
+      setPracticeStatus("Enter a name between 2 and 40 characters.");
+      return;
+    }
+    const sessionId = practiceSessionId && sessionIdPattern.test(practiceSessionId) ? practiceSessionId : createSessionId();
+    window.localStorage.setItem(practiceNameKey, displayName);
+    window.localStorage.setItem(practiceSessionKey, sessionId);
+    setCandidate((current) => ({ ...current, name: displayName }));
+    setPracticeNameDraft(displayName);
+    setPracticeSessionId(sessionId);
+    setPracticeSeed(sessionId);
+    setPracticeActivity(null);
+    setPracticeSessionOverride(null);
+    setPracticeActivityStatus("Loading activity...");
+    setPracticeStatus("");
+    setPracticeAccess(true);
+  }
+
+  function startPracticeOver() {
+    const sessionId = createSessionId();
+    window.localStorage.setItem(practiceSessionKey, sessionId);
+    setPracticeSessionId(sessionId);
+    setPracticeSeed(sessionId);
+    setSelectedTopic("Mixed Mock");
     setPracticeIndex(0);
     setPracticeStates({});
     setPracticeSessionOverride(null);
     setPracticeUnresolved(new Set());
+    setPracticeBlockWrong(new Set());
+    setPracticeActivity(null);
+    setPracticeActivityStatus("Loading activity...");
     setPracticeStatus("");
-    setView("practice");
   }
 
   function resetAttempt() {
@@ -250,7 +320,10 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
         body: JSON.stringify({
           questionId: practiceQuestion.id,
           selectedOptionIds: practiceState.selected,
-          ...(candidate.name.trim() ? { candidate } : {}),
+          displayName: candidate.name,
+          practiceSessionId,
+          attemptKind: practiceItem.phase === "new" ? "initial" : practiceItem.phase,
+          blockNumber: practiceItem.blockNumber,
         }),
       });
       const data = (await response.json()) as { error?: string; question?: ExamQuestion; activity?: PracticeActivity };
@@ -260,6 +333,10 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
         [practiceItem.key]: { ...practiceState, feedback: data.question ?? null, revealed: true },
       }));
       const correct = isAnswerCorrect(data.question, practiceState.selected);
+      setPracticeSessionOverride((current) => current ? schedulePracticeReinforcement(current, practiceIndex, correct) : current);
+      if (practiceItem.phase === "new" && !correct) {
+        setPracticeBlockWrong((current) => new Set(current).add(practiceQuestion.id));
+      }
       setPracticeUnresolved((current) => {
         const next = new Set(current);
         if (correct) next.delete(practiceQuestion.id);
@@ -306,6 +383,8 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
     setPracticeStates({});
     setPracticeSessionOverride(null);
     setPracticeUnresolved(new Set());
+    setPracticeActivity(null);
+    setPracticeActivityStatus("Loading activity...");
     setPracticeStatus("");
   }
 
@@ -364,30 +443,43 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
         </div>
       </header>
 
-      {view === "dashboard" && <Landing candidate={candidate} setCandidate={setCandidate} summary={summary} attemptHistory={attemptHistory} questionBank={questionBank} goExam={() => setView("exam-setup")} goPractice={startPractice} />}
-      {view === "practice" && practiceQuestion && (
+      {view === "dashboard" && <Landing summary={summary} attemptHistory={attemptHistory} questionBank={questionBank} goExam={() => setView("exam-setup")} goPractice={startPractice} />}
+      {view === "practice" && practiceNameLoaded && !practiceAccess && (
+        <PracticeEntry
+          name={practiceNameDraft}
+          setName={setPracticeNameDraft}
+          remembered={Boolean(practiceSessionId && practiceNameDraft)}
+          status={practiceStatus}
+          onContinue={continuePractice}
+        />
+      )}
+      {view === "practice" && practiceAccess && practiceDisplayQuestion && practiceItem && (
         <PracticeMode
           topic={selectedTopic}
           setTopic={changePracticeTopic}
-          question={practiceQuestion}
+          question={practiceDisplayQuestion}
           index={practiceIndex}
           eyebrow={practiceItem ? practiceQueueEyebrow(practiceItem) : "Practice question"}
           selected={practiceState.selected}
           onSelect={selectPracticeOption}
           revealed={practiceState.revealed}
-          feedback={practiceState.feedback}
+          feedback={practiceState.feedback ? practiceDisplayQuestion : null}
           activity={practiceActivity}
           activityStatus={practiceActivityStatus}
-          history={practiceActivity?.historyByQuestion[practiceQuestion.id]}
+          history={practiceActivity?.historyByQuestion[practiceDisplayQuestion.id]}
           checking={practiceChecking}
           status={practiceStatus}
           onCheck={() => void checkPracticeAnswer()}
           previous={() => { setPracticeIndex((current) => Math.max(0, current - 1)); setPracticeStatus(""); }}
           canGoNext={practiceCanGoNext}
           next={moveToNextPracticeQuestion}
+          learnerName={candidate.name}
+          session={practiceActivity?.session ?? null}
+          phase={practiceItem.phase}
+          onStartOver={startPracticeOver}
         />
       )}
-      {view === "practice" && !practiceQuestion && <QuestionBankUnavailable />}
+      {view === "practice" && practiceAccess && !practiceDisplayQuestion && practiceActivityStatus !== "Loading activity..." && <QuestionBankUnavailable />}
       {view === "exam-setup" && <ExamSetup candidate={candidate} setCandidate={setCandidate} timed={timed} setTimed={setTimed} onStart={startExam} hasDraft={Boolean(startedAt)} onReset={resetAttempt} ready={questionBank.length > 0} />}
       {view === "exam" && activeQuestion && (
         <ExamMode
@@ -418,7 +510,7 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
 // Landing — fluid, animated marketing-style home (shares the login palette)
 // ---------------------------------------------------------------------------
 
-function Landing({ candidate, setCandidate, summary, attemptHistory, questionBank, goExam, goPractice }: { candidate: Candidate; setCandidate: (candidate: Candidate) => void; summary: ReturnType<typeof scoreAttempt>; attemptHistory: AttemptHistoryItem[]; questionBank: ExamQuestion[]; goExam: () => void; goPractice: () => void }) {
+function Landing({ summary, attemptHistory, questionBank, goExam, goPractice }: { summary: ReturnType<typeof scoreAttempt>; attemptHistory: AttemptHistoryItem[]; questionBank: ExamQuestion[]; goExam: () => void; goPractice: () => void }) {
   return (
     <div className="relative overflow-hidden">
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
@@ -473,11 +565,8 @@ function Landing({ candidate, setCandidate, summary, attemptHistory, questionBan
               style={{ borderColor: "var(--card-border)", background: "var(--card-bg)", boxShadow: "var(--card-shadow)" }}
             >
               <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--text-faint)]">Get started</p>
-              <h3 className="mt-2 text-xl font-bold text-[var(--text)]">Set up your candidate profile</h3>
-              <div className="mt-5 grid gap-3.5">
-                <GlassInput label="Candidate name" value={candidate.name} onChange={(name) => setCandidate({ ...candidate, name })} placeholder="Your name" />
-                <GlassInput label="Email" value={candidate.email} onChange={(email) => setCandidate({ ...candidate, email })} placeholder="you@example.com" type="email" />
-              </div>
+              <h3 className="mt-2 text-xl font-bold text-[var(--text)]">Choose how you want to study</h3>
+              <p className="mt-3 text-sm leading-6 text-[var(--text-soft)]">Practice with guided feedback, or configure a full timed mock exam.</p>
               <div className="mt-6 grid gap-2.5">
                 <button
                   className="group relative flex items-center justify-center gap-2 overflow-hidden rounded-xl bg-[image:var(--gradient-primary)] px-4 py-3 text-sm font-bold text-white transition-[background-image] duration-300 hover:bg-[image:var(--gradient-primary-hover)] active:scale-[0.98]"
@@ -523,24 +612,6 @@ function Landing({ candidate, setCandidate, summary, attemptHistory, questionBan
   );
 }
 
-function GlassInput({ label, value, onChange, placeholder, type = "text" }: { label: string; value: string; onChange: (value: string) => void; placeholder: string; type?: string }) {
-  return (
-    <label className="grid gap-1.5">
-      <span className="text-xs font-semibold uppercase tracking-[0.1em] text-[var(--text-faint)]">{label}</span>
-      <input
-        className="rounded-xl border px-3.5 py-2.5 text-sm text-[var(--text)] outline-none transition-colors placeholder:text-[var(--text-faint)] focus:ring-4"
-        style={{ borderColor: "var(--input-border)", background: "var(--input-bg)" }}
-        onFocus={(event) => { event.currentTarget.style.borderColor = "var(--accent)"; }}
-        onBlur={(event) => { event.currentTarget.style.borderColor = "var(--input-border)"; }}
-        type={type}
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-        placeholder={placeholder}
-      />
-    </label>
-  );
-}
-
 function GlassMetric({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
     <div
@@ -559,7 +630,39 @@ function GlassMetric({ icon, label, value }: { icon: React.ReactNode; label: str
 // (Pearson VUE style: neutral surfaces, structured cards, disciplined accent use)
 // ---------------------------------------------------------------------------
 
-function PracticeMode(props: { topic: string; setTopic: (topic: string) => void; question: ExamQuestion; index: number; eyebrow: string; selected: string[]; onSelect: (optionId: string) => void; revealed: boolean; feedback: ExamQuestion | null; activity: PracticeActivity | null; activityStatus: string; history?: QuestionHistory; checking: boolean; status: string; onCheck: () => void; previous: () => void; canGoNext: boolean; next: () => void }) {
+function PracticeEntry({ name, setName, remembered, status, onContinue }: { name: string; setName: (name: string) => void; remembered: boolean; status: string; onContinue: () => void }) {
+  const [editing, setEditing] = useState(!remembered);
+  const submit = (event: React.FormEvent) => {
+    event.preventDefault();
+    onContinue();
+  };
+  return (
+    <section className="mx-auto max-w-lg px-4 py-12 sm:px-6">
+      <div className={clsx(platformCard, "p-6 sm:p-8")}>
+        <p className="text-xs font-bold uppercase tracking-[0.14em] text-[var(--accent)]">Practice mode</p>
+        {remembered && !editing ? (
+          <div className="mt-4">
+            <h2 className="text-2xl font-bold tracking-tight">Continue as {name}</h2>
+            <button className={clsx(platformPrimaryBtn, "mt-6 w-full")} onClick={onContinue}>Continue Practice <ArrowRight className="h-4 w-4" /></button>
+            <button className="mt-3 w-full text-sm font-semibold text-[var(--accent)] hover:underline" onClick={() => setEditing(true)}>Not you? Change learner</button>
+          </div>
+        ) : (
+          <form className="mt-4" onSubmit={submit}>
+            <h2 className="text-2xl font-bold tracking-tight">What should we call you?</h2>
+            <label className="mt-6 grid gap-1.5 text-sm font-semibold">
+              Name
+              <input className={platformInput} autoComplete="name" maxLength={40} minLength={2} required value={name} onChange={(event) => setName(event.target.value)} placeholder="Your name" />
+            </label>
+            <button className={clsx(platformPrimaryBtn, "mt-6 w-full")} type="submit">Start Practice <ArrowRight className="h-4 w-4" /></button>
+          </form>
+        )}
+        {status && <p aria-live="polite" className="mt-3 text-sm text-[var(--danger)]">{status}</p>}
+      </div>
+    </section>
+  );
+}
+
+function PracticeMode(props: { topic: string; setTopic: (topic: string) => void; question: ExamQuestion; index: number; eyebrow: string; selected: string[]; onSelect: (optionId: string) => void; revealed: boolean; feedback: ExamQuestion | null; activity: PracticeActivity | null; activityStatus: string; history?: QuestionHistory; checking: boolean; status: string; onCheck: () => void; previous: () => void; canGoNext: boolean; next: () => void; learnerName: string; session: PracticeSessionSummary | null; phase: PracticeQueuePhase; onStartOver: () => void }) {
   const feedbackQuestion = props.feedback ?? props.question;
   const correct = props.revealed && Boolean(props.feedback) && isAnswerCorrect(feedbackQuestion, props.selected);
   return (
@@ -569,16 +672,21 @@ function PracticeMode(props: { topic: string; setTopic: (topic: string) => void;
           <p className="text-xs font-bold uppercase tracking-[0.14em] text-[var(--accent)]">Practice mode</p>
           <h2 className="mt-1 text-2xl font-bold tracking-tight">Immediate feedback and explanations</h2>
         </div>
-        <label className="grid gap-1.5 text-sm font-semibold">
-          Topic
-          <select className={clsx(platformInput, "cursor-pointer")} value={props.topic} onChange={(event) => props.setTopic(event.target.value)}>
-            <option>Mixed Mock</option>
-            {topics.map((topic) => <option key={topic}>{topic}</option>)}
-          </select>
-        </label>
+        <div className="flex flex-wrap items-end gap-2">
+          <label className="grid gap-1.5 text-sm font-semibold">
+            Topic
+            <select className={clsx(platformInput, "cursor-pointer")} value={props.topic} onChange={(event) => props.setTopic(event.target.value)}>
+              <option>Mixed Mock</option>
+              {topics.map((topic) => <option key={topic}>{topic}</option>)}
+            </select>
+          </label>
+          <StartOverControl learnerName={props.learnerName} session={props.session} onStartOver={props.onStartOver} />
+        </div>
       </div>
+      <PracticeSessionProgress session={props.session} />
       <ReadinessCard activity={props.activity} status={props.activityStatus} />
       <TopicPerformanceSection performance={props.activity?.topicPerformance ?? null} onPracticeTopic={props.setTopic} />
+      {props.phase === "review" && props.session ? <PracticeBlockSummary session={props.session} /> : null}
       <div className="mb-3 mt-5 flex min-h-5 items-center gap-1.5 text-xs text-[var(--text-faint)]">
         <History className="h-3.5 w-3.5" aria-hidden="true" />
         <QuestionHistoryIndicator history={props.history} />
@@ -597,6 +705,70 @@ function PracticeMode(props: { topic: string; setTopic: (topic: string) => void;
       </div>
       {props.status && <p aria-live="polite" className="mt-3 text-sm text-[var(--danger)]">{props.status}</p>}
       {props.revealed && props.feedback && <Feedback question={props.feedback} selected={props.selected} correct={correct} />}
+    </section>
+  );
+}
+
+function PracticeSessionProgress({ session }: { session: PracticeSessionSummary | null }) {
+  const blockUnique = session?.blockUniqueQuestions ?? 0;
+  const blockTarget = session?.blockTarget || 100;
+  const progress = Math.min(100, Math.round((blockUnique / blockTarget) * 100));
+  return (
+    <section className={clsx(platformCard, "mb-5 p-4 sm:p-5")} aria-label="Current practice progress">
+      <div className="grid gap-4 sm:grid-cols-[1fr_auto_auto] sm:items-center">
+        <div>
+          <div className="flex items-center justify-between gap-3 text-sm">
+            <span className="font-bold text-[var(--text)]">Unique Progress: {blockUnique} / {blockTarget}</span>
+            <span className="tabular-nums text-[var(--text-soft)]">{progress}%</span>
+          </div>
+          <div className="mt-2 h-2 overflow-hidden rounded-full bg-[var(--border)]">
+            <div className="h-full rounded-full bg-[image:var(--gradient-primary)]" style={{ width: `${progress}%` }} />
+          </div>
+        </div>
+        <div className="text-sm"><span className="text-[var(--text-faint)]">Total Attempts</span><strong className="ml-2 tabular-nums">{session?.totalAttempts ?? 0}</strong></div>
+        <div className="text-sm"><span className="text-[var(--text-faint)]">Current Score</span><strong className="ml-2 tabular-nums">{session?.score === null || session?.score === undefined ? "--" : `${session.score}%`}</strong></div>
+      </div>
+    </section>
+  );
+}
+
+function StartOverControl({ learnerName, session, onStartOver }: { learnerName: string; session: PracticeSessionSummary | null; onStartOver: () => void }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <button className={clsx(platformSecondaryBtn, "py-2.5")} onClick={() => setOpen(true)} title="Start a fresh Practice session">
+        <RotateCcw className="h-4 w-4" /> Start Over
+      </button>
+      {open ? (
+        <div className="fixed inset-0 z-50 grid place-items-center bg-black/55 p-4" role="presentation" onMouseDown={() => setOpen(false)}>
+          <div className={clsx(platformCard, "w-full max-w-md p-6")} role="dialog" aria-modal="true" aria-labelledby="start-over-title" onMouseDown={(event) => event.stopPropagation()}>
+            <h3 id="start-over-title" className="text-xl font-bold">Start Practice Over?</h3>
+            <p className="mt-2 text-sm leading-6 text-[var(--text-soft)]">This will begin a completely fresh Practice session for {learnerName}. Your previous Practice session will remain saved in your history.</p>
+            <div className="mt-4 rounded-lg bg-[var(--surface-2)] p-3 text-sm text-[var(--text-soft)]">
+              Current progress: <strong className="text-[var(--text)]">{session?.uniqueQuestions ?? 0} unique questions</strong> &bull; <strong className="text-[var(--text)]">{session?.totalAttempts ?? 0} attempts</strong> &bull; <strong className="text-[var(--text)]">{session?.score === null || session?.score === undefined ? "no score" : `${session.score}% score`}</strong>
+            </div>
+            <div className="mt-6 flex justify-end gap-3">
+              <button className={platformSecondaryBtn} onClick={() => setOpen(false)}>Cancel</button>
+              <button className={platformPrimaryBtn} onClick={() => { setOpen(false); onStartOver(); }}><RotateCcw className="h-4 w-4" /> Start Over</button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+    </>
+  );
+}
+
+function PracticeBlockSummary({ session }: { session: PracticeSessionSummary }) {
+  return (
+    <section className={clsx(platformCard, "mt-5 border-[var(--accent)] p-5")}>
+      <p className="text-xs font-bold uppercase tracking-[0.14em] text-[var(--accent)]">{session.blockTarget} unique questions complete</p>
+      <div className="mt-3 grid gap-3 text-sm sm:grid-cols-4">
+        <div><span className="text-[var(--text-faint)]">Score</span><strong className="mt-1 block text-lg">{session.blockScore ?? 0}%</strong></div>
+        <div><span className="text-[var(--text-faint)]">Initially Wrong</span><strong className="mt-1 block text-lg">{session.blockInitiallyWrong}</strong></div>
+        <div><span className="text-[var(--text-faint)]">Reinforcement Attempts</span><strong className="mt-1 block text-lg">{session.reinforcementAttempts}</strong></div>
+        <div><span className="text-[var(--text-faint)]">Still Struggling</span><strong className="mt-1 block text-lg">{session.stillStruggling}</strong></div>
+      </div>
+      <p className="mt-4 text-sm font-semibold text-[var(--text-soft)]">Review the questions missed in this block before continuing to new questions.</p>
     </section>
   );
 }
@@ -1224,6 +1396,7 @@ function AdminScoreboardSection({ title, scoreboard, scoreSuffix }: { title: str
               <tr>
                 <th className="p-3 font-bold">Rank</th>
                 <th className="p-3 font-bold">Learner</th>
+                <th className="p-3 font-bold">Started</th>
                 <th className="p-3 font-bold">Latest attempt</th>
                 <th className="p-3 font-bold">Attempted (incl. repeats)</th>
                 <th className="p-3 font-bold">Unique questions</th>
@@ -1235,6 +1408,7 @@ function AdminScoreboardSection({ title, scoreboard, scoreSuffix }: { title: str
                 <tr key={leader.userId} className="border-t border-[var(--border)]" style={index === 0 ? { background: "var(--accent-soft)" } : undefined}>
                   <td className="p-3 font-bold text-[var(--text-soft)]">#{index + 1}</td>
                   <td className="p-3 font-semibold text-[var(--text)]">{leader.name}</td>
+                  <td className="p-3 whitespace-nowrap text-[var(--text-soft)]">{formatAdminDate(leader.startedAt)}</td>
                   <td className="p-3 whitespace-nowrap text-[var(--text-soft)]">{formatAdminDate(leader.latestAttemptedAt)}</td>
                   <td className="p-3 tabular-nums text-[var(--text)]">{leader.questionsAttempted}</td>
                   <td className="p-3 tabular-nums text-[var(--text)]">{leader.uniqueQuestionsAttempted}</td>
@@ -1406,6 +1580,12 @@ function Metric({ icon, label, value }: { icon: React.ReactNode; label: string; 
 
 function createSessionSeed() {
   return globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random()}`;
+}
+
+function createSessionId() {
+  const bytes = new Uint8Array(16);
+  globalThis.crypto.getRandomValues(bytes);
+  return Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
 }
 
 function readLastQuestion(key: string) {

@@ -2,8 +2,9 @@ import { loadActiveQuestions } from "@/lib/question-store";
 import { isAnswerCorrect } from "@/lib/exam-engine";
 import { getOrCreateParticipantId } from "@/lib/participant";
 import { loadPracticeActivity, recordPracticeAttempt } from "@/lib/practice-activity-store";
+import { normalizePracticeDisplayName } from "@/lib/practice-session";
 import { enforceBodyLimit, enforceRateLimit, enforceSameOrigin, noStoreJson } from "@/lib/security";
-import type { Candidate } from "@/types/exam";
+import type { PracticeAttemptKind } from "@/types/practice";
 
 export async function POST(request: Request) {
   const originError = enforceSameOrigin(request);
@@ -13,7 +14,14 @@ export async function POST(request: Request) {
   const rateLimitError = enforceRateLimit(request, "practice-check", 120, 60 * 1_000);
   if (rateLimitError) return rateLimitError;
 
-  let body: { questionId?: unknown; selectedOptionIds?: unknown; candidate?: unknown };
+  let body: {
+    questionId?: unknown;
+    selectedOptionIds?: unknown;
+    displayName?: unknown;
+    practiceSessionId?: unknown;
+    attemptKind?: unknown;
+    blockNumber?: unknown;
+  };
   try {
     body = (await request.json()) as typeof body;
   } catch {
@@ -26,10 +34,20 @@ export async function POST(request: Request) {
   if (body.selectedOptionIds.length > 10 || body.selectedOptionIds.some((id) => typeof id !== "string" || id.length > 36)) {
     return noStoreJson({ error: "Answer data is invalid." }, { status: 400 });
   }
-  const candidate = sanitizeCandidate(body.candidate);
-  if (body.candidate !== undefined && !candidate) {
+  const sessionId = typeof body.practiceSessionId === "string" && /^[a-f0-9]{32}$/.test(body.practiceSessionId) ? body.practiceSessionId : undefined;
+  const displayName = normalizePracticeDisplayName(body.displayName) ?? undefined;
+  const attemptKind = validAttemptKind(body.attemptKind) ? body.attemptKind : undefined;
+  const blockNumber = Number.isInteger(body.blockNumber) && Number(body.blockNumber) >= 1 && Number(body.blockNumber) <= 10_000
+    ? Number(body.blockNumber)
+    : undefined;
+  if (body.practiceSessionId !== undefined && !sessionId) {
+    return noStoreJson({ error: "Practice session is invalid." }, { status: 400 });
+  }
+  if (sessionId && !displayName) {
     return noStoreJson({ error: "Candidate data is invalid." }, { status: 400 });
   }
+  if (body.attemptKind !== undefined && !attemptKind) return noStoreJson({ error: "Practice attempt type is invalid." }, { status: 400 });
+  if (body.blockNumber !== undefined && !blockNumber) return noStoreJson({ error: "Practice block is invalid." }, { status: 400 });
 
   try {
     const questions = await loadActiveQuestions();
@@ -42,8 +60,13 @@ export async function POST(request: Request) {
 
     const selectedOptionIds = body.selectedOptionIds as string[];
     const participantId = await getOrCreateParticipantId();
-    await recordPracticeAttempt(participantId, question, isAnswerCorrect(question, selectedOptionIds), new Date().toISOString(), candidate);
-    const activity = await loadPracticeActivity(participantId, questions);
+    await recordPracticeAttempt(participantId, question, isAnswerCorrect(question, selectedOptionIds), new Date().toISOString(), {
+      practiceSessionId: sessionId,
+      displayName,
+      attemptKind,
+      blockNumber,
+    });
+    const activity = await loadPracticeActivity(participantId, questions, sessionId);
 
     return noStoreJson({ question, activity });
   } catch {
@@ -51,14 +74,6 @@ export async function POST(request: Request) {
   }
 }
 
-function sanitizeCandidate(value: unknown): Candidate | undefined {
-  if (value === undefined) return undefined;
-  if (!value || typeof value !== "object") return undefined;
-  const candidate = value as Partial<Candidate>;
-  if (typeof candidate.name !== "string" || typeof candidate.email !== "string") return undefined;
-  const name = candidate.name.trim();
-  const email = candidate.email.trim().toLowerCase();
-  if (!name) return undefined;
-  if (name.length > 128 || email.length > 254) return undefined;
-  return { name, email };
+function validAttemptKind(value: unknown): value is PracticeAttemptKind {
+  return value === "initial" || value === "reinforcement" || value === "review";
 }

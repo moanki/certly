@@ -14,8 +14,12 @@ type PracticePayload = {
   correctAttempts: number;
   lastAttemptedAt: string;
   previousCorrect: boolean;
-  recentAttempts: Array<{ attemptedAt: string; correct: boolean }>;
+  recentAttempts: Array<{ attemptedAt: string; correct: boolean; kind?: string }>;
   candidateName?: string;
+  learnerId?: string;
+  practiceSessionId?: string;
+  firstAttemptCorrect?: boolean;
+  firstAttemptedAt?: string;
 };
 
 type ExamPayload = {
@@ -32,9 +36,11 @@ type PerformanceGroup = {
   key: string;
   name: string;
   identityAt: string;
+  startedAt: string;
   latestAttemptedAt: string;
   questionsAttempted: number;
   correctAttempts: number;
+  scoredAttempts: number;
   uniqueQuestions: Set<string>;
   scores: Array<{ attemptedAt: string; score: number }>;
 };
@@ -60,21 +66,28 @@ function buildPracticeScoreboard(rows: PerformanceRecordRow[], participantNames:
   for (const row of rows) {
     const payload = parsePracticePayload(row.payloadJson);
     if (!payload) continue;
-    const key = `participant:${row.lookup}`;
-    const linkedIdentity = participantNames.get(row.lookup);
+    const learnerId = payload.learnerId ?? row.lookup.split(":")[0];
+    const key = payload.practiceSessionId
+      ? `practice:${learnerId}:${payload.practiceSessionId}`
+      : `practice-legacy:${row.lookup}`;
+    const linkedIdentity = participantNames.get(learnerId);
     const group = getGroup(groups, key, payload.candidateName ?? linkedIdentity?.name, linkedIdentity?.attemptedAt ?? row.occurredAt);
     if (payload.candidateName && timestamp(row.occurredAt) >= timestamp(group.identityAt)) {
       group.name = payload.candidateName;
       group.identityAt = row.occurredAt;
     }
+    group.startedAt = earlierDate(group.startedAt, payload.firstAttemptedAt ?? payload.lastAttemptedAt);
     group.latestAttemptedAt = laterDate(group.latestAttemptedAt, payload.lastAttemptedAt);
     group.questionsAttempted += payload.totalAttempts;
-    group.correctAttempts += payload.correctAttempts;
+    group.correctAttempts += payload.firstAttemptCorrect === undefined ? payload.correctAttempts : payload.firstAttemptCorrect ? 1 : 0;
+    group.scoredAttempts += payload.firstAttemptCorrect === undefined ? payload.totalAttempts : 1;
     group.uniqueQuestions.add(payload.questionId);
-    group.scores.push(...payload.recentAttempts.map((attempt) => ({ attemptedAt: attempt.attemptedAt, score: attempt.correct ? 1 : 0 })));
+    group.scores.push(...(payload.firstAttemptCorrect === undefined
+      ? payload.recentAttempts.map((attempt) => ({ attemptedAt: attempt.attemptedAt, score: attempt.correct ? 1 : 0 }))
+      : [{ attemptedAt: payload.firstAttemptedAt ?? payload.lastAttemptedAt, score: payload.firstAttemptCorrect ? 1 : 0 }]));
   }
 
-  return finalizeScoreboard(groups, 100, (group) => percent(group.correctAttempts, group.questionsAttempted), true);
+  return finalizeScoreboard(groups, 100, (group) => percent(group.correctAttempts, group.scoredAttempts), true);
 }
 
 function linkParticipantNames(examRows: PerformanceRecordRow[], activityRows: PerformanceRecordRow[]) {
@@ -115,6 +128,7 @@ function buildExamScoreboard(rows: PerformanceRecordRow[]): AdminScoreboard {
       group.identityAt = payload.submittedAt;
     }
     group.latestAttemptedAt = laterDate(group.latestAttemptedAt, payload.submittedAt);
+    group.startedAt = earlierDate(group.startedAt, payload.submittedAt);
     group.questionsAttempted += payload.total;
     payload.questionKeys.forEach((questionKey) => group.uniqueQuestions.add(questionKey));
     group.scores.push({ attemptedAt: payload.submittedAt, score: payload.score });
@@ -132,6 +146,7 @@ function finalizeScoreboard(
   const leaders: AdminScoreboardEntry[] = [...groups.values()].map((group) => ({
     userId: publicUserId(group.key),
     name: group.name,
+    startedAt: group.startedAt,
     latestAttemptedAt: group.latestAttemptedAt,
     questionsAttempted: group.questionsAttempted,
     uniqueQuestionsAttempted: group.uniqueQuestions.size,
@@ -165,9 +180,11 @@ function getGroup(groups: Map<string, PerformanceGroup>, key: string, candidateN
     key,
     name: cleanName(candidateName) ?? `Anonymous learner ${publicUserId(key).slice(-4).toUpperCase()}`,
     identityAt,
+    startedAt: identityAt,
     latestAttemptedAt: identityAt,
     questionsAttempted: 0,
     correctAttempts: 0,
+    scoredAttempts: 0,
     uniqueQuestions: new Set(),
     scores: [],
   };
@@ -191,6 +208,10 @@ function parsePracticePayload(value: unknown): PracticePayload | null {
       previousCorrect: item.previousCorrect,
       recentAttempts,
       candidateName: cleanName(item.candidateName),
+      learnerId: typeof item.learnerId === "string" && /^[a-f0-9]{32}$/.test(item.learnerId) ? item.learnerId : undefined,
+      practiceSessionId: typeof item.practiceSessionId === "string" && /^[a-f0-9]{32}$/.test(item.practiceSessionId) ? item.practiceSessionId : undefined,
+      firstAttemptCorrect: typeof item.firstAttemptCorrect === "boolean" ? item.firstAttemptCorrect : undefined,
+      firstAttemptedAt: validDate(item.firstAttemptedAt) ? item.firstAttemptedAt : undefined,
     };
   } catch {
     return null;
@@ -257,6 +278,10 @@ function timestamp(value: string) {
 
 function laterDate(left: string, right: string) {
   return timestamp(right) > timestamp(left) ? right : left;
+}
+
+function earlierDate(left: string, right: string) {
+  return timestamp(right) < timestamp(left) ? right : left;
 }
 
 function positiveInteger(value: unknown): value is number {

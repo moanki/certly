@@ -13,6 +13,7 @@ export type AdminPerformanceSeries = {
 export type AdminScoreboardEntry = {
   userId: string;
   name: string;
+  startedAt: string;
   latestAttemptedAt: string;
   questionsAttempted: number;
   uniqueQuestionsAttempted: number;

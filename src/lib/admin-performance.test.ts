@@ -103,6 +103,36 @@ describe("admin performance analytics", () => {
 
     expect(result.practice.leaders[0].name).toBe("Known Learner");
   });
+
+  it("keeps practice sessions separate and scores only first attempts", () => {
+    const learnerId = "a".repeat(32);
+    const firstSession = "1".repeat(32);
+    const secondSession = "2".repeat(32);
+    const practice = [
+      sessionRow("first-q1", learnerId, firstSession, "q1", "2026-09-10T10:00:00.000Z", false, 4, 3),
+      sessionRow("first-q2", learnerId, firstSession, "q2", "2026-09-10T11:00:00.000Z", true, 1, 1),
+      sessionRow("second-q1", learnerId, secondSession, "q1", "2026-09-12T10:00:00.000Z", true, 2, 2),
+    ];
+
+    const result = buildAdminPerformance([], practice);
+
+    expect(result.practice.leaders).toHaveLength(2);
+    expect(result.practice.leaders).toEqual(expect.arrayContaining([
+      expect.objectContaining({ name: "Same Learner", startedAt: "2026-09-10T10:00:00.000Z", questionsAttempted: 5, uniqueQuestionsAttempted: 2, totalScore: 50 }),
+      expect.objectContaining({ name: "Same Learner", startedAt: "2026-09-12T10:00:00.000Z", questionsAttempted: 2, uniqueQuestionsAttempted: 1, totalScore: 100 }),
+    ]));
+    expect(result.practice.series.find((series) => series.points.length === 2)?.points.map((point) => point.score)).toEqual([0, 50]);
+  });
+
+  it("does not merge different learners who share a display name", () => {
+    const sessionId = "3".repeat(32);
+    const practice = [
+      sessionRow("learner-a", "a".repeat(32), sessionId, "q1", "2026-09-10T10:00:00.000Z", true, 1, 1),
+      sessionRow("learner-b", "b".repeat(32), sessionId, "q1", "2026-09-10T10:01:00.000Z", false, 1, 0),
+    ];
+
+    expect(buildAdminPerformance([], practice).practice.leaders).toHaveLength(2);
+  });
 });
 
 function row(id: string, lookup: string, occurredAt: string, payload: object): PerformanceRecordRow {
@@ -124,5 +154,21 @@ function examRow(
     score,
     total: questionIds.length,
     questionKeys: questionIds.map(fingerprintQuestion),
+  });
+}
+
+function sessionRow(id: string, learnerId: string, practiceSessionId: string, questionId: string, attemptedAt: string, firstAttemptCorrect: boolean, totalAttempts: number, correctAttempts: number) {
+  return row(id, `${learnerId}:${practiceSessionId}`, attemptedAt, {
+    questionId,
+    totalAttempts,
+    correctAttempts,
+    lastAttemptedAt: attemptedAt,
+    previousCorrect: correctAttempts === totalAttempts,
+    recentAttempts: [{ attemptedAt, correct: firstAttemptCorrect, kind: "initial" }],
+    candidateName: "Same Learner",
+    learnerId,
+    practiceSessionId,
+    firstAttemptCorrect,
+    firstAttemptedAt: attemptedAt,
   });
 }

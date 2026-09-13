@@ -12,11 +12,49 @@ export type PracticeProgress = QuestionHistory & {
   recentAttempts: PracticeRecentAttempt[];
   candidateName?: string;
   candidateEmail?: string;
+  learnerId?: string;
+  practiceSessionId?: string;
+  blockNumber?: number;
+  firstAttemptCorrect?: boolean;
+  firstAttemptedAt?: string;
+  reinforcementAttempts?: number;
+  reinforcementCorrect?: number;
+  reviewAttempts?: number;
 };
 
 export type PracticeRecentAttempt = {
   attemptedAt: string;
   correct: boolean;
+  kind?: PracticeAttemptKind;
+};
+
+export type PracticeAttemptKind = "initial" | "reinforcement" | "review";
+
+export type PracticeSessionQuestionProgress = {
+  questionId: string;
+  blockNumber: number;
+  firstAttemptCorrect: boolean;
+  reinforcementAttempts: number;
+  reinforcementCorrect: number;
+  reviewAttempts: number;
+  previousCorrect: boolean;
+};
+
+export type PracticeSessionSummary = {
+  id: string;
+  startedAt: string | null;
+  uniqueQuestions: number;
+  totalAttempts: number;
+  score: number | null;
+  initiallyWrong: number;
+  reinforcementAttempts: number;
+  successfullyReinforced: number;
+  stillStruggling: number;
+  blockNumber: number;
+  blockUniqueQuestions: number;
+  blockTarget: number;
+  blockScore: number | null;
+  blockInitiallyWrong: number;
 };
 
 export type MockPerformance = {
@@ -78,4 +116,6 @@ export type PracticeActivity = {
   historyByQuestion: Record<string, QuestionHistory>;
   readiness: ExamReadiness;
   topicPerformance: TopicPerformanceSummary;
+  session: PracticeSessionSummary;
+  sessionProgress: PracticeSessionQuestionProgress[];
 };

@@ -2,21 +2,22 @@ import { createHash } from "node:crypto";
 import { ID, Query } from "node-appwrite";
 import { appwriteConfig, createAdminClient } from "@/lib/appwrite";
 import { calculateExamReadiness, calculateTopicPerformance } from "@/lib/practice-analytics";
-import type { AttemptSummary, Candidate, ExamQuestion } from "@/types/exam";
-import type { MockPerformance, PracticeActivity, PracticeProgress } from "@/types/practice";
+import type { AttemptSummary, ExamQuestion } from "@/types/exam";
+import type { MockPerformance, PracticeActivity, PracticeAttemptKind, PracticeProgress } from "@/types/practice";
 
 const practiceKind = "practice_progress";
 const examKind = "exam_activity";
 
-export async function loadPracticeActivity(participantId: string, questions: ExamQuestion[]): Promise<PracticeActivity> {
+export async function loadPracticeActivity(participantId: string, questions: ExamQuestion[], practiceSessionId?: string): Promise<PracticeActivity> {
   const { tables } = createAdminClient();
+  const lookup = practiceSessionId ? practiceLookup(participantId, practiceSessionId) : participantId;
   const [practiceRows, examRows] = await Promise.all([
     tables.listRows({
       databaseId: appwriteConfig.databaseId,
       tableId: appwriteConfig.attemptsCollectionId,
       queries: [
         Query.equal("kind", [practiceKind]),
-        Query.equal("lookup", [participantId]),
+        Query.equal("lookup", [lookup]),
         Query.orderDesc("occurredAt"),
         Query.limit(500),
       ],
@@ -52,6 +53,16 @@ export async function loadPracticeActivity(participantId: string, questions: Exa
     }])),
     readiness: calculateExamReadiness(progress, mockPerformance, questions.length, topicRecommendations),
     topicPerformance,
+    session: summarizeSession(practiceSessionId ?? "legacy", progress, questions.length),
+    sessionProgress: progress.map((item) => ({
+      questionId: item.questionId,
+      blockNumber: item.blockNumber ?? 1,
+      firstAttemptCorrect: item.firstAttemptCorrect ?? item.previousCorrect,
+      reinforcementAttempts: item.reinforcementAttempts ?? 0,
+      reinforcementCorrect: item.reinforcementCorrect ?? 0,
+      reviewAttempts: item.reviewAttempts ?? 0,
+      previousCorrect: item.previousCorrect,
+    })),
   };
 }
 
@@ -60,10 +71,17 @@ export async function recordPracticeAttempt(
   question: ExamQuestion,
   isCorrect: boolean,
   attemptedAt: string,
-  candidate?: Candidate,
+  context: {
+    practiceSessionId?: string;
+    displayName?: string;
+    attemptKind?: PracticeAttemptKind;
+    blockNumber?: number;
+  } = {},
 ) {
   const { tables } = createAdminClient();
-  const rowId = stableRowId("practice", participantId, question.id);
+  const rowId = context.practiceSessionId
+    ? stableRowId("practice", participantId, context.practiceSessionId, question.id)
+    : stableRowId("practice", participantId, question.id);
   let existing: PracticeProgress | null = null;
   try {
     const row = await tables.getRow({
@@ -76,6 +94,9 @@ export async function recordPracticeAttempt(
     if (!isNotFound(error)) throw error;
   }
 
+  const attemptKind: PracticeAttemptKind = existing
+    ? context.attemptKind === "review" ? "review" : "reinforcement"
+    : "initial";
   const progress: PracticeProgress = {
     questionId: question.id,
     topic: question.topic,
@@ -84,13 +105,21 @@ export async function recordPracticeAttempt(
     correctAttempts: (existing?.correctAttempts ?? 0) + (isCorrect ? 1 : 0),
     lastAttemptedAt: attemptedAt,
     previousCorrect: isCorrect,
-    recentAttempts: [...(existing?.recentAttempts ?? []), { attemptedAt, correct: isCorrect }].slice(-10),
-    candidateName: candidate?.name.trim() || existing?.candidateName,
-    candidateEmail: candidate?.email.trim().toLowerCase() || existing?.candidateEmail,
+    recentAttempts: [...(existing?.recentAttempts ?? []), { attemptedAt, correct: isCorrect, kind: attemptKind }].slice(-10),
+    candidateName: context.displayName?.trim() || existing?.candidateName,
+    candidateEmail: existing?.candidateEmail,
+    learnerId: participantId,
+    practiceSessionId: context.practiceSessionId ?? existing?.practiceSessionId,
+    blockNumber: existing?.blockNumber ?? context.blockNumber ?? 1,
+    firstAttemptCorrect: existing?.firstAttemptCorrect ?? isCorrect,
+    firstAttemptedAt: existing?.firstAttemptedAt ?? attemptedAt,
+    reinforcementAttempts: (existing?.reinforcementAttempts ?? 0) + (attemptKind === "reinforcement" ? 1 : 0),
+    reinforcementCorrect: (existing?.reinforcementCorrect ?? 0) + (attemptKind === "reinforcement" && isCorrect ? 1 : 0),
+    reviewAttempts: (existing?.reviewAttempts ?? 0) + (attemptKind === "review" ? 1 : 0),
   };
   const data = {
     kind: practiceKind,
-    lookup: participantId,
+    lookup: context.practiceSessionId ? practiceLookup(participantId, context.practiceSessionId) : participantId,
     status: isCorrect ? "correct" : "incorrect",
     occurredAt: attemptedAt,
     payloadJson: JSON.stringify(progress),
@@ -130,8 +159,8 @@ export async function recordExamActivity(participantId: string, summary: Attempt
   });
 }
 
-function stableRowId(scope: string, participantId: string, questionId: string) {
-  const digest = createHash("sha256").update(`${scope}:${participantId}:${questionId}`).digest("hex");
+function stableRowId(scope: string, ...parts: string[]) {
+  const digest = createHash("sha256").update([scope, ...parts].join(":" )).digest("hex");
   return `pp_${digest.slice(0, 29)}`;
 }
 
@@ -148,6 +177,38 @@ function parseProgress(value: unknown): PracticeProgress[] {
   } catch {
     return [];
   }
+}
+
+function summarizeSession(sessionId: string, progress: PracticeProgress[], totalQuestions: number) {
+  const uniqueQuestions = progress.length;
+  const totalAttempts = progress.reduce((total, item) => total + item.totalAttempts, 0);
+  const firstCorrect = progress.filter((item) => item.firstAttemptCorrect ?? item.previousCorrect).length;
+  const initiallyWrong = progress.filter((item) => !(item.firstAttemptCorrect ?? item.previousCorrect));
+  const blockNumber = progress.length ? Math.max(...progress.map((item) => item.blockNumber ?? 1)) : 1;
+  const blockProgress = progress.filter((item) => (item.blockNumber ?? 1) === blockNumber);
+  const blockCorrect = blockProgress.filter((item) => item.firstAttemptCorrect ?? item.previousCorrect).length;
+  return {
+    id: sessionId,
+    startedAt: progress.length
+      ? [...progress].sort((left, right) => Date.parse(left.firstAttemptedAt ?? left.lastAttemptedAt) - Date.parse(right.firstAttemptedAt ?? right.lastAttemptedAt))[0]?.firstAttemptedAt ?? progress[0].lastAttemptedAt
+      : null,
+    uniqueQuestions,
+    totalAttempts,
+    score: uniqueQuestions ? Math.round((firstCorrect / uniqueQuestions) * 100) : null,
+    initiallyWrong: initiallyWrong.length,
+    reinforcementAttempts: progress.reduce((total, item) => total + (item.reinforcementAttempts ?? 0), 0),
+    successfullyReinforced: initiallyWrong.filter((item) => (item.reinforcementCorrect ?? 0) >= 3).length,
+    stillStruggling: initiallyWrong.filter((item) => !item.previousCorrect).length,
+    blockNumber,
+    blockUniqueQuestions: blockProgress.length,
+    blockTarget: Math.min(100, Math.max(0, totalQuestions - (blockNumber - 1) * 100)),
+    blockScore: blockProgress.length ? Math.round((blockCorrect / blockProgress.length) * 100) : null,
+    blockInitiallyWrong: blockProgress.length - blockCorrect,
+  };
+}
+
+function practiceLookup(participantId: string, practiceSessionId: string) {
+  return `${participantId}:${practiceSessionId}`;
 }
 
 function parseMockPerformance(value: unknown): MockPerformance[] {

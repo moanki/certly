@@ -16,7 +16,7 @@ export function calculateExamReadiness(
   topicRecommendations?: string[],
 ): ExamReadiness {
   const attempted = progress.length;
-  const mastered = progress.filter((item) => item.previousCorrect).length;
+  const mastered = progress.filter((item) => item.firstAttemptCorrect ?? item.previousCorrect).length;
   const recent = [...progress]
     .sort((left, right) => Date.parse(right.lastAttemptedAt) - Date.parse(left.lastAttemptedAt))
     .slice(0, 20);
@@ -28,7 +28,7 @@ export function calculateExamReadiness(
   const metrics = {
     knowledgeMastery: percent(mastered, totalQuestions),
     topicCoverage: percent(attempted, totalQuestions),
-    recentAccuracy: percent(recent.filter((item) => item.previousCorrect).length, recent.length),
+    recentAccuracy: percent(recent.filter((item) => item.firstAttemptCorrect ?? item.previousCorrect).length, recent.length),
     weakAreaPerformance: weakAreas.length
       ? Math.round(weakAreas.reduce((total, area) => total + area.percent, 0) / weakAreas.length)
       : 0,
@@ -97,8 +97,9 @@ function summarizeAreas(progress: PracticeProgress[]) {
   for (const item of progress) {
     const name = usefulSubtopic(item.subtopic, item.topic) ? item.subtopic : item.topic;
     const current = areas.get(name) ?? { attempts: 0, correct: 0 };
-    current.attempts += item.totalAttempts;
-    current.correct += item.correctAttempts;
+    const scored = scoredAttempts(item);
+    current.attempts += scored.attempts;
+    current.correct += scored.correct;
     areas.set(name, current);
   }
   return [...areas.entries()].map(([name, value]) => ({
@@ -110,10 +111,12 @@ function summarizeAreas(progress: PracticeProgress[]) {
 
 function calculateTopicDetail(topic: string, progress: PracticeProgress[], questions: ExamQuestion[]): TopicPerformanceDetail {
   const questionsAttempted = progress.length;
-  const totalAttempts = progress.reduce((total, item) => total + item.totalAttempts, 0);
-  const correctAttempts = progress.reduce((total, item) => total + item.correctAttempts, 0);
+  const totalAttempts = progress.reduce((total, item) => total + scoredAttempts(item).attempts, 0);
+  const correctAttempts = progress.reduce((total, item) => total + scoredAttempts(item).correct, 0);
   const recentAttempts = progress
-    .flatMap((item) => item.recentAttempts)
+    .flatMap((item) => item.firstAttemptCorrect === undefined
+      ? item.recentAttempts
+      : [{ attemptedAt: item.firstAttemptedAt ?? item.lastAttemptedAt, correct: item.firstAttemptCorrect }])
     .sort((left, right) => Date.parse(right.attemptedAt) - Date.parse(left.attemptedAt))
     .slice(0, 10);
   const accuracy = percent(correctAttempts, totalAttempts);
@@ -144,9 +147,11 @@ function calculateWeakestSubtopics(progress: PracticeProgress[], questions: Exam
     .flatMap(([name, subtopicQuestions]) => {
       const subtopicProgress = progressBySubtopic.get(name) ?? [];
       if (subtopicProgress.length < 2) return [];
-      const attempts = subtopicProgress.reduce((total, item) => total + item.totalAttempts, 0);
-      const correct = subtopicProgress.reduce((total, item) => total + item.correctAttempts, 0);
-      const recent = subtopicProgress.flatMap((item) => item.recentAttempts)
+      const attempts = subtopicProgress.reduce((total, item) => total + scoredAttempts(item).attempts, 0);
+      const correct = subtopicProgress.reduce((total, item) => total + scoredAttempts(item).correct, 0);
+      const recent = subtopicProgress.flatMap((item) => item.firstAttemptCorrect === undefined
+        ? item.recentAttempts
+        : [{ attemptedAt: item.firstAttemptedAt ?? item.lastAttemptedAt, correct: item.firstAttemptCorrect }])
         .sort((left, right) => Date.parse(right.attemptedAt) - Date.parse(left.attemptedAt))
         .slice(0, 10);
       const mastery = Math.round(
@@ -178,6 +183,12 @@ function usefulSubtopic(subtopic: string, topic: string) {
   return normalized.length > 0
     && normalized !== topic.trim().toLowerCase()
     && !["general", "unassigned", "hcip-dcf comprehensive"].includes(normalized);
+}
+
+function scoredAttempts(item: PracticeProgress) {
+  return item.firstAttemptCorrect === undefined
+    ? { attempts: item.totalAttempts, correct: item.correctAttempts }
+    : { attempts: 1, correct: item.firstAttemptCorrect ? 1 : 0 };
 }
 
 function percent(value: number, total: number) {

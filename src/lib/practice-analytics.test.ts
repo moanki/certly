@@ -39,6 +39,16 @@ describe("practice analytics", () => {
     expect(result.recommendedNext).toEqual([]);
   });
 
+  it("does not let reinforcement answers raise current-session mastery", () => {
+    const item = progressItem("q1", "UPS5000", "Redundancy", 4, 3, true, "2026-09-11T10:00:00.000Z", [true, true, true, false]);
+    item.firstAttemptCorrect = false;
+    item.firstAttemptedAt = "2026-09-10T10:00:00.000Z";
+    const result = calculateExamReadiness([item], [], 1);
+
+    expect(result.metrics.knowledgeMastery).toBe(0);
+    expect(result.metrics.recentAccuracy).toBe(0);
+  });
+
   it("requires five unique attempted questions before assigning topic mastery", () => {
     const questions = questionInventory("UPS5000", 40);
     const progress = [
