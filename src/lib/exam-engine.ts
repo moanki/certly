@@ -12,7 +12,7 @@ export const hcipHuaweiPreset: ExamPreset = {
   id: "hcip-dcf-huawei-style",
   certificationId: "hcip-dcf",
   title: "HCIP-Datacenter Facility Deployment Huawei-style Mock",
-  questionCount: 100,
+  questionCount: 250,
   durationMinutes: 90,
   scoreScale: 1000,
   passingScore: 600,
@@ -173,6 +173,16 @@ export function shuffleWithSeed<T>(items: T[], seed: string) {
   }
 
   return copy;
+}
+
+export function uniqueExamQuestions<T extends Pick<ExamQuestion, "text">>(questions: T[]) {
+  const seen = new Set<string>();
+  return questions.filter((question) => {
+    const key = normalizeQuestionText(question.text);
+    if (!key || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 }
 
 export function parseQuestionType(raw: string): QuestionType {

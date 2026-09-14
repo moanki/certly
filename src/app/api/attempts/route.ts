@@ -1,7 +1,8 @@
 import { ID, Query } from "node-appwrite";
 import { requireAdmin } from "@/lib/admin-auth";
 import { appwriteConfig, createAdminClient } from "@/lib/appwrite";
-import { hcipHuaweiPreset, normalizeQuestionCount, scoreAttempt } from "@/lib/exam-engine";
+import { hcipHuaweiPreset, normalizeQuestionCount, scoreAttempt, uniqueExamQuestions } from "@/lib/exam-engine";
+import { serializeAttemptPayload } from "@/lib/attempt-persistence";
 import { loadActiveQuestions } from "@/lib/question-store";
 import { getOrCreateParticipantId } from "@/lib/participant";
 import { recordExamActivity } from "@/lib/practice-activity-store";
@@ -62,9 +63,10 @@ export async function POST(request: Request) {
     if (validationError) return noStoreJson({ error: validationError }, { status: 400 });
 
     const allQuestions = await loadActiveQuestions();
+    const uniqueQuestionPool = uniqueExamQuestions(allQuestions);
     const questionById = new Map(allQuestions.map((question) => [question.id, question]));
     const questionIds = payload.questionIds as string[];
-    const expectedCount = normalizeQuestionCount(allQuestions.length, hcipHuaweiPreset.questionCount);
+    const expectedCount = normalizeQuestionCount(uniqueQuestionPool.length, hcipHuaweiPreset.questionCount);
     if (questionIds.length !== expectedCount || new Set(questionIds).size !== questionIds.length) {
       return noStoreJson({ error: "The submitted exam question set is invalid." }, { status: 400 });
     }
@@ -72,10 +74,14 @@ export async function POST(request: Request) {
     if (questions.some((question) => !question)) {
       return noStoreJson({ error: "The submitted exam question set is invalid." }, { status: 400 });
     }
+    const submittedQuestions = questions.flatMap((question) => question ? [question] : []);
+    if (uniqueExamQuestions(submittedQuestions).length !== submittedQuestions.length) {
+      return noStoreJson({ error: "The submitted exam question set contains duplicate questions." }, { status: 400 });
+    }
 
     const answers = sanitizeAnswers(payload.answers as AttemptAnswer[], questionById);
     if (!answers) return noStoreJson({ error: "One or more submitted answers are invalid." }, { status: 400 });
-    const summary = scoreAttempt(questions.flatMap((question) => question ? [question] : []), answers);
+    const summary = scoreAttempt(submittedQuestions, answers);
     const startedAt = new Date(payload.startedAt as string);
     const submittedAt = new Date(payload.submittedAt as string);
     const durationSeconds = Math.max(0, Math.min(24 * 60 * 60, Math.round((submittedAt.getTime() - startedAt.getTime()) / 1_000)));
@@ -108,9 +114,7 @@ export async function POST(request: Request) {
         })),
       };
       const questionKeys = questionIds.map(fingerprintQuestion);
-      let attemptPayload = JSON.stringify({ ...attemptData, questionKeys });
-      if (attemptPayload.length > 15_000) attemptPayload = JSON.stringify(attemptData);
-      if (attemptPayload.length > 15_000) throw new Error("Attempt payload exceeds storage limit.");
+      const attemptPayload = serializeAttemptPayload(attemptData, questionKeys);
       const attempt = await tables.createRow({
         databaseId: appwriteConfig.databaseId,
         tableId: appwriteConfig.attemptsCollectionId,

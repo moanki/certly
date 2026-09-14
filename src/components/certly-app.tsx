@@ -4,7 +4,7 @@ import type React from "react";
 import { ArrowRight, Award, BarChart3, BookOpenCheck, CheckCircle2, ChevronLeft, ChevronRight, Clock3, FileUp, Flag, GraduationCap, History, LayoutDashboard, ListChecks, LockKeyhole, LogOut, RotateCcw, ShieldCheck, Sparkles, Trophy, XCircle } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { clsx } from "clsx";
-import { describeAnswerResult, explainCorrectAnswer, getCorrectOptionIds, hcipHuaweiPreset, isAnswerCorrect, normalizeQuestionCount, scoreAttempt, shuffleWithSeed } from "@/lib/exam-engine";
+import { describeAnswerResult, explainCorrectAnswer, getCorrectOptionIds, hcipHuaweiPreset, isAnswerCorrect, normalizeQuestionCount, scoreAttempt, shuffleWithSeed, uniqueExamQuestions } from "@/lib/exam-engine";
 import { certifications, topics } from "@/lib/exam-catalog";
 import { advancePracticeSessionQueue, createPracticeSessionQueue, normalizePracticeDisplayName, practiceQueueEyebrow, schedulePracticeReinforcement, type PracticeQueuePhase, type PracticeSessionQueue } from "@/lib/practice-session";
 import type { AttemptAnswer, AttemptSummary, Candidate, ExamQuestion, ImportPreviewQuestion } from "@/types/exam";
@@ -81,8 +81,9 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
   const practiceCheckInFlight = useRef(false);
 
   const examQuestions = useMemo(() => {
-    const count = normalizeQuestionCount(questionBank.length, hcipHuaweiPreset.questionCount);
-    return avoidPreviousFirst(shuffleWithSeed(questionBank, examSeed), previousExamFirst).slice(0, count);
+    const uniquePool = uniqueExamQuestions(questionBank);
+    const count = normalizeQuestionCount(uniquePool.length, hcipHuaweiPreset.questionCount);
+    return avoidPreviousFirst(shuffleWithSeed(uniquePool, examSeed), previousExamFirst).slice(0, count);
   }, [examSeed, previousExamFirst, questionBank]);
   const practiceQuestions = useMemo(() => {
     const topicQuestions = selectedTopic === "Mixed Mock" ? questionBank : questionBank.filter((question) => question.topic === selectedTopic);
@@ -501,7 +502,7 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
         />
       )}
       {view === "results" && resultSummary && <Results summary={resultSummary} saveStatus={saveStatus} onRetake={resetAttempt} />}
-      {view === "admin" && <AdminImport />}
+      {view === "admin" && <AdminImport questionBank={questionBank} />}
     </main>
   );
 }
@@ -1118,7 +1119,7 @@ function QuestionBankUnavailable() {
   );
 }
 
-function AdminImport() {
+function AdminImport({ questionBank }: { questionBank: ExamQuestion[] }) {
   const [batches, setBatches] = useState<Array<{ importId: string; fileName: string; questions: ImportPreviewQuestion[] }>>([]);
   const [status, setStatus] = useState("Upload CSV or PDF to preview extracted questions before import.");
   const [auth, setAuth] = useState<"loading" | "guest" | "admin">("loading");
@@ -1293,6 +1294,7 @@ function AdminImport() {
 
   return (
     <section className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+      <AdminOverview questionBank={questionBank} performance={performance} />
       <AdminPerformanceSection performance={performance} status={performanceStatus} />
       <div className={clsx(platformCard, "p-6")}>
         <div className="flex flex-wrap items-start justify-between gap-3">
@@ -1362,6 +1364,46 @@ function AdminImport() {
         </div>
       )}
     </section>
+  );
+}
+
+function AdminOverview({ questionBank, performance }: { questionBank: ExamQuestion[]; performance: AdminPerformanceDashboard | null }) {
+  const uniqueCount = uniqueExamQuestions(questionBank).length;
+  const duplicates = Math.max(0, questionBank.length - uniqueCount);
+  const examCapacity = Math.min(uniqueCount, hcipHuaweiPreset.questionCount);
+  const practiceSessions = performance?.practice.leaders.length ?? 0;
+  const completedExams = performance?.exam.leaders.reduce((total, learner) => total + learner.completedAttempts, 0) ?? 0;
+  const bankLoaded = questionBank.length > 0;
+  const ready = uniqueCount >= hcipHuaweiPreset.questionCount;
+
+  return (
+    <section className={clsx(platformCard, "mb-6 overflow-hidden")} aria-labelledby="admin-overview-title">
+      <div className="border-b border-[var(--border)] p-5 sm:p-6">
+        <p className="text-xs font-bold uppercase tracking-[0.14em] text-[var(--accent)]">Admin dashboard</p>
+        <div className="mt-1 flex flex-wrap items-center justify-between gap-3">
+          <h2 id="admin-overview-title" className="text-2xl font-bold tracking-tight">Platform overview</h2>
+          <span className="rounded-full border px-3 py-1 text-xs font-bold" style={ready ? { background: "var(--success-soft)", borderColor: "var(--success-border)", color: "var(--success)" } : { background: "var(--warning-soft)", borderColor: "var(--warning)", color: "var(--warning)" }}>
+            {!bankLoaded ? "Loading question bank" : ready ? "250-question exam ready" : `${hcipHuaweiPreset.questionCount - uniqueCount} unique questions needed`}
+          </span>
+        </div>
+      </div>
+      <div className="grid divide-y divide-[var(--border)] sm:grid-cols-2 sm:divide-x sm:divide-y-0 xl:grid-cols-4">
+        <AdminOverviewMetric label="Unique exam pool" value={bankLoaded ? uniqueCount : "--"} detail={bankLoaded ? `${questionBank.length} active records · ${duplicates} duplicates excluded` : "Loading active questions"} />
+        <AdminOverviewMetric label="Questions per exam" value={bankLoaded ? examCapacity : "--"} detail={`Target ${hcipHuaweiPreset.questionCount} · unique only`} />
+        <AdminOverviewMetric label="Practice sessions" value={practiceSessions} detail="Current and historical runs" />
+        <AdminOverviewMetric label="Completed exams" value={completedExams} detail={`${performance?.exam.leaders.length ?? 0} exam candidates`} />
+      </div>
+    </section>
+  );
+}
+
+function AdminOverviewMetric({ label, value, detail }: { label: string; value: React.ReactNode; detail: string }) {
+  return (
+    <div className="p-5 sm:p-6">
+      <p className="text-xs font-bold uppercase tracking-[0.08em] text-[var(--text-faint)]">{label}</p>
+      <p className="mt-2 text-3xl font-bold tabular-nums text-[var(--text)]">{value}</p>
+      <p className="mt-1 text-xs text-[var(--text-soft)]">{detail}</p>
+    </div>
   );
 }
 

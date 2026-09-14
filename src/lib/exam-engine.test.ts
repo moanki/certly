@@ -1,17 +1,27 @@
 import { describe, expect, it } from "vitest";
-import { dedupeImportQuestions, describeAnswerResult, explainCorrectAnswer, hcipHuaweiPreset, isAnswerCorrect, parseDelimitedAnswers, scoreAttempt, shuffleWithSeed } from "@/lib/exam-engine";
+import { dedupeImportQuestions, describeAnswerResult, explainCorrectAnswer, hcipHuaweiPreset, isAnswerCorrect, parseDelimitedAnswers, scoreAttempt, shuffleWithSeed, uniqueExamQuestions } from "@/lib/exam-engine";
 import { sampleQuestions } from "@/lib/questions";
 
 describe("exam scoring", () => {
-  it("uses a 100-question exam preset", () => {
-    expect(hcipHuaweiPreset.questionCount).toBe(100);
+  it("uses a 250-question exam preset", () => {
+    expect(hcipHuaweiPreset.questionCount).toBe(250);
   });
 
   it("randomizes without duplicating questions", () => {
-    const questions = Array.from({ length: 120 }, (_, index) => index);
+    const questions = Array.from({ length: 300 }, (_, index) => index);
     const randomized = shuffleWithSeed(questions, "fresh-session").slice(0, hcipHuaweiPreset.questionCount);
-    expect(new Set(randomized).size).toBe(100);
-    expect(randomized).not.toEqual(questions.slice(0, 100));
+    expect(new Set(randomized).size).toBe(250);
+    expect(randomized).not.toEqual(questions.slice(0, 250));
+  });
+
+  it("builds the exam pool from normalized unique question text", () => {
+    const questions = [
+      { text: "Which UPS mode is active?", id: "q1" },
+      { text: "  Which UPS mode is active! ", id: "q2" },
+      { text: "Which cooling mode is active?", id: "q3" },
+    ];
+
+    expect(uniqueExamQuestions(questions).map((question) => question.id)).toEqual(["q1", "q3"]);
   });
 
   it("requires every correct option and no incorrect options", () => {
