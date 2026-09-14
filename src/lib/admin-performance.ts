@@ -20,6 +20,7 @@ type PracticePayload = {
   practiceSessionId?: string;
   firstAttemptCorrect?: boolean;
   firstAttemptedAt?: string;
+  attemptKind?: string;
 };
 
 type ExamPayload = {
@@ -79,12 +80,17 @@ function buildPracticeScoreboard(rows: PerformanceRecordRow[], participantNames:
     group.startedAt = earlierDate(group.startedAt, payload.firstAttemptedAt ?? payload.lastAttemptedAt);
     group.latestAttemptedAt = laterDate(group.latestAttemptedAt, payload.lastAttemptedAt);
     group.questionsAttempted += payload.totalAttempts;
-    group.correctAttempts += payload.firstAttemptCorrect === undefined ? payload.correctAttempts : payload.firstAttemptCorrect ? 1 : 0;
-    group.scoredAttempts += payload.firstAttemptCorrect === undefined ? payload.totalAttempts : 1;
+    const scored = !payload.attemptKind || payload.attemptKind === "initial";
+    if (scored) {
+      group.correctAttempts += payload.firstAttemptCorrect === undefined ? payload.correctAttempts : payload.firstAttemptCorrect ? 1 : 0;
+      group.scoredAttempts += payload.firstAttemptCorrect === undefined ? payload.totalAttempts : 1;
+    }
     group.uniqueQuestions.add(payload.questionId);
-    group.scores.push(...(payload.firstAttemptCorrect === undefined
-      ? payload.recentAttempts.map((attempt) => ({ attemptedAt: attempt.attemptedAt, score: attempt.correct ? 1 : 0 }))
-      : [{ attemptedAt: payload.firstAttemptedAt ?? payload.lastAttemptedAt, score: payload.firstAttemptCorrect ? 1 : 0 }]));
+    if (scored) {
+      group.scores.push(...(payload.firstAttemptCorrect === undefined
+        ? payload.recentAttempts.map((attempt) => ({ attemptedAt: attempt.attemptedAt, score: attempt.correct ? 1 : 0 }))
+        : [{ attemptedAt: payload.firstAttemptedAt ?? payload.lastAttemptedAt, score: payload.firstAttemptCorrect ? 1 : 0 }]));
+    }
   }
 
   return finalizeScoreboard(groups, 100, (group) => percent(group.correctAttempts, group.scoredAttempts), true);
@@ -212,6 +218,7 @@ function parsePracticePayload(value: unknown): PracticePayload | null {
       practiceSessionId: typeof item.practiceSessionId === "string" && /^[a-f0-9]{32}$/.test(item.practiceSessionId) ? item.practiceSessionId : undefined,
       firstAttemptCorrect: typeof item.firstAttemptCorrect === "boolean" ? item.firstAttemptCorrect : undefined,
       firstAttemptedAt: validDate(item.firstAttemptedAt) ? item.firstAttemptedAt : undefined,
+      attemptKind: typeof item.attemptKind === "string" ? item.attemptKind : undefined,
     };
   } catch {
     return null;

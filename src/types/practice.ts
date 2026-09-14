@@ -14,6 +14,7 @@ export type PracticeProgress = QuestionHistory & {
   candidateEmail?: string;
   learnerId?: string;
   practiceSessionId?: string;
+  attemptKind?: PracticeAttemptKind;
   blockNumber?: number;
   firstAttemptCorrect?: boolean;
   firstAttemptedAt?: string;

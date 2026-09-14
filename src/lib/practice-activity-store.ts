@@ -1,4 +1,3 @@
-import { createHash } from "node:crypto";
 import { ID, Query } from "node-appwrite";
 import { appwriteConfig, createAdminClient } from "@/lib/appwrite";
 import { calculateExamReadiness, calculateTopicPerformance } from "@/lib/practice-analytics";
@@ -45,7 +44,7 @@ export async function loadPracticeActivity(participantId: string, questions: Exa
     }),
   ]);
 
-  const progress = practiceRows.rows.flatMap((row) => parseProgress(row.payloadJson));
+  const progress = mergePracticeProgress(practiceRows.rows.flatMap((row) => parseProgress(row.payloadJson)));
   const mockPerformance = examRows.rows.flatMap((row) => parseMockPerformance(row.payloadJson));
   const topicPerformance = calculateTopicPerformance(progress, questions);
   const topicRecommendations = topicPerformance.topics.some((topic) => topic.mastery !== null)
@@ -90,43 +89,26 @@ export async function recordPracticeAttempt(
   } = {},
 ) {
   const { tables } = createAdminClient();
-  const rowId = context.practiceSessionId
-    ? stableRowId("practice", participantId, context.practiceSessionId, question.id)
-    : stableRowId("practice", participantId, question.id);
-  let existing: PracticeProgress | null = null;
-  try {
-    const row = await tables.getRow({
-      databaseId: appwriteConfig.databaseId,
-      tableId: appwriteConfig.attemptsCollectionId,
-      rowId,
-    });
-    existing = parseProgress(row.payloadJson)[0] ?? null;
-  } catch (error) {
-    if (!isNotFound(error)) throw error;
-  }
-
-  const attemptKind: PracticeAttemptKind = existing
-    ? context.attemptKind === "review" ? "review" : "reinforcement"
-    : "initial";
+  const attemptKind: PracticeAttemptKind = context.attemptKind ?? "initial";
   const progress: PracticeProgress = {
     questionId: question.id,
     topic: question.topic,
     subtopic: question.subtopic,
-    totalAttempts: (existing?.totalAttempts ?? 0) + 1,
-    correctAttempts: (existing?.correctAttempts ?? 0) + (isCorrect ? 1 : 0),
+    totalAttempts: 1,
+    correctAttempts: isCorrect ? 1 : 0,
     lastAttemptedAt: attemptedAt,
     previousCorrect: isCorrect,
-    recentAttempts: [...(existing?.recentAttempts ?? []), { attemptedAt, correct: isCorrect, kind: attemptKind }].slice(-10),
-    candidateName: context.displayName?.trim() || existing?.candidateName,
-    candidateEmail: existing?.candidateEmail,
+    recentAttempts: [{ attemptedAt, correct: isCorrect, kind: attemptKind }],
+    candidateName: context.displayName?.trim(),
     learnerId: participantId,
-    practiceSessionId: context.practiceSessionId ?? existing?.practiceSessionId,
-    blockNumber: existing?.blockNumber ?? context.blockNumber ?? 1,
-    firstAttemptCorrect: existing?.firstAttemptCorrect ?? isCorrect,
-    firstAttemptedAt: existing?.firstAttemptedAt ?? attemptedAt,
-    reinforcementAttempts: (existing?.reinforcementAttempts ?? 0) + (attemptKind === "reinforcement" ? 1 : 0),
-    reinforcementCorrect: (existing?.reinforcementCorrect ?? 0) + (attemptKind === "reinforcement" && isCorrect ? 1 : 0),
-    reviewAttempts: (existing?.reviewAttempts ?? 0) + (attemptKind === "review" ? 1 : 0),
+    practiceSessionId: context.practiceSessionId,
+    blockNumber: context.blockNumber ?? 1,
+    attemptKind,
+    firstAttemptCorrect: attemptKind === "initial" ? isCorrect : undefined,
+    firstAttemptedAt: attemptKind === "initial" ? attemptedAt : undefined,
+    reinforcementAttempts: attemptKind === "reinforcement" ? 1 : 0,
+    reinforcementCorrect: attemptKind === "reinforcement" && isCorrect ? 1 : 0,
+    reviewAttempts: attemptKind === "review" ? 1 : 0,
   };
   const data = {
     kind: practiceKind,
@@ -136,21 +118,12 @@ export async function recordPracticeAttempt(
     payloadJson: JSON.stringify(progress),
   };
 
-  if (existing) {
-    await tables.updateRow({
-      databaseId: appwriteConfig.databaseId,
-      tableId: appwriteConfig.attemptsCollectionId,
-      rowId,
-      data,
-    });
-  } else {
-    await tables.createRow({
-      databaseId: appwriteConfig.databaseId,
-      tableId: appwriteConfig.attemptsCollectionId,
-      rowId,
-      data,
-    });
-  }
+  await tables.createRow({
+    databaseId: appwriteConfig.databaseId,
+    tableId: appwriteConfig.attemptsCollectionId,
+    rowId: ID.unique(),
+    data,
+  });
 }
 
 export async function recordExamActivity(participantId: string, summary: AttemptSummary, attemptedAt: string) {
@@ -170,11 +143,6 @@ export async function recordExamActivity(participantId: string, summary: Attempt
   });
 }
 
-function stableRowId(scope: string, ...parts: string[]) {
-  const digest = createHash("sha256").update([scope, ...parts].join(":" )).digest("hex");
-  return `pp_${digest.slice(0, 29)}`;
-}
-
 function parseProgress(value: unknown): PracticeProgress[] {
   try {
     const item = JSON.parse(String(value)) as PracticeProgress;
@@ -188,6 +156,32 @@ function parseProgress(value: unknown): PracticeProgress[] {
   } catch {
     return [];
   }
+}
+
+export function mergePracticeProgress(items: PracticeProgress[]) {
+  const groups = new Map<string, PracticeProgress[]>();
+  for (const item of items) groups.set(item.questionId, [...(groups.get(item.questionId) ?? []), item]);
+
+  return [...groups.values()].map((group) => {
+    const ordered = [...group].sort((left, right) => Date.parse(left.lastAttemptedAt) - Date.parse(right.lastAttemptedAt));
+    const first = ordered[0];
+    const latest = ordered.at(-1) ?? first;
+    const initial = ordered.find((item) => item.firstAttemptCorrect !== undefined || item.attemptKind === "initial");
+    return {
+      ...first,
+      totalAttempts: ordered.reduce((total, item) => total + item.totalAttempts, 0),
+      correctAttempts: ordered.reduce((total, item) => total + item.correctAttempts, 0),
+      lastAttemptedAt: latest.lastAttemptedAt,
+      previousCorrect: latest.previousCorrect,
+      recentAttempts: ordered.flatMap((item) => item.recentAttempts).sort((left, right) => Date.parse(left.attemptedAt) - Date.parse(right.attemptedAt)).slice(-10),
+      candidateName: [...ordered].reverse().find((item) => item.candidateName)?.candidateName,
+      firstAttemptCorrect: initial?.firstAttemptCorrect ?? initial?.previousCorrect,
+      firstAttemptedAt: initial?.firstAttemptedAt ?? initial?.lastAttemptedAt,
+      reinforcementAttempts: ordered.reduce((total, item) => total + (item.reinforcementAttempts ?? 0), 0),
+      reinforcementCorrect: ordered.reduce((total, item) => total + (item.reinforcementCorrect ?? 0), 0),
+      reviewAttempts: ordered.reduce((total, item) => total + (item.reviewAttempts ?? 0), 0),
+    };
+  });
 }
 
 function summarizeSession(sessionId: string, progress: PracticeProgress[], totalQuestions: number) {
@@ -230,8 +224,4 @@ function parseMockPerformance(value: unknown): MockPerformance[] {
   } catch {
     return [];
   }
-}
-
-function isNotFound(error: unknown) {
-  return Boolean(error && typeof error === "object" && "code" in error && error.code === 404);
 }

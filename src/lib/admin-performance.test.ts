@@ -133,6 +133,30 @@ describe("admin performance analytics", () => {
 
     expect(buildAdminPerformance([], practice).practice.leaders).toHaveLength(2);
   });
+
+  it("does not let append-only reinforcement attempts inflate practice score", () => {
+    const learnerId = "c".repeat(32);
+    const sessionId = "4".repeat(32);
+    const initial = sessionRow("initial", learnerId, sessionId, "q1", "2026-09-10T10:00:00.000Z", false, 1, 0);
+    const reinforcement = row("reinforcement", `${learnerId}:${sessionId}`, "2026-09-10T10:10:00.000Z", {
+      questionId: "q1",
+      totalAttempts: 1,
+      correctAttempts: 1,
+      lastAttemptedAt: "2026-09-10T10:10:00.000Z",
+      previousCorrect: true,
+      recentAttempts: [{ attemptedAt: "2026-09-10T10:10:00.000Z", correct: true, kind: "reinforcement" }],
+      candidateName: "Same Learner",
+      learnerId,
+      practiceSessionId: sessionId,
+      attemptKind: "reinforcement",
+    });
+
+    expect(buildAdminPerformance([], [initial, reinforcement]).practice.leaders[0]).toMatchObject({
+      questionsAttempted: 2,
+      uniqueQuestionsAttempted: 1,
+      totalScore: 0,
+    });
+  });
 });
 
 function row(id: string, lookup: string, occurredAt: string, payload: object): PerformanceRecordRow {
