@@ -580,7 +580,7 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
         />
       )}
       {view === "practice" && practiceAccess && !practiceDisplayQuestion && practiceActivityStatus !== "Loading activity..." && <QuestionBankUnavailable />}
-      {view === "exam-setup" && <ExamSetup candidate={candidate} setCandidate={setCandidate} timed={timed} setTimed={setTimed} onStart={startExam} hasDraft={Boolean(startedAt)} onReset={resetAttempt} ready={questionBank.length > 0} />}
+      {view === "exam-setup" && <ExamSetup candidate={candidate} setCandidate={setCandidate} timed={timed} setTimed={setTimed} onStart={startExam} hasDraft={Boolean(startedAt)} onReset={resetAttempt} availableQuestions={uniqueExamQuestions(questionBank).length} />}
       {view === "exam" && activeQuestion && (
         <ExamMode
           question={activeQuestion}
@@ -1056,7 +1056,8 @@ function TopicStatusBadge({ status }: { status: TopicPerformanceStatus }) {
   return <span className="rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.06em]" style={style}>{status}</span>;
 }
 
-function ExamSetup({ candidate, setCandidate, timed, setTimed, onStart, hasDraft, onReset, ready }: { candidate: Candidate; setCandidate: (candidate: Candidate) => void; timed: boolean; setTimed: (timed: boolean) => void; onStart: () => void; hasDraft: boolean; onReset: () => void; ready: boolean }) {
+function ExamSetup({ candidate, setCandidate, timed, setTimed, onStart, hasDraft, onReset, availableQuestions }: { candidate: Candidate; setCandidate: (candidate: Candidate) => void; timed: boolean; setTimed: (timed: boolean) => void; onStart: () => void; hasDraft: boolean; onReset: () => void; availableQuestions: number }) {
+  const ready = availableQuestions >= hcipHuaweiPreset.questionCount;
   return (
     <section className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
       <div className={clsx(platformCard, "p-6 sm:p-8")}>
@@ -1081,14 +1082,16 @@ function ExamSetup({ candidate, setCandidate, timed, setTimed, onStart, hasDraft
           <button className={platformPrimaryBtn} disabled={!candidate.name.trim() || !ready} onClick={onStart}>Start mock exam</button>
           {hasDraft && <button className="inline-flex items-center gap-2 rounded-lg border px-4 py-2.5 text-sm font-semibold transition-colors" style={{ borderColor: "var(--danger)", background: "var(--danger-soft)", color: "var(--danger)" }} onClick={onReset}><RotateCcw className="h-4 w-4" />Start again</button>}
         </div>
-        {(!candidate.name.trim() || !ready) && <p className="mt-3 text-sm text-[var(--text-soft)]">{ready ? "Enter the candidate name to start." : "The question bank is loading. Try again in a moment."}</p>}
+        {(!candidate.name.trim() || !ready) && <p className="mt-3 text-sm text-[var(--text-soft)]">{ready ? "Enter the candidate name to start." : availableQuestions > 0 ? `Exam unavailable: ${availableQuestions} of ${hcipHuaweiPreset.questionCount} unique questions loaded.` : "The question bank is loading. Try again in a moment."}</p>}
       </div>
     </section>
   );
 }
 
 function ExamMode(props: { question: ExamQuestion; questions: ExamQuestion[]; index: number; total: number; answers: AttemptAnswer[]; marked: Set<string>; timed: boolean; remainingSeconds: number; paused: boolean; status: string; onSelect: (question: ExamQuestion, optionId: string) => void; onPrevious: () => void; onNext: () => void; onJump: (index: number) => void; onFinish: () => void; onPause: () => void; onResume: () => void; onToggleMark: (questionId: string) => void }) {
+  const [confirmEnd, setConfirmEnd] = useState(false);
   const selected = props.answers.find((item) => item.questionId === props.question.id)?.selectedOptionIds ?? [];
+  const answeredCount = props.answers.filter((answer) => answer.selectedOptionIds.length > 0).length;
   const lowTime = props.timed && props.remainingSeconds <= 300;
   return (
     <section className="grid min-h-[calc(100vh-73px)] lg:grid-cols-[1fr_320px]">
@@ -1108,6 +1111,9 @@ function ExamMode(props: { question: ExamQuestion; questions: ExamQuestion[]; in
             </div>
             <button className={clsx(platformSecondaryBtn, "py-2")} onClick={props.onPause}>
               <Pause className="h-4 w-4" /> Pause
+            </button>
+            <button className={clsx(platformSecondaryBtn, "py-2")} style={{ borderColor: "var(--danger-border)", color: "var(--danger)" }} onClick={() => setConfirmEnd(true)}>
+              End exam
             </button>
             <button
               className={clsx(platformSecondaryBtn, "py-2")}
@@ -1168,11 +1174,30 @@ function ExamMode(props: { question: ExamQuestion; questions: ExamQuestion[]; in
           </div>
         </div>
       ) : null}
+      {confirmEnd ? (
+        <div className="fixed inset-0 z-50 grid place-items-center bg-black/70 p-4 backdrop-blur-sm">
+          <div className={clsx(platformCard, "w-full max-w-md p-7")} role="dialog" aria-modal="true" aria-labelledby="end-exam-title">
+            <h2 id="end-exam-title" className="text-2xl font-bold">End exam?</h2>
+            <p className="mt-2 text-sm leading-6 text-[var(--text-soft)]">Your exam will be submitted now. You can review your result and wrong answers immediately.</p>
+            <div className="mt-5 grid grid-cols-2 gap-3 text-center">
+              <MiniStat label="Answered" value={answeredCount} />
+              <MiniStat label="Unanswered" value={props.total - answeredCount} />
+            </div>
+            <div className="mt-6 flex justify-end gap-3">
+              <button className={platformSecondaryBtn} onClick={() => setConfirmEnd(false)}>Continue exam</button>
+              <button className="inline-flex items-center justify-center rounded-lg px-4 py-2.5 text-sm font-semibold text-white" style={{ background: "var(--danger)" }} onClick={props.onFinish}>End and view results</button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </section>
   );
 }
 
 function Results({ summary, saveStatus, onRetake }: { summary: AttemptSummary; saveStatus: string; onRetake: () => void }) {
+  const wrongResults = summary.results
+    .map((result, index) => ({ result, questionNumber: index + 1 }))
+    .filter(({ result }) => result.isAnswered && !result.isCorrect);
   return (
     <section className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
       <div className="grid gap-5 lg:grid-cols-[0.8fr_1.2fr]">
@@ -1199,6 +1224,30 @@ function Results({ summary, saveStatus, onRetake }: { summary: AttemptSummary; s
           <h3 className="text-sm font-bold uppercase tracking-[0.1em] text-[var(--text-soft)]">Weak topic analysis</h3>
           <div className="mt-4 space-y-3.5">{summary.byTopic.map((topic) => <Progress key={topic.topic} label={`${topic.topic} — ${topic.status}`} value={topic.percent} />)}</div>
         </div>
+      </div>
+      <div className={clsx(platformCard, "mt-6 p-6")}>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h3 className="text-sm font-bold uppercase tracking-[0.1em] text-[var(--text-soft)]">Wrong-answer report</h3>
+          <span className="rounded-full border px-3 py-1 text-xs font-bold" style={{ background: "var(--danger-soft)", borderColor: "var(--danger-border)", color: "var(--danger)" }}>{wrongResults.length} incorrect</span>
+        </div>
+        {wrongResults.length ? (
+          <div className="mt-4 grid gap-4">
+            {wrongResults.map(({ result, questionNumber }) => (
+              <div key={result.question.id} className="rounded-xl border border-[var(--danger-border)] bg-[var(--surface-2)] p-4">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <p className="font-bold">Question {questionNumber}</p>
+                  <span className="text-xs font-semibold text-[var(--text-soft)]">{result.question.topic}{result.question.subtopic ? ` / ${result.question.subtopic}` : ""}</span>
+                </div>
+                <p className="mt-2 text-sm leading-6">{result.question.text}</p>
+                <p className="mt-3 text-sm"><strong>Your answer:</strong> {formatResultOptions(result.question, result.selectedOptionIds)}</p>
+                <p className="mt-1 text-sm text-[var(--success)]"><strong>Correct answer:</strong> {formatResultOptions(result.question, getCorrectOptionIds(result.question))}</p>
+                <p className="mt-3 text-sm leading-6 text-[var(--text-soft)]">{result.question.explanation}</p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="mt-4 text-sm text-[var(--text-soft)]">No incorrect answers. Nicely done.</p>
+        )}
       </div>
       <div className={clsx(platformCard, "mt-6 p-6")}>
         <h3 className="text-sm font-bold uppercase tracking-[0.1em] text-[var(--text-soft)]">Full review</h3>
@@ -1809,6 +1858,14 @@ function addQuestionTime(answers: AttemptAnswer[], questionId: string, elapsed: 
       markedForReview,
     },
   ];
+}
+
+function formatResultOptions(question: ExamQuestion, optionIds: string[]) {
+  if (!optionIds.length) return "No answer";
+  return optionIds.map((id) => {
+    const option = question.options.find((item) => item.id === id);
+    return option ? `${option.label}. ${option.text}` : id;
+  }).join("; ");
 }
 
 function formatTime(totalSeconds: number) {

@@ -2,8 +2,10 @@ import "server-only";
 
 import { Query } from "node-appwrite";
 import { appwriteConfig, createAdminClient } from "@/lib/appwrite";
-import { sampleQuestions } from "@/lib/questions";
+import staticQuestionBank from "@/lib/static-question-bank.json";
 import type { ExamQuestion } from "@/types/exam";
+
+const fallbackQuestions = staticQuestionBank as unknown as ExamQuestion[];
 
 export async function loadActiveQuestions(): Promise<ExamQuestion[]> {
   try {
@@ -33,9 +35,9 @@ export async function loadActiveQuestions(): Promise<ExamQuestion[]> {
         return [];
       }
     });
-    return questions.length ? questions : sampleQuestions;
+    return questions.length ? questions : fallbackQuestions;
   } catch {
-    return sampleQuestions;
+    return fallbackQuestions;
   }
 }
 
