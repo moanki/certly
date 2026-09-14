@@ -75,6 +75,26 @@ export type AttemptSummary = {
   results: QuestionResult[];
 };
 
+export type ExamDraft = {
+  candidate: Candidate;
+  timed: boolean;
+  startedAt: string;
+  questionIds: string[];
+  questionIndex: number;
+  answers: AttemptAnswer[];
+  marked: string[];
+  deadlineAt: number | null;
+  remainingSeconds: number;
+  pausedAt: string | null;
+  pausedDurationSeconds: number;
+  questionOpenedAt: number;
+};
+
+export type TemporaryExamResult = {
+  summary: AttemptSummary;
+  saveStatus: string;
+};
+
 export type ImportPreviewQuestion = {
   topic: string;
   subtopic: string;

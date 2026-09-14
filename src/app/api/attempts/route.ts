@@ -17,6 +17,7 @@ type AttemptPayload = {
   timed?: boolean;
   startedAt?: string;
   submittedAt?: string;
+  pausedDurationSeconds?: number;
   questionIds?: string[];
   answers?: AttemptAnswer[];
 };
@@ -84,7 +85,9 @@ export async function POST(request: Request) {
     const summary = scoreAttempt(submittedQuestions, answers);
     const startedAt = new Date(payload.startedAt as string);
     const submittedAt = new Date(payload.submittedAt as string);
-    const durationSeconds = Math.max(0, Math.min(24 * 60 * 60, Math.round((submittedAt.getTime() - startedAt.getTime()) / 1_000)));
+    const pausedDurationSeconds = payload.pausedDurationSeconds ?? 0;
+    const elapsedSeconds = Math.round((submittedAt.getTime() - startedAt.getTime()) / 1_000);
+    const durationSeconds = Math.max(0, Math.min(24 * 60 * 60, elapsedSeconds - pausedDurationSeconds));
 
     let attemptId: string | null = null;
     let saved = false;
@@ -108,6 +111,7 @@ export async function POST(request: Request) {
         unanswered: summary.unanswered,
         total: summary.total,
         durationSeconds,
+        pausedDurationSeconds,
         answers: answers.map((answer) => ({
           ...answer,
           isCorrect: summary.results.find((result) => result.question.id === answer.questionId)?.isCorrect ?? false,
@@ -158,6 +162,7 @@ function validateAttempt(payload: AttemptPayload) {
   }
   if (!isValidDate(payload.startedAt) || !isValidDate(payload.submittedAt)) return "Exam timestamps are invalid.";
   if (new Date(payload.submittedAt).getTime() < new Date(payload.startedAt).getTime()) return "Exam timestamps are invalid.";
+  if (payload.pausedDurationSeconds !== undefined && (!Number.isInteger(payload.pausedDurationSeconds) || payload.pausedDurationSeconds < 0 || payload.pausedDurationSeconds > 24 * 60 * 60)) return "Exam pause data is invalid.";
   if (!Array.isArray(payload.questionIds) || payload.questionIds.length > hcipHuaweiPreset.questionCount) return "Exam question data is invalid.";
   if (payload.questionIds.some((id) => typeof id !== "string" || id.length > 64)) return "Exam question data is invalid.";
   if (!Array.isArray(payload.answers) || payload.answers.length > hcipHuaweiPreset.questionCount) return "Answer data is invalid.";

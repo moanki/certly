@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { ArrowRight, Award, BarChart3, BookOpenCheck, CheckCircle2, ChevronLeft, ChevronRight, Clock3, FileUp, Flag, GraduationCap, History, LayoutDashboard, ListChecks, LockKeyhole, LogOut, RotateCcw, ShieldCheck, Sparkles, Trophy, XCircle } from "lucide-react";
+import { ArrowRight, Award, BarChart3, BookOpenCheck, CheckCircle2, ChevronLeft, ChevronRight, Clock3, FileUp, Flag, GraduationCap, History, LayoutDashboard, ListChecks, LockKeyhole, LogOut, Pause, Play, RotateCcw, ShieldCheck, Sparkles, Trophy, XCircle } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { clsx } from "clsx";
 import { describeAnswerResult, explainCorrectAnswer, getCorrectOptionIds, hcipHuaweiPreset, isAnswerCorrect, normalizeQuestionCount, scoreAttempt, shuffleWithSeed, uniqueExamQuestions } from "@/lib/exam-engine";
@@ -12,10 +12,12 @@ import type { PracticeActivity, PracticeSessionSummary, QuestionHistory, TopicPe
 import type { AdminPerformanceDashboard, AdminScoreboard } from "@/types/admin";
 import { AdminLogin } from "@/components/admin-login";
 import { ThemeToggle } from "@/lib/theme";
+import { parseExamDraft, parseTemporaryExamResult } from "@/lib/exam-session";
 
 export type View = "dashboard" | "practice" | "exam-setup" | "exam" | "results" | "admin";
 
 const storageKey = "certly-active-attempt";
+const resultStorageKey = "certly-temporary-result";
 const practiceNameKey = "certly-practice-name";
 const practiceSessionKey = "certly-practice-session";
 const sessionIdPattern = /^[a-f0-9]{32}$/;
@@ -66,6 +68,11 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
   const [answers, setAnswers] = useState<AttemptAnswer[]>([]);
   const [timed, setTimed] = useState(true);
   const [startedAt, setStartedAt] = useState<string | null>(null);
+  const [examQuestionIds, setExamQuestionIds] = useState<string[] | null>(null);
+  const [examDeadlineAt, setExamDeadlineAt] = useState<number | null>(null);
+  const [examPaused, setExamPaused] = useState(false);
+  const [pausedAt, setPausedAt] = useState<string | null>(null);
+  const [pausedDurationSeconds, setPausedDurationSeconds] = useState(0);
   const [marked, setMarked] = useState<Set<string>>(new Set());
   const [remainingSeconds, setRemainingSeconds] = useState(hcipHuaweiPreset.durationMinutes * 60);
   const [saveStatus, setSaveStatus] = useState("");
@@ -77,14 +84,20 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
   const [previousExamFirst, setPreviousExamFirst] = useState(() => readLastQuestion("certly-last-exam-first"));
   const [previousPracticeFirst] = useState(() => readLastQuestion("certly-last-practice-first"));
   const questionOpenedAt = useRef(0);
+  const remainingSecondsRef = useRef(hcipHuaweiPreset.durationMinutes * 60);
   const submittingAttempt = useRef(false);
   const practiceCheckInFlight = useRef(false);
 
   const examQuestions = useMemo(() => {
     const uniquePool = uniqueExamQuestions(questionBank);
+    if (examQuestionIds?.length) {
+      const questionById = new Map(uniquePool.map((question) => [question.id, question]));
+      const restored = examQuestionIds.flatMap((id) => questionById.get(id) ?? []);
+      if (restored.length === examQuestionIds.length) return restored;
+    }
     const count = normalizeQuestionCount(uniquePool.length, hcipHuaweiPreset.questionCount);
     return avoidPreviousFirst(shuffleWithSeed(uniquePool, examSeed), previousExamFirst).slice(0, count);
-  }, [examSeed, previousExamFirst, questionBank]);
+  }, [examQuestionIds, examSeed, previousExamFirst, questionBank]);
   const practiceQuestions = useMemo(() => {
     const topicQuestions = selectedTopic === "Mixed Mock" ? questionBank : questionBank.filter((question) => question.topic === selectedTopic);
     const shuffled = shuffleWithSeed(topicQuestions, practiceSessionId ?? practiceSeed);
@@ -114,6 +127,36 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
   );
   const practiceCanGoNext = practiceIndex < practiceSession.items.length - 1
     || advancedPracticeSession.items.length > practiceSession.items.length;
+
+  useEffect(() => {
+    const draft = parseExamDraft(window.sessionStorage.getItem(storageKey));
+    const temporaryResult = parseTemporaryExamResult(window.sessionStorage.getItem(resultStorageKey));
+    queueMicrotask(() => {
+      if (draft && initialView === "exam-setup") {
+        setCandidate(draft.candidate);
+        setTimed(draft.timed);
+        setStartedAt(draft.startedAt);
+        setExamQuestionIds(draft.questionIds);
+        setQuestionIndex(draft.questionIndex);
+        setAnswers(draft.answers);
+        setMarked(new Set(draft.marked));
+        setExamDeadlineAt(draft.deadlineAt);
+        setRemainingSeconds(draft.remainingSeconds);
+        remainingSecondsRef.current = draft.remainingSeconds;
+        setPausedAt(draft.pausedAt);
+        setPausedDurationSeconds(draft.pausedDurationSeconds);
+        setExamPaused(Boolean(draft.pausedAt));
+        questionOpenedAt.current = draft.questionOpenedAt;
+        setView("exam");
+        return;
+      }
+      if (temporaryResult && (initialView === "exam-setup" || initialView === "results")) {
+        setResultSummary(temporaryResult.summary);
+        setSaveStatus(temporaryResult.saveStatus);
+        setView("results");
+      }
+    });
+  }, [initialView]);
 
   useEffect(() => {
     const savedName = window.localStorage.getItem(practiceNameKey)?.trim().replace(/\s+/g, " ") ?? "";
@@ -178,9 +221,22 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
   }, [practiceAccess, practiceQuestions, practiceSessionId, questionBank.length, view]);
 
   useEffect(() => {
-    if (!startedAt) return;
-    window.sessionStorage.setItem(storageKey, JSON.stringify({ candidate, answers, startedAt, marked: [...marked] }));
-  }, [answers, candidate, marked, startedAt]);
+    if (!startedAt || !examQuestionIds?.length) return;
+    window.sessionStorage.setItem(storageKey, JSON.stringify({
+      candidate,
+      timed,
+      startedAt,
+      questionIds: examQuestionIds,
+      questionIndex,
+      answers,
+      marked: [...marked],
+      deadlineAt: examDeadlineAt,
+      remainingSeconds: remainingSecondsRef.current,
+      pausedAt,
+      pausedDurationSeconds,
+      questionOpenedAt: questionOpenedAt.current,
+    }));
+  }, [answers, candidate, examDeadlineAt, examQuestionIds, marked, pausedAt, pausedDurationSeconds, questionIndex, startedAt, timed]);
 
   function updateAnswer(question: ExamQuestion, optionId: string) {
     setAnswers((current) => {
@@ -197,15 +253,22 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
   function startExam() {
     if (questionBank.length === 0) return;
     setPreviousExamFirst(examQuestions[0]?.id ?? previousExamFirst);
+    setExamQuestionIds(examQuestions.map((question) => question.id));
     setAnswers([]);
     setMarked(new Set());
     setQuestionIndex(0);
-    setStartedAt(new Date().toISOString());
+    const now = Date.now();
+    setStartedAt(new Date(now).toISOString());
     setRemainingSeconds(hcipHuaweiPreset.durationMinutes * 60);
+    remainingSecondsRef.current = hcipHuaweiPreset.durationMinutes * 60;
+    setExamDeadlineAt(timed ? now + hcipHuaweiPreset.durationMinutes * 60 * 1000 : null);
+    setExamPaused(false);
+    setPausedAt(null);
+    setPausedDurationSeconds(0);
     setSaveStatus("");
     setResultSummary(null);
-    setExamSeed(createSessionSeed());
-    questionOpenedAt.current = Date.now();
+    window.sessionStorage.removeItem(resultStorageKey);
+    questionOpenedAt.current = now;
     setView("exam");
   }
 
@@ -252,11 +315,18 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
 
   function resetAttempt() {
     window.sessionStorage.removeItem(storageKey);
+    window.sessionStorage.removeItem(resultStorageKey);
     setAnswers([]);
     setMarked(new Set());
     setStartedAt(null);
+    setExamQuestionIds(null);
+    setExamDeadlineAt(null);
+    setExamPaused(false);
+    setPausedAt(null);
+    setPausedDurationSeconds(0);
     setResultSummary(null);
     setQuestionIndex(0);
+    setExamSeed(createSessionSeed());
     setView("exam-setup");
   }
 
@@ -281,6 +351,7 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
           timed,
           startedAt,
           submittedAt,
+          pausedDurationSeconds,
           questionIds: examQuestions.map((question) => question.id),
           answers: finalAnswers,
         }),
@@ -289,9 +360,15 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
       if (!response.ok || !data.summary) throw new Error(data.error ?? "The attempt could not be scored.");
       setResultSummary(data.summary);
       setStartedAt(null);
+      setExamQuestionIds(null);
+      setExamDeadlineAt(null);
+      setExamPaused(false);
+      setPausedAt(null);
       window.sessionStorage.removeItem(storageKey);
       setView("results");
-      setSaveStatus(data.saved ? "Attempt saved." : "Result shown, but attempt history could not be saved.");
+      const resultStatus = data.saved ? "Attempt saved." : "Result shown, but attempt history could not be saved.";
+      setSaveStatus(resultStatus);
+      window.sessionStorage.setItem(resultStorageKey, JSON.stringify({ summary: data.summary, saveStatus: resultStatus }));
       const historyItem: AttemptHistoryItem = {
         id: data.attemptId ?? `local-${Date.now()}`,
         submittedAt,
@@ -307,7 +384,7 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
     } finally {
       submittingAttempt.current = false;
     }
-  }, [activeQuestion, answers, candidate, examQuestions, marked, startedAt, timed]);
+  }, [activeQuestion, answers, candidate, examQuestions, marked, pausedDurationSeconds, startedAt, timed]);
 
   async function checkPracticeAnswer() {
     if (!practiceQuestion || !practiceItem || practiceState.selected.length === 0 || practiceCheckInFlight.current || practiceState.revealed) return;
@@ -390,17 +467,37 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
   }
 
   useEffect(() => {
-    if (view !== "exam" || !timed || !startedAt) return;
+    if (view !== "exam" || !timed || !startedAt || examPaused || !examDeadlineAt) return;
     const updateTimer = () => {
-      const deadline = new Date(startedAt).getTime() + hcipHuaweiPreset.durationMinutes * 60 * 1000;
-      const next = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
+      const next = Math.max(0, Math.ceil((examDeadlineAt - Date.now()) / 1000));
+      remainingSecondsRef.current = next;
       setRemainingSeconds(next);
       if (next === 0) void finishExam();
     };
     updateTimer();
     const interval = window.setInterval(updateTimer, 1000);
     return () => window.clearInterval(interval);
-  }, [finishExam, startedAt, timed, view]);
+  }, [examDeadlineAt, examPaused, finishExam, startedAt, timed, view]);
+
+  function pauseExam() {
+    if (examPaused || !startedAt || !activeQuestion) return;
+    const now = Date.now();
+    const elapsed = Math.max(0, Math.round((now - questionOpenedAt.current) / 1000));
+    setAnswers((current) => addQuestionTime(current, activeQuestion.id, elapsed, marked.has(activeQuestion.id)));
+    setPausedAt(new Date(now).toISOString());
+    setExamPaused(true);
+  }
+
+  function resumeExam() {
+    if (!examPaused || !pausedAt) return;
+    const now = Date.now();
+    const pausedMilliseconds = Math.max(0, now - new Date(pausedAt).getTime());
+    setPausedDurationSeconds((current) => current + Math.round(pausedMilliseconds / 1000));
+    if (timed) setExamDeadlineAt((current) => current === null ? now + remainingSecondsRef.current * 1000 : current + pausedMilliseconds);
+    setPausedAt(null);
+    setExamPaused(false);
+    questionOpenedAt.current = now;
+  }
 
   function moveToQuestion(nextIndex: number) {
     if (!activeQuestion) return;
@@ -493,10 +590,13 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
           timed={timed}
           onSelect={updateAnswer}
           remainingSeconds={remainingSeconds}
+          paused={examPaused}
           onJump={moveToQuestion}
           onPrevious={() => moveToQuestion(Math.max(0, questionIndex - 1))}
           onNext={() => moveToQuestion(Math.min(examQuestions.length - 1, questionIndex + 1))}
           onFinish={() => void finishExam()}
+          onPause={pauseExam}
+          onResume={resumeExam}
           status={saveStatus}
           onToggleMark={(questionId) => setMarked((current) => { const next = new Set(current); if (next.has(questionId)) next.delete(questionId); else next.add(questionId); return next; })}
         />
@@ -985,7 +1085,7 @@ function ExamSetup({ candidate, setCandidate, timed, setTimed, onStart, hasDraft
   );
 }
 
-function ExamMode(props: { question: ExamQuestion; questions: ExamQuestion[]; index: number; total: number; answers: AttemptAnswer[]; marked: Set<string>; timed: boolean; remainingSeconds: number; status: string; onSelect: (question: ExamQuestion, optionId: string) => void; onPrevious: () => void; onNext: () => void; onJump: (index: number) => void; onFinish: () => void; onToggleMark: (questionId: string) => void }) {
+function ExamMode(props: { question: ExamQuestion; questions: ExamQuestion[]; index: number; total: number; answers: AttemptAnswer[]; marked: Set<string>; timed: boolean; remainingSeconds: number; paused: boolean; status: string; onSelect: (question: ExamQuestion, optionId: string) => void; onPrevious: () => void; onNext: () => void; onJump: (index: number) => void; onFinish: () => void; onPause: () => void; onResume: () => void; onToggleMark: (questionId: string) => void }) {
   const selected = props.answers.find((item) => item.questionId === props.question.id)?.selectedOptionIds ?? [];
   const lowTime = props.timed && props.remainingSeconds <= 300;
   return (
@@ -1004,6 +1104,9 @@ function ExamMode(props: { question: ExamQuestion; questions: ExamQuestion[]; in
             >
               {props.timed ? formatTime(props.remainingSeconds) : "Untimed"}
             </div>
+            <button className={clsx(platformSecondaryBtn, "py-2")} onClick={props.onPause}>
+              <Pause className="h-4 w-4" /> Pause
+            </button>
             <button
               className={clsx(platformSecondaryBtn, "py-2")}
               style={props.marked.has(props.question.id) ? { borderColor: "var(--warning)", background: "var(--warning-soft)", color: "var(--warning)" } : undefined}
@@ -1052,6 +1155,17 @@ function ExamMode(props: { question: ExamQuestion; questions: ExamQuestion[]; in
           <span className="inline-flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full" style={{ boxShadow: "0 0 0 2px var(--warning)" }} /> Marked for review</span>
         </div>
       </aside>
+      {props.paused ? (
+        <div className="fixed inset-0 z-50 grid place-items-center bg-black/70 p-4 backdrop-blur-sm">
+          <div className={clsx(platformCard, "w-full max-w-md p-7 text-center")} role="dialog" aria-modal="true" aria-labelledby="exam-paused-title">
+            <span className="mx-auto grid h-12 w-12 place-items-center rounded-full bg-[var(--accent-soft)] text-[var(--accent)]"><Pause className="h-5 w-5" /></span>
+            <h2 id="exam-paused-title" className="mt-4 text-2xl font-bold">Exam paused</h2>
+            <p className="mt-2 text-sm text-[var(--text-soft)]">Your answers and current question are saved in this browser session.</p>
+            <p className="mt-5 text-3xl font-bold tabular-nums">{props.timed ? formatTime(props.remainingSeconds) : "Untimed"}</p>
+            <button className={clsx(platformPrimaryBtn, "mt-6 w-full")} onClick={props.onResume}><Play className="h-4 w-4" /> Resume exam</button>
+          </div>
+        </div>
+      ) : null}
     </section>
   );
 }
@@ -1076,6 +1190,7 @@ function Results({ summary, saveStatus, onRetake }: { summary: AttemptSummary; s
             <MiniStat label="Blank" value={summary.unanswered} />
           </div>
           {saveStatus && <p className="mt-4 text-sm text-[var(--text-soft)]">{saveStatus}</p>}
+          <p className="mt-2 text-xs text-[var(--text-faint)]">This result remains available in this browser session until you retake the exam.</p>
           <button className={clsx(platformPrimaryBtn, "mt-6 w-full")} onClick={onRetake}>Retake exam</button>
         </div>
         <div className={clsx(platformCard, "p-6")}>
