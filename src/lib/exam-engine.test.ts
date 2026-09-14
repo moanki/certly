@@ -3,15 +3,15 @@ import { dedupeImportQuestions, describeAnswerResult, explainCorrectAnswer, hcip
 import { sampleQuestions } from "@/lib/questions";
 
 describe("exam scoring", () => {
-  it("uses a 250-question exam preset", () => {
-    expect(hcipHuaweiPreset.questionCount).toBe(250);
+  it("uses a 100-question exam preset", () => {
+    expect(hcipHuaweiPreset.questionCount).toBe(100);
   });
 
   it("randomizes without duplicating questions", () => {
     const questions = Array.from({ length: 300 }, (_, index) => index);
     const randomized = shuffleWithSeed(questions, "fresh-session").slice(0, hcipHuaweiPreset.questionCount);
-    expect(new Set(randomized).size).toBe(250);
-    expect(randomized).not.toEqual(questions.slice(0, 250));
+    expect(new Set(randomized).size).toBe(100);
+    expect(randomized).not.toEqual(questions.slice(0, 100));
   });
 
   it("builds the exam pool from normalized unique question text", () => {

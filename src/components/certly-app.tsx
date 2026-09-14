@@ -130,23 +130,25 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
 
   useEffect(() => {
     const draft = parseExamDraft(window.sessionStorage.getItem(storageKey));
+    const currentDraft = draft?.questionIds.length === hcipHuaweiPreset.questionCount ? draft : null;
+    if (draft && !currentDraft) window.sessionStorage.removeItem(storageKey);
     const temporaryResult = parseTemporaryExamResult(window.sessionStorage.getItem(resultStorageKey));
     queueMicrotask(() => {
-      if (draft && initialView === "exam-setup") {
-        setCandidate(draft.candidate);
-        setTimed(draft.timed);
-        setStartedAt(draft.startedAt);
-        setExamQuestionIds(draft.questionIds);
-        setQuestionIndex(draft.questionIndex);
-        setAnswers(draft.answers);
-        setMarked(new Set(draft.marked));
-        setExamDeadlineAt(draft.deadlineAt);
-        setRemainingSeconds(draft.remainingSeconds);
-        remainingSecondsRef.current = draft.remainingSeconds;
-        setPausedAt(draft.pausedAt);
-        setPausedDurationSeconds(draft.pausedDurationSeconds);
-        setExamPaused(Boolean(draft.pausedAt));
-        questionOpenedAt.current = draft.questionOpenedAt;
+      if (currentDraft && initialView === "exam-setup") {
+        setCandidate(currentDraft.candidate);
+        setTimed(currentDraft.timed);
+        setStartedAt(currentDraft.startedAt);
+        setExamQuestionIds(currentDraft.questionIds);
+        setQuestionIndex(currentDraft.questionIndex);
+        setAnswers(currentDraft.answers);
+        setMarked(new Set(currentDraft.marked));
+        setExamDeadlineAt(currentDraft.deadlineAt);
+        setRemainingSeconds(currentDraft.remainingSeconds);
+        remainingSecondsRef.current = currentDraft.remainingSeconds;
+        setPausedAt(currentDraft.pausedAt);
+        setPausedDurationSeconds(currentDraft.pausedDurationSeconds);
+        setExamPaused(Boolean(currentDraft.pausedAt));
+        questionOpenedAt.current = currentDraft.questionOpenedAt;
         setView("exam");
         return;
       }
@@ -1498,7 +1500,7 @@ function AdminOverview({ questionBank, performance }: { questionBank: ExamQuesti
         <div className="mt-1 flex flex-wrap items-center justify-between gap-3">
           <h2 id="admin-overview-title" className="text-2xl font-bold tracking-tight">Platform overview</h2>
           <span className="rounded-full border px-3 py-1 text-xs font-bold" style={ready ? { background: "var(--success-soft)", borderColor: "var(--success-border)", color: "var(--success)" } : { background: "var(--warning-soft)", borderColor: "var(--warning)", color: "var(--warning)" }}>
-            {!bankLoaded ? "Loading question bank" : ready ? "250-question exam ready" : `${hcipHuaweiPreset.questionCount - uniqueCount} unique questions needed`}
+            {!bankLoaded ? "Loading question bank" : ready ? `${hcipHuaweiPreset.questionCount}-question exam ready` : `${hcipHuaweiPreset.questionCount - uniqueCount} unique questions needed`}
           </span>
         </div>
       </div>
