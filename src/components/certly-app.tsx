@@ -199,10 +199,10 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
     const controller = new AbortController();
     void fetch(`/api/practice/activity?sessionId=${encodeURIComponent(practiceSessionId)}`, { signal: controller.signal })
       .then(async (response) => {
-        const data = (await response.json()) as { activity?: PracticeActivity; error?: string };
+        const data = (await response.json()) as { activity?: PracticeActivity; error?: string; degraded?: boolean; warning?: string };
         if (!response.ok || !data.activity) throw new Error(data.error ?? "Practice activity could not be loaded.");
         setPracticeActivity(data.activity);
-        setPracticeActivityStatus("");
+        setPracticeActivityStatus(data.degraded ? data.warning ?? "Practice history is temporarily unavailable." : "");
         setPracticeSessionOverride(createPracticeSessionQueue(
           practiceQuestions.map((question) => question.id),
           100,
@@ -406,7 +406,7 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
           blockNumber: practiceItem.blockNumber,
         }),
       });
-      const data = (await response.json()) as { error?: string; question?: ExamQuestion; activity?: PracticeActivity };
+      const data = (await response.json()) as { error?: string; question?: ExamQuestion; activity?: PracticeActivity; saved?: boolean };
       if (!response.ok || !data.question) throw new Error(data.error ?? "Answer could not be checked.");
       setPracticeStates((current) => ({
         ...current,
@@ -427,6 +427,7 @@ export function CertlyApp({ initialView = "dashboard" }: { initialView?: View })
         setPracticeActivity(data.activity);
         setPracticeActivityStatus("");
       }
+      if (data.saved === false) setPracticeStatus("Answer checked. Progress could not be saved while activity storage is unavailable.");
     } catch {
       setPracticeStatus("Answer could not be checked. Try again.");
     } finally {

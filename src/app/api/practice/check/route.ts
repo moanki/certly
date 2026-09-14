@@ -60,15 +60,25 @@ export async function POST(request: Request) {
 
     const selectedOptionIds = body.selectedOptionIds as string[];
     const participantId = await getOrCreateParticipantId();
-    await recordPracticeAttempt(participantId, question, isAnswerCorrect(question, selectedOptionIds), new Date().toISOString(), {
-      practiceSessionId: sessionId,
-      displayName,
-      attemptKind,
-      blockNumber,
-    });
-    const activity = await loadPracticeActivity(participantId, questions, sessionId);
+    let saved = true;
+    try {
+      await recordPracticeAttempt(participantId, question, isAnswerCorrect(question, selectedOptionIds), new Date().toISOString(), {
+        practiceSessionId: sessionId,
+        displayName,
+        attemptKind,
+        blockNumber,
+      });
+    } catch {
+      saved = false;
+    }
+    let activity;
+    try {
+      activity = await loadPracticeActivity(participantId, questions, sessionId);
+    } catch {
+      activity = undefined;
+    }
 
-    return noStoreJson({ question, activity });
+    return noStoreJson({ question, activity, saved });
   } catch {
     return noStoreJson({ error: "Answer could not be checked or saved." }, { status: 500 });
   }

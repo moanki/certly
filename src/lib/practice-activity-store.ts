@@ -8,6 +8,17 @@ import type { MockPerformance, PracticeActivity, PracticeAttemptKind, PracticePr
 const practiceKind = "practice_progress";
 const examKind = "exam_activity";
 
+export function createEmptyPracticeActivity(questions: ExamQuestion[], practiceSessionId = "legacy"): PracticeActivity {
+  const topicPerformance = calculateTopicPerformance([], questions);
+  return {
+    historyByQuestion: {},
+    readiness: calculateExamReadiness([], [], questions.length),
+    topicPerformance,
+    session: summarizeSession(practiceSessionId, [], questions.length),
+    sessionProgress: [],
+  };
+}
+
 export async function loadPracticeActivity(participantId: string, questions: ExamQuestion[], practiceSessionId?: string): Promise<PracticeActivity> {
   const { tables } = createAdminClient();
   const lookup = practiceSessionId ? practiceLookup(participantId, practiceSessionId) : participantId;
